@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Mail, UserRound } from "lucide-react";
 import { signupAction, type AuthFormState } from "@/lib/actions/auth";
 import { FormAlert } from "@/components/auth/form-alert";
+import { GoogleButton } from "@/components/auth/google-button";
 import { PasswordField } from "@/components/auth/password-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ const initialState: AuthFormState = null;
 
 export function SignupForm({ dict }: { dict: AppMessages }) {
   const [state, formAction] = useActionState(signupAction, initialState);
+  const googleEnabled = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true";
 
   if (state?.success) {
     return (
@@ -31,7 +33,7 @@ export function SignupForm({ dict }: { dict: AppMessages }) {
         </div>
         <Link
           href="/login"
-          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
         >
           {dict.auth.backToLogin}
         </Link>
@@ -51,6 +53,25 @@ export function SignupForm({ dict }: { dict: AppMessages }) {
       </div>
 
       {state?.error ? <FormAlert tone="error">{state.error}</FormAlert> : null}
+
+      {googleEnabled ? (
+        <>
+          <GoogleButton
+            label={dict.auth.google}
+            redirectTo="/onboarding"
+            errorLabel={dict.auth.genericError}
+          />
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-hairline" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-ink-muted">{dict.auth.or}</span>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">

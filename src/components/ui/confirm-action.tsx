@@ -55,7 +55,7 @@ export function ConfirmAction({
         aria-label={triggerLabel ?? confirmLabel}
         title={triggerLabel ?? confirmLabel}
         className={cn(
-          "inline-flex items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-ink-muted transition-colors hover:bg-[#ef4444]/10 hover:text-[#b91c1c]",
+          "inline-flex items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-ink-muted transition-colors hover:bg-[#ef4444]/10 hover:text-danger",
           iconOnly ? "size-8" : "h-8 px-2.5",
           className
         )}
@@ -83,7 +83,7 @@ export function ConfirmAction({
               type="button"
               onClick={confirm}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-xl bg-[#ef4444]/15 px-3.5 text-[13px] font-semibold text-[#b91c1c] transition-colors hover:bg-[#ef4444]/25 disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-2 rounded-xl bg-[#ef4444]/15 px-3.5 text-[13px] font-semibold text-danger transition-colors hover:bg-[#ef4444]/25 disabled:opacity-60"
             >
               {isPending ? (
                 <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

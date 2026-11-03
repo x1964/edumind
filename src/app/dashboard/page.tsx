@@ -89,7 +89,7 @@ export default async function DashboardOverviewPage() {
         action={
           <Link
             href="/dashboard/materials?upload=1"
-            className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981]"
+            className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
           >
             <Plus className="size-4" aria-hidden="true" />
             {dict.dashboard.upload}
@@ -112,13 +112,13 @@ export default async function DashboardOverviewPage() {
                   <div className="min-w-0">
                     <p className="truncate text-[11.5px] font-medium text-ink-muted">{label}</p>
                     <p
-                      className="mt-1.5 text-[26px] font-semibold tracking-[-0.04em] text-ink"
+                      className="em-num mt-1.5 text-[24px] font-semibold leading-tight tracking-[-0.04em] text-ink sm:text-[26px]"
                       dir="ltr"
                     >
                       {value}
                     </p>
                   </div>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/15 bg-gradient-to-br from-brand/[0.14] to-brand/[0.04] text-brand-ink">
                     <Icon className="size-4" aria-hidden="true" />
                   </span>
                 </div>
@@ -157,7 +157,7 @@ export default async function DashboardOverviewPage() {
                   action={
                     <Link
                       href="/dashboard/materials?upload=1"
-                      className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-[#10b981]"
+                      className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-brand-deep"
                     >
                       <Upload className="size-3.5" aria-hidden="true" />
                       {dict.dashboard.uploadFirst}

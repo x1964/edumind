@@ -86,7 +86,7 @@ export function PwaRegister() {
       <button
         type="button"
         onClick={() => waitingWorker.postMessage({ type: "SKIP_WAITING" })}
-        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-brand px-3 text-[11.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+        className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-brand px-3 text-[11.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
       >
         {isEnglish ? "Update" : "تحديث"}
       </button>

@@ -157,7 +157,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
               {dict.nav.searchPlaceholder}
             </p>
           ) : error ? (
-            <p className="px-1 py-6 text-center text-[12.5px] text-[#b91c1c]">
+            <p className="px-1 py-6 text-center text-[12.5px] text-danger">
               {dict.errors.loadFailed}
             </p>
           ) : !loading && results.length === 0 ? (

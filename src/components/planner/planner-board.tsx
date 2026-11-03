@@ -180,7 +180,7 @@ export function PlannerBoard({
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981]"
+          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
         >
           <Plus className="size-4" aria-hidden="true" />
           {dict.planner.addTask}
@@ -195,7 +195,7 @@ export function PlannerBoard({
           <button
             type="button"
             onClick={openCreate}
-            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-[#10b981]"
+            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-brand-deep"
           >
             <Plus className="size-3.5" aria-hidden="true" />
             {dict.planner.addTask}
@@ -263,7 +263,7 @@ export function PlannerBoard({
               type="button"
               onClick={save}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981] disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -275,7 +275,7 @@ export function PlannerBoard({
       >
         <div className="space-y-3.5">
           {error ? (
-            <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-[#b91c1c]">
+            <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-danger">
               {error}
             </p>
           ) : null}
@@ -505,7 +505,7 @@ function TaskSection({
                     className={cn(
                       "inline-flex items-center gap-1",
                       task.priority === "high"
-                        ? "text-[#b91c1c]"
+                        ? "text-danger"
                         : task.priority === "low"
                           ? "text-ink-muted"
                           : "text-brand-ink"

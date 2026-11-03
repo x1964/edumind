@@ -49,7 +49,7 @@ export function Modal({
         type="button"
         aria-label={closeLabel}
         onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="animate-in fade-in-0 absolute inset-0 bg-[#10231a]/45 backdrop-blur-[3px] duration-200"
         tabIndex={-1}
       />
       <div
@@ -57,10 +57,14 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={titleId}
         className={cn(
-          "relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-hairline bg-surface-raised shadow-2xl sm:rounded-3xl",
+          "animate-in slide-in-from-bottom-6 sm:zoom-in-95 relative z-10 flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-[26px] border border-hairline bg-surface-raised pb-[env(safe-area-inset-bottom)] shadow-pop duration-300 sm:rounded-3xl sm:pb-0",
           className
         )}
       >
+        <span
+          aria-hidden="true"
+          className="mx-auto mt-2.5 block h-1.5 w-10 shrink-0 rounded-full bg-hairline-strong/70 sm:hidden"
+        />
         <div className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4">
           <div className="min-w-0">
             <h2 id={titleId} className="text-[15px] font-semibold text-ink">
@@ -81,7 +85,7 @@ export function Modal({
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
         {footer ? (
-          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-hairline px-5 py-4">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-hairline px-5 py-4 max-sm:[&>*]:flex-1">
             {footer}
           </div>
         ) : null}

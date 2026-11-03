@@ -291,7 +291,7 @@ export function TutorWorkspace({
         </header>
 
         {missingThread ? (
-          <div className="border-b border-hairline bg-[#ef4444]/[0.06] px-4 py-2 text-[11.5px] text-[#b91c1c]">
+          <div className="border-b border-hairline bg-[#ef4444]/[0.06] px-4 py-2 text-[11.5px] text-danger">
             {dict.tutor.loadError}
           </div>
         ) : null}
@@ -395,7 +395,7 @@ export function TutorWorkspace({
               ) : null}
 
               {error || localError ? (
-                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3.5 py-2.5 text-[11.5px] text-[#b91c1c]">
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3.5 py-2.5 text-[11.5px] text-danger">
                   <span>{localError ?? dict.tutor.error}</span>
                   <button
                     type="button"
@@ -435,7 +435,7 @@ export function TutorWorkspace({
               disabled={!aiConfigured}
               placeholder={dict.tutor.placeholder}
               aria-label={dict.tutor.placeholder}
-              className="max-h-40 min-h-[42px] flex-1 resize-none rounded-xl border border-hairline bg-surface-deep/70 px-3.5 py-2.5 text-[13px] leading-relaxed text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none disabled:opacity-60"
+              className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl border border-hairline bg-surface-deep/70 px-3.5 py-2.5 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none disabled:opacity-60 sm:text-[13px]"
             />
             {busy ? (
               <button
@@ -450,7 +450,7 @@ export function TutorWorkspace({
               <button
                 type="submit"
                 disabled={!canSend || !input.trim() || creating}
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {creating ? (
                   <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

@@ -504,7 +504,7 @@ function QuizPanel({
               <p
                 className={cn(
                   "text-[11.5px] font-medium",
-                  selected === question.correct ? "text-brand-ink" : "text-[#b91c1c]"
+                  selected === question.correct ? "text-brand-ink" : "text-danger"
                 )}
               >
                 {selected === question.correct ? q.correct : q.incorrect}
@@ -517,7 +517,7 @@ function QuizPanel({
               <button
                 type="button"
                 onClick={onNext}
-                className="inline-flex h-9 items-center gap-2 rounded-full bg-brand px-4 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+                className="inline-flex h-9 items-center gap-2 rounded-full bg-brand px-4 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
               >
                 {isLast ? q.seeResult : q.next}
                 <ArrowRight className="size-3.5 rtl:hidden" aria-hidden="true" />

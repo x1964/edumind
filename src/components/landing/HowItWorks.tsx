@@ -45,7 +45,7 @@ function StepVisual({ index }: { index: number }) {
 
   return (
     <div className="mt-5 flex flex-wrap gap-1.5">
-      {["Explain", "Summary", "Quiz", "Map"].map((tool) => (
+      {["شرح", "ملخص", "اختبار", "خريطة"].map((tool) => (
         <span
           key={tool}
           className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 text-[9px] text-ink-muted"

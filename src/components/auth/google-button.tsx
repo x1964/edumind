@@ -69,7 +69,7 @@ export function GoogleButton({
         )}
         {label}
       </button>
-      {error ? <p className="text-center text-[11.5px] text-[#b91c1c]">{error}</p> : null}
+      {error ? <p className="text-center text-[11.5px] text-danger">{error}</p> : null}
     </div>
   );
 }

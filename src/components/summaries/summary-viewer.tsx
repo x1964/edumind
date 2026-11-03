@@ -72,7 +72,7 @@ export function SummaryViewer({
               type="button"
               onClick={save}
               disabled={isPending}
-              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-brand px-3 text-[11.5px] font-semibold text-[#04130c] hover:bg-[#10b981] disabled:opacity-50"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-brand px-3 text-[11.5px] font-semibold text-[#04130c] hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />

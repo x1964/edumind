@@ -8,9 +8,9 @@ export function FormAlert({
   children: React.ReactNode;
 }) {
   const styles = {
-    error: "border-[#ef4444]/25 bg-[#ef4444]/[0.07] text-[#b91c1c]",
-    success: "border-brand/25 bg-brand/[0.07] text-brand-ink",
-    info: "border-sky-400/25 bg-sky-400/[0.07] text-sky-200",
+    error: "border-danger/25 bg-danger/[0.06] text-danger",
+    success: "border-brand/30 bg-brand/[0.07] text-brand-ink",
+    info: "border-sky-500/25 bg-sky-500/[0.06] text-sky-700",
   }[tone];
 
   return (

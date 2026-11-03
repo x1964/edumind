@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -216,7 +216,7 @@ export function DashboardShell({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-hairline/70 bg-surface/85 px-4 backdrop-blur-xl sm:px-6">
+          <header className="sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-hairline/70 bg-surface/80 px-4 pt-[env(safe-area-inset-top)] backdrop-blur-2xl sm:px-6">
             <Link href="/dashboard" aria-label={dict.common.appName} className="shrink-0 lg:hidden">
               <Logo compact />
             </Link>
@@ -268,7 +268,7 @@ export function DashboardShell({
                     <form action={signOutAction}>
                       <button
                         type="submit"
-                        className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-start text-[12.5px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-[#b91c1c]"
+                        className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-start text-[12.5px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-danger"
                       >
                         <LogOut className="size-3.5" aria-hidden="true" />
                         {dict.common.signOut}
@@ -280,7 +280,7 @@ export function DashboardShell({
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-[1420px] flex-1 px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+84px)] sm:px-6 lg:px-8 lg:py-8 lg:pb-8">
+          <main className="em-safe-x mx-auto w-full max-w-[1420px] flex-1 px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+92px)] sm:px-6 sm:py-6 lg:px-8 lg:py-8 lg:pb-8">
             {children}
           </main>
         </div>

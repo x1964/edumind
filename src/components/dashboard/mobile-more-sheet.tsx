@@ -66,7 +66,7 @@ export function MobileMoreSheet({
         role="dialog"
         aria-modal="true"
         aria-label={dict.nav.more}
-        className="animate-in slide-in-from-bottom-8 absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[26px] border-t border-hairline bg-surface shadow-[0_-24px_60px_-24px_rgba(16,38,44,0.45)] duration-300"
+        className="animate-in slide-in-from-bottom-8 absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[26px] border-t border-hairline bg-surface shadow-pop duration-300"
       >
         <div className="shrink-0 px-5 pt-2.5">
           <span
@@ -100,9 +100,9 @@ export function MobileMoreSheet({
                   key={tool.href}
                   href={tool.href}
                   onClick={onClose}
-                  className="flex min-w-0 items-center gap-2.5 rounded-2xl border border-hairline/70 bg-surface px-3 py-2.5 transition-colors hover:border-brand/30 hover:bg-brand/[0.04]"
+                  className="em-tap flex min-w-0 items-center gap-2.5 rounded-2xl border border-hairline/70 bg-surface px-3 py-3 transition-colors active:border-brand/30 active:bg-brand/[0.05]"
                 >
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/15 bg-brand/[0.07] text-brand-ink">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/15 bg-gradient-to-br from-brand/[0.16] to-brand/[0.04] text-brand-ink">
                     <Icon className="size-4" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 truncate text-[12px] font-medium text-ink">
@@ -140,7 +140,7 @@ export function MobileMoreSheet({
             <form action={signOutAction}>
               <button
                 type="submit"
-                className="flex w-full items-center gap-2.5 px-3.5 py-3 text-start text-[12.5px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-[#b91c1c]"
+                className="flex w-full items-center gap-2.5 px-3.5 py-3 text-start text-[12.5px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-danger"
               >
                 <LogOut className="size-4 shrink-0" aria-hidden="true" />
                 {dict.common.signOut}

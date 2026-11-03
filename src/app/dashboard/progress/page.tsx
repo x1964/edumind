@@ -275,8 +275,8 @@ export default async function ProgressPage() {
                               attempt.score >= 70
                                 ? "text-brand-ink"
                                 : attempt.score >= 40
-                                  ? "text-amber-300"
-                                  : "text-[#b91c1c]"
+                                  ? "text-amber-700"
+                                  : "text-danger"
                             }`}
                             dir="ltr"
                           >

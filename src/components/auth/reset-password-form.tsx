@@ -30,7 +30,7 @@ export function ResetPasswordForm({ dict }: { dict: AppMessages }) {
       {state?.success ? (
         <Link
           href="/login"
-          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
         >
           {dict.auth.backToLogin}
         </Link>

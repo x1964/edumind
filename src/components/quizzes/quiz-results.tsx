@@ -55,7 +55,7 @@ export function QuizResults({
           </div>
           <div className="rounded-2xl border border-hairline bg-surface-raised/80 p-4">
             <p className="text-[10.5px] text-ink-muted">{dict.quizzes.incorrect}</p>
-            <p className="mt-1 text-[22px] font-semibold text-[#b91c1c]" dir="ltr">
+            <p className="mt-1 text-[22px] font-semibold text-danger" dir="ltr">
               {attempt.total_count - attempt.correct_count}
             </p>
           </div>
@@ -91,7 +91,7 @@ export function QuizResults({
                 <span
                   className={cn(
                     "grid size-6 shrink-0 place-items-center rounded-full",
-                    isCorrect ? "bg-brand/15 text-brand-ink" : "bg-[#ef4444]/15 text-[#b91c1c]"
+                    isCorrect ? "bg-brand/15 text-brand-ink" : "bg-[#ef4444]/15 text-danger"
                   )}
                 >
                   {isCorrect ? (

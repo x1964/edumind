@@ -134,7 +134,7 @@ export default async function MaterialDetailPage({
       </header>
 
       {material.status === "failed" ? (
-        <div className="rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-4 py-3 text-[12.5px] leading-relaxed text-[#b91c1c]">
+        <div className="rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-4 py-3 text-[12.5px] leading-relaxed text-danger">
           {material.error_message === "no_extractable_text"
             ? dict.materials.noText
             : dict.materials.extractionFailed}

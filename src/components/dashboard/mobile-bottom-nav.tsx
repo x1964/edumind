@@ -51,10 +51,10 @@ export function MobileBottomNav({
   const moreActive = moreOpen || SHEET_ROUTES.some((href) => isRouteActive(pathname, href));
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline/80 bg-surface/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-22px_rgba(16,38,44,0.35)] backdrop-blur-xl lg:hidden">
+    <div className="em-safe-x fixed inset-x-0 bottom-0 z-40 border-t border-hairline/70 bg-surface/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-1px_0_rgba(16,35,26,0.04),0_-18px_44px_-32px_rgba(16,35,26,0.5)] backdrop-blur-2xl lg:hidden">
       <nav
         aria-label={dict.nav.main}
-        className="mx-auto flex h-[62px] w-full max-w-lg items-stretch gap-1 px-2"
+        className="mx-auto flex h-[64px] w-full max-w-lg items-stretch gap-0.5 px-2"
       >
         {PRIMARY_ITEMS.map((item) => {
           const active = isRouteActive(pathname, item.href, item.exact);
@@ -65,30 +65,30 @@ export function MobileBottomNav({
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors",
-                active ? "text-brand-ink" : "text-ink-muted"
+                "em-tap group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors duration-200",
+                active ? "text-brand-ink" : "text-ink-muted active:bg-black/[0.03]"
               )}
             >
               <span
                 aria-hidden="true"
                 className={cn(
-                  "absolute top-0 h-[2.5px] w-7 rounded-full bg-brand transition-opacity duration-200",
-                  active ? "opacity-100" : "opacity-0"
+                  "absolute top-0 h-[2.5px] w-8 rounded-full bg-brand transition-all duration-200",
+                  active ? "opacity-100" : "w-0 opacity-0"
                 )}
               />
               <span
                 className={cn(
-                  "grid size-7 place-items-center rounded-lg transition-colors",
+                  "grid size-8 place-items-center rounded-[10px] transition-all duration-200",
                   active
-                    ? "bg-brand/[0.12]"
-                    : "group-hover:bg-black/[0.04] group-hover:text-ink-soft"
+                    ? "bg-gradient-to-b from-brand/[0.18] to-brand/[0.08] shadow-[inset_0_0_0_1px_rgba(0,201,80,0.14)]"
+                    : "group-active:bg-black/[0.04]"
                 )}
               >
-                <Icon className="size-[18px]" strokeWidth={active ? 2.3 : 1.9} aria-hidden="true" />
+                <Icon className="size-[19px]" strokeWidth={active ? 2.4 : 1.9} aria-hidden="true" />
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[9.5px] leading-none",
+                  "max-w-full truncate text-[10px] leading-none",
                   active ? "font-semibold" : "font-medium"
                 )}
               >
@@ -105,34 +105,34 @@ export function MobileBottomNav({
           aria-expanded={moreOpen}
           aria-haspopup="dialog"
           className={cn(
-            "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors",
-            moreActive ? "text-brand-ink" : "text-ink-muted"
+            "em-tap group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors duration-200",
+            moreActive ? "text-brand-ink" : "text-ink-muted active:bg-black/[0.03]"
           )}
         >
           <span
             aria-hidden="true"
             className={cn(
-              "absolute top-0 h-[2.5px] w-7 rounded-full bg-brand transition-opacity duration-200",
-              moreActive ? "opacity-100" : "opacity-0"
+              "absolute top-0 h-[2.5px] w-8 rounded-full bg-brand transition-all duration-200",
+              moreActive ? "opacity-100" : "w-0 opacity-0"
             )}
           />
           <span
             className={cn(
-              "grid size-7 place-items-center rounded-lg transition-colors",
+              "grid size-8 place-items-center rounded-[10px] transition-all duration-200",
               moreActive
-                ? "bg-brand/[0.12]"
-                : "group-hover:bg-black/[0.04] group-hover:text-ink-soft"
+                ? "bg-gradient-to-b from-brand/[0.18] to-brand/[0.08] shadow-[inset_0_0_0_1px_rgba(0,201,80,0.14)]"
+                : "group-active:bg-black/[0.04]"
             )}
           >
             <LayoutGrid
-              className="size-[18px]"
-              strokeWidth={moreActive ? 2.3 : 1.9}
+              className={cn("size-[19px]", moreOpen && "scale-95")}
+              strokeWidth={moreActive ? 2.4 : 1.9}
               aria-hidden="true"
             />
           </span>
           <span
             className={cn(
-              "max-w-full truncate text-[9.5px] leading-none",
+              "max-w-full truncate text-[10px] leading-none",
               moreActive ? "font-semibold" : "font-medium"
             )}
           >

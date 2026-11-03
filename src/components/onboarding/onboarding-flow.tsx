@@ -191,7 +191,7 @@ export function OnboardingFlow({
       {error ? (
         <div
           role="alert"
-          className="mb-5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-4 py-3 text-[12.5px] text-[#b91c1c]"
+          className="mb-5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-4 py-3 text-[12.5px] text-danger"
         >
           {error}
         </div>
@@ -460,7 +460,7 @@ export function OnboardingFlow({
           type="button"
           onClick={next}
           disabled={isPending}
-          className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand px-5 text-[13.5px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981] disabled:opacity-60"
+          className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand px-5 text-[13.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-60"
         >
           {isPending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
           {isPending

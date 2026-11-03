@@ -23,6 +23,7 @@ export interface NavDict {
   openMenu: string;
   closeMenu: string;
   home: string;
+  signIn: string;
 }
 
 export interface HeroDict {
@@ -36,6 +37,35 @@ export interface HeroDict {
   formatsLabel: string;
   formats: string[];
   previewLabel: string;
+  trust: { ai: string; fast: string; personal: string };
+}
+
+export interface StatisticsDict {
+  eyebrow: string;
+  title: string;
+  description: string;
+  activeStudents: string;
+  materialsProcessed: string;
+  successRate: string;
+  fasterLearning: string;
+  trust: string[];
+}
+
+export interface TestimonialItem {
+  name: string;
+  role: string;
+  avatar: string;
+  quote: string;
+  highlight: string;
+}
+
+export interface TestimonialsDict {
+  eyebrow: string;
+  title: string;
+  description: string;
+  ratingValue: string;
+  ratingNote: string;
+  items: TestimonialItem[];
 }
 
 export interface ProductPreviewDict {
@@ -204,6 +234,8 @@ export interface FooterDict {
 export interface Dictionary {
   nav: NavDict;
   hero: HeroDict;
+  statistics: StatisticsDict;
+  testimonials: TestimonialsDict;
   productPreview: ProductPreviewDict;
   learning: LearningDict;
   how: HowDict;
@@ -227,6 +259,7 @@ export const dictionaries: Record<Lang, Dictionary> = {
       openMenu: "فتح القائمة",
       closeMenu: "إغلاق القائمة",
       home: "الصفحة الرئيسية",
+      signIn: "تسجيل الدخول",
     },
     hero: {
       badge: "مستقبل التعلّم أصبح أكثر ذكاءً",
@@ -240,6 +273,78 @@ export const dictionaries: Record<Lang, Dictionary> = {
       formatsLabel: "بيشتغل مع ملفاتك",
       formats: ["PDF", "Word", "Text"],
       previewLabel: "معاينة الواجهة",
+      trust: {
+        ai: "مدعوم بالذكاء الاصطناعي",
+        fast: "تعلّم سريع",
+        personal: "مخصص لك",
+      },
+    },
+    statistics: {
+      eyebrow: "أرقام تتكلم",
+      title: "موثوق من الطلاب حول العالم",
+      description: "انضم لآلاف الطلاب الذين يتعلمون بذكاء مع EduMind",
+      activeStudents: "طالب نشط",
+      materialsProcessed: "مادة معالجة",
+      successRate: "معدل نجاح",
+      fasterLearning: "تعلّم أسرع",
+      trust: ["آمن بالتصميم", "الخصوصية أولاً", "مدعوم بالذكاء الاصطناعي", "متاح 24/7"],
+    },
+    testimonials: {
+      eyebrow: "آراء المتعلّمين",
+      title: "ماذا يقول متعلّمونا؟",
+      description: "انضم لآلاف الطلاب الذين غيّروا طريقة تعلّمهم مع EduMind",
+      ratingValue: "4.9/5",
+      ratingNote: "بناءً على أكثر من 10,000 تقييم من متعلّمين راضين",
+      items: [
+        {
+          name: "أحمد محمد",
+          role: "طالب طب",
+          avatar: "أم",
+          quote:
+            "غيّر EduMind طريقة مذاكرتي تماماً. المدرّس الذكي يشرح المفاهيم الطبية المعقدة ببساطة، والاختبارات تساعدني على تثبيت المعلومات أكثر من أي وقت مضى.",
+          highlight: "المفاهيم الطبية المعقدة",
+        },
+        {
+          name: "سارة الراشد",
+          role: "طالبة هندسة",
+          avatar: "سر",
+          quote:
+            "الخرائط الذهنية مذهلة! أستطيع تصوّر الفصول كاملة وفهم الروابط بين الموضوعات. تحسّنت درجاتي بشكل ملحوظ منذ أن بدأت استخدام EduMind.",
+          highlight: "الخرائط الذهنية مذهلة",
+        },
+        {
+          name: "عمر حسن",
+          role: "طالب ثانوية",
+          avatar: "عح",
+          quote:
+            "كنت أكره المذاكرة للامتحانات. الآن أرفع ملاحظاتي وأحصل على اختبارات وملخصات مخصصة. وكأن لديّ مدرّساً خاصاً متاحاً على مدار الساعة.",
+          highlight: "اختبارات وملخصات مخصصة",
+        },
+        {
+          name: "ليلى أحمد",
+          role: "طالبة جامعية",
+          avatar: "لأ",
+          quote:
+            "الملخصات توفر عليّ ساعات من القراءة. أستطيع مراجعة كتب كاملة في دقائق والتركيز على الأهم. ضرورية لأي طالب جاد.",
+          highlight: "توفر عليّ ساعات من القراءة",
+        },
+        {
+          name: "كريم علي",
+          role: "طالب ماجستير إدارة أعمال",
+          avatar: "كع",
+          quote:
+            "كموظف مشغول، الوقت ثمين. يساعدني EduMind على التعلّم بكفاءة أثناء التنقل، والملخصات السريعة تغيّر قواعد اللعبة.",
+          highlight: "التعلّم بكفاءة",
+        },
+        {
+          name: "نور فتحي",
+          role: "طالبة علوم حاسب",
+          avatar: "نف",
+          quote:
+            "المدرّس الذكي يفهم المفاهيم التقنية بدقة. أستطيع السؤال عن البرمجة والخوارزميات والحصول على شروحات واضحة مع أمثلة برمجية.",
+          highlight: "شروحات واضحة",
+        },
+      ],
     },
     productPreview: {
       fileName: "Introduction to Biology.pdf",
@@ -648,6 +753,7 @@ export const dictionaries: Record<Lang, Dictionary> = {
       openMenu: "Open menu",
       closeMenu: "Close menu",
       home: "Home",
+      signIn: "Sign in",
     },
     hero: {
       badge: "The future of learning is smarter",
@@ -661,6 +767,78 @@ export const dictionaries: Record<Lang, Dictionary> = {
       formatsLabel: "Works with your files",
       formats: ["PDF", "Word", "Text"],
       previewLabel: "Product preview",
+      trust: {
+        ai: "AI-powered",
+        fast: "Learn faster",
+        personal: "Personalized for you",
+      },
+    },
+    statistics: {
+      eyebrow: "By the numbers",
+      title: "Trusted by learners worldwide",
+      description: "Join thousands of students who learn smarter with EduMind",
+      activeStudents: "Active students",
+      materialsProcessed: "Materials processed",
+      successRate: "Success rate",
+      fasterLearning: "Faster learning",
+      trust: ["Secure by design", "Privacy first", "AI-powered", "Available 24/7"],
+    },
+    testimonials: {
+      eyebrow: "Testimonials",
+      title: "What our learners say",
+      description: "Join thousands of students who transformed how they learn with EduMind",
+      ratingValue: "4.9/5",
+      ratingNote: "Based on 10,000+ reviews from satisfied learners",
+      items: [
+        {
+          name: "Ahmed Mohamed",
+          role: "Medical student",
+          avatar: "AM",
+          quote:
+            "EduMind transformed how I study. The AI tutor explains complex medical concepts in simple terms, and the quizzes help me retain information better than ever before.",
+          highlight: "complex medical concepts",
+        },
+        {
+          name: "Sarah Al-Rashid",
+          role: "Engineering student",
+          avatar: "SR",
+          quote:
+            "The mind maps are incredible! I can visualize entire chapters and understand connections between topics. My grades have improved significantly since I started using EduMind.",
+          highlight: "mind maps are incredible",
+        },
+        {
+          name: "Omar Hassan",
+          role: "High school student",
+          avatar: "OH",
+          quote:
+            "I used to hate studying for exams. Now I upload my notes and get personalized quizzes and summaries. It's like having a private tutor available 24/7.",
+          highlight: "personalized quizzes",
+        },
+        {
+          name: "Layla Ahmed",
+          role: "University student",
+          avatar: "LA",
+          quote:
+            "The summaries save me hours of reading. I can review entire textbooks in minutes and focus on what matters most. Absolutely essential for any serious student.",
+          highlight: "summaries save me hours",
+        },
+        {
+          name: "Karim Ali",
+          role: "MBA student",
+          avatar: "KA",
+          quote:
+            "As a working professional, time is precious. EduMind helps me learn efficiently during my commute. The audio features and quick summaries are game-changers.",
+          highlight: "learn efficiently",
+        },
+        {
+          name: "Nour Fathy",
+          role: "Computer science student",
+          avatar: "NF",
+          quote:
+            "The AI tutor understands technical concepts perfectly. I can ask questions about programming and algorithms, and get clear explanations with code examples.",
+          highlight: "clear explanations",
+        },
+      ],
     },
     productPreview: {
       fileName: "Introduction to Biology.pdf",

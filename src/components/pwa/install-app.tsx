@@ -225,7 +225,7 @@ export function InstallAppCard({ dict }: { dict: AppMessages }) {
               type="button"
               onClick={install}
               disabled={pending}
-              className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-brand px-3 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981] disabled:opacity-60"
+              className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl bg-brand px-3 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-60"
             >
               {pending ? (
                 <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

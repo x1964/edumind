@@ -78,6 +78,14 @@ export function Navbar({ lang, dict }: NavbarProps) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher lang={lang} label={dict.nav.language} />
           <CtaLink
+            href="/login"
+            variant="ghost"
+            size="md"
+            className="hidden h-9 px-3 text-[13px] sm:inline-flex"
+          >
+            {dict.nav.signIn}
+          </CtaLink>
+          <CtaLink
             href="/signup"
             size="md"
             className="hidden h-9 px-4 text-[13px] sm:inline-flex"
@@ -128,6 +136,9 @@ export function Navbar({ lang, dict }: NavbarProps) {
               ))}
               <CtaLink href="/signup" size="lg" className="mt-3 w-full" withArrow>
                 {dict.nav.getStarted}
+              </CtaLink>
+              <CtaLink href="/login" variant="secondary" size="lg" className="mt-2 w-full">
+                {dict.nav.signIn}
               </CtaLink>
             </nav>
           </motion.div>

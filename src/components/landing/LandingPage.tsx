@@ -7,7 +7,9 @@ import { HeroSection } from "./HeroSection";
 import { HowItWorks } from "./HowItWorks";
 import { LearningPreview } from "./LearningPreview";
 import { Navbar } from "./Navbar";
+import { StatisticsSection } from "./StatisticsSection";
 import { SubjectsSection } from "./SubjectsSection";
+import { TestimonialsSection } from "./TestimonialsSection";
 import { WhyEduMind } from "./WhyEduMind";
 
 export function LandingPage({ lang, dict }: { lang: Lang; dict: Dictionary }) {
@@ -16,11 +18,13 @@ export function LandingPage({ lang, dict }: { lang: Lang; dict: Dictionary }) {
       <Navbar lang={lang} dict={dict} />
       <main className="flex-1">
         <HeroSection dict={dict} />
+        <StatisticsSection dict={dict} />
         <LearningPreview dict={dict} />
         <HowItWorks dict={dict} />
         <FeaturesSection dict={dict} />
         <SubjectsSection dict={dict} lang={lang} />
         <WhyEduMind dict={dict} />
+        <TestimonialsSection dict={dict} />
         <FAQSection dict={dict} />
         <FinalCTA dict={dict} />
       </main>

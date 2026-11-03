@@ -31,5 +31,12 @@ export default async function LoginPage({
     );
   }
 
-  return <LoginForm dict={dict} next={next || undefined} />;
+  const errorMessage =
+    params.error === "config"
+      ? dict.auth.configBody
+      : params.error
+        ? dict.auth.authFailed
+        : undefined;
+
+  return <LoginForm dict={dict} next={next || undefined} error={errorMessage} />;
 }

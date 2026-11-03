@@ -22,7 +22,7 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   display: "swap",
 });
 
-const title = "EduMind   ";
+const title = "EduMind";
 const description =
   "EduMind turns your study documents into AI tutoring, smart summaries, interactive quizzes, mind maps, and personalized learning experiences. ارفع ملفاتك وافهم كل حاجة بطريقتك.";
 
@@ -101,7 +101,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: languageBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: installPromptBootstrap }} />
       </head>
-      <body className="min-h-full overflow-x-clip bg-background text-foreground">
+      <body
+        className="min-h-full overflow-x-clip bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <div className="flex min-h-dvh flex-col">{children}</div>
         <PwaRegister />
       </body>

@@ -152,7 +152,7 @@ export function UploadDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+        className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
       >
         <Plus className="size-4" aria-hidden="true" />
         {dict.materials.upload}
@@ -178,7 +178,7 @@ export function UploadDialog({
               type="button"
               onClick={upload}
               disabled={!file || stage !== "ready"}
-              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
             >
               {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
               {stage === "uploading"
@@ -252,7 +252,7 @@ export function UploadDialog({
                 {stage === "extracting" ? (
                   <LoaderCircle className="size-4 animate-spin text-brand-ink" aria-hidden="true" />
                 ) : stage === "failed" ? (
-                  <XCircle className="size-4 text-[#b91c1c]" aria-hidden="true" />
+                  <XCircle className="size-4 text-danger" aria-hidden="true" />
                 ) : (
                   <CheckCircle2 className="size-4 text-brand-ink" aria-hidden="true" />
                 )}
@@ -288,7 +288,7 @@ export function UploadDialog({
           {error ? (
             <div
               role="alert"
-              className="rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-3.5 py-2.5 text-[12px] text-[#b91c1c]"
+              className="rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-3.5 py-2.5 text-[12px] text-danger"
             >
               {error}
             </div>

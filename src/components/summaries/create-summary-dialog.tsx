@@ -51,7 +51,7 @@ export function CreateSummaryDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981]"
+        className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
       >
         <Sparkles className="size-4" aria-hidden="true" />
         {dict.summaries.create}
@@ -77,7 +77,7 @@ export function CreateSummaryDialog({
               type="button"
               onClick={generate}
               disabled={isPending || !materialId || !aiConfigured}
-              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981] disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isPending ? (
                 <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

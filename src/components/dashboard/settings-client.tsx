@@ -345,7 +345,7 @@ export function SettingsClient({
               </div>
 
               {error ? (
-                <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-[#b91c1c]">
+                <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-danger">
                   {error}
                 </p>
               ) : null}
@@ -355,7 +355,7 @@ export function SettingsClient({
                   type="button"
                   onClick={save}
                   disabled={isPending}
-                  className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981] disabled:opacity-50"
+                  className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
                 >
                   {isPending ? (
                     <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -460,7 +460,7 @@ export function SettingsClient({
                 {dict.settings.privacyFilesBody}
               </p>
               <div className="rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/[0.035] p-3">
-                <p className="text-[11px] font-medium text-[#b91c1c]">{dict.settings.dangerZone}</p>
+                <p className="text-[11px] font-medium text-danger">{dict.settings.dangerZone}</p>
                 <p className="mt-1 text-[10.5px] leading-relaxed text-ink-muted">
                   {dict.settings.deleteAllBody}
                 </p>

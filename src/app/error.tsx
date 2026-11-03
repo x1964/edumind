@@ -19,7 +19,7 @@ export default function GlobalError({
   return (
     <div className="flex min-h-dvh items-center justify-center bg-surface px-5 py-16">
       <div className="w-full max-w-md rounded-2xl border border-hairline bg-surface-raised p-7 text-center">
-        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-[#ef4444]/25 bg-[#ef4444]/10 text-[#b91c1c]">
+        <div className="mx-auto grid size-12 place-items-center rounded-2xl border border-[#ef4444]/25 bg-[#ef4444]/10 text-danger">
           <AlertTriangle className="size-5" aria-hidden="true" />
         </div>
         <h1 className="mt-4 text-lg font-semibold text-ink">حدث خطأ غير متوقع</h1>
@@ -30,7 +30,7 @@ export default function GlobalError({
           <button
             type="button"
             onClick={reset}
-            className="h-9 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] hover:bg-[#10b981]"
+            className="h-9 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] hover:bg-brand-deep"
           >
             إعادة المحاولة
           </button>

@@ -39,30 +39,32 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={dict.materials.searchPlaceholder}
-          className="h-9 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-[12.5px] text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none"
+          className="h-11 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-base text-ink transition-colors placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-white focus:outline-none sm:h-9 sm:text-[12.5px]"
         />
       </div>
-      <select
-        value={searchParams.get("type") ?? ""}
-        onChange={(event) => update({ type: event.target.value || null })}
-        aria-label={dict.common.filter}
-        className="h-9 rounded-xl border border-hairline bg-black/[0.025] px-3 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
-      >
-        <option value="">{dict.materials.filterAll}</option>
-        <option value="pdf">PDF</option>
-        <option value="docx">DOCX</option>
-        <option value="txt">TXT</option>
-      </select>
-      <select
-        value={searchParams.get("sort") ?? "newest"}
-        onChange={(event) => update({ sort: event.target.value })}
-        aria-label={dict.common.filter}
-        className="h-9 rounded-xl border border-hairline bg-black/[0.025] px-3 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
-      >
-        <option value="newest">{dict.materials.sortNewest}</option>
-        <option value="oldest">{dict.materials.sortOldest}</option>
-        <option value="name">{dict.materials.sortName}</option>
-      </select>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+        <select
+          value={searchParams.get("type") ?? ""}
+          onChange={(event) => update({ type: event.target.value || null })}
+          aria-label={dict.common.filter}
+          className="h-10 min-w-0 rounded-xl border border-hairline bg-black/[0.025] px-3 text-base text-ink-soft focus:border-brand/50 focus:outline-none sm:h-9 sm:text-[12px]"
+        >
+          <option value="">{dict.materials.filterAll}</option>
+          <option value="pdf">PDF</option>
+          <option value="docx">DOCX</option>
+          <option value="txt">TXT</option>
+        </select>
+        <select
+          value={searchParams.get("sort") ?? "newest"}
+          onChange={(event) => update({ sort: event.target.value })}
+          aria-label={dict.common.filter}
+          className="h-10 min-w-0 rounded-xl border border-hairline bg-black/[0.025] px-3 text-base text-ink-soft focus:border-brand/50 focus:outline-none sm:h-9 sm:text-[12px]"
+        >
+          <option value="newest">{dict.materials.sortNewest}</option>
+          <option value="oldest">{dict.materials.sortOldest}</option>
+          <option value="name">{dict.materials.sortName}</option>
+        </select>
+      </div>
     </div>
   );
 }

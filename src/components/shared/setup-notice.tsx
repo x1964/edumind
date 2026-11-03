@@ -12,8 +12,8 @@ export function SupabaseSetupNotice({
   env: string;
 }) {
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] px-6 py-10 text-center">
-      <div className="grid size-12 place-items-center rounded-2xl border border-amber-400/25 bg-amber-400/10 text-amber-200">
+    <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] px-6 py-10 text-center shadow-card">
+      <div className="grid size-12 place-items-center rounded-2xl border border-amber-500/25 bg-amber-500/[0.12] text-amber-700">
         <Database className="size-5" aria-hidden="true" />
       </div>
       <h2 className="mt-4 text-lg font-semibold text-ink">{title}</h2>
@@ -29,8 +29,8 @@ export function SupabaseSetupNotice({
 
 export function AiSetupNotice({ title, body }: { title: string; body: string }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] px-6 py-10 text-center">
-      <div className="grid size-12 place-items-center rounded-2xl border border-amber-400/25 bg-amber-400/10 text-amber-200">
+    <div className="flex flex-col items-center rounded-2xl border border-amber-500/20 bg-amber-500/[0.06] px-6 py-10 text-center">
+      <div className="grid size-12 place-items-center rounded-2xl border border-amber-500/25 bg-amber-500/[0.12] text-amber-700">
         <Sparkles className="size-5" aria-hidden="true" />
       </div>
       <h2 className="mt-4 text-[15px] font-semibold text-ink">{title}</h2>

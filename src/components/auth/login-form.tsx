@@ -13,9 +13,18 @@ import type { AppMessages } from "@/lib/i18n/app";
 
 const initialState: AuthFormState = null;
 
-export function LoginForm({ dict, next }: { dict: AppMessages; next?: string }) {
+export function LoginForm({
+  dict,
+  next,
+  error,
+}: {
+  dict: AppMessages;
+  next?: string;
+  error?: string;
+}) {
   const [state, formAction] = useActionState(loginAction, initialState);
   const googleEnabled = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true";
+  const errorMessage = state?.error ?? error;
 
   return (
     <div className="space-y-6">
@@ -28,7 +37,7 @@ export function LoginForm({ dict, next }: { dict: AppMessages; next?: string }) 
         </p>
       </div>
 
-      {state?.error ? <FormAlert tone="error">{state.error}</FormAlert> : null}
+      {errorMessage ? <FormAlert tone="error">{errorMessage}</FormAlert> : null}
 
       <form action={formAction} className="space-y-4" noValidate={false}>
         {next ? <input type="hidden" name="next" value={next} /> : null}

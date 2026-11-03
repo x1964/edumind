@@ -61,7 +61,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           </div>
           <Link
             href="/onboarding?revisit=1"
-            className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-[#10b981]"
+            className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
           >
             {dict.onboarding.incompleteBannerCta}
             <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
