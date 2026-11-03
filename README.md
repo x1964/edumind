@@ -1,0 +1,2 @@
+# edumind
+My Startup
