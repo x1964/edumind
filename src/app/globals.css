@@ -327,36 +327,6 @@ html[lang="ar"] {
   }
 }
 
-@keyframes em-launch-bar {
-  0% {
-    transform: translateX(-110%);
-  }
-  100% {
-    transform: translateX(220%);
-  }
-}
-
-/* Branded launch screen: hidden unless the inline bootstrap flags a boot. */
-.em-launch {
-  display: none;
-}
-
-html.em-booting .em-launch {
-  display: flex;
-}
-
-.em-launch-copy-en {
-  display: none;
-}
-
-html[lang="en"] .em-launch-copy-ar {
-  display: none;
-}
-
-html[lang="en"] .em-launch-copy-en {
-  display: inline;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
