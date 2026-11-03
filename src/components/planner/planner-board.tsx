@@ -16,6 +16,7 @@ import { formatDate, formatNumber } from "@/lib/format";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
 import type { StudyTask, TaskPriority } from "@/lib/types";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 const PRIORITIES: TaskPriority[] = ["low", "medium", "high"];
