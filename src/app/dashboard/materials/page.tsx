@@ -82,11 +82,11 @@ export default async function MaterialsPage({
               {materials.map((material) => (
                 <li
                   key={material.id}
-                  className="group grid gap-2 px-4 py-3 transition-colors hover:bg-black/[0.02] sm:grid-cols-[minmax(0,1fr)_90px_120px_110px_92px] sm:items-center sm:gap-3"
+                  className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 px-4 py-3 transition-colors hover:bg-black/[0.02] sm:grid-cols-[minmax(0,1fr)_90px_120px_110px_92px] sm:gap-3"
                 >
                   <Link
                     href={`/dashboard/materials/${material.id}`}
-                    className="flex min-w-0 items-center gap-3"
+                    className="col-span-2 flex min-w-0 items-center gap-3 sm:col-span-1"
                   >
                     <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-hairline bg-black/[0.03] text-ink-soft">
                       <FileKindIcon kind={material.file_type} />
@@ -100,34 +100,36 @@ export default async function MaterialsPage({
                       </span>
                     </span>
                   </Link>
-                  <span className="text-[11.5px] text-ink-muted" dir="ltr">
-                    {formatBytes(material.file_size, lang)}
-                  </span>
-                  <span>
-                    <StatusBadge status={material.status} dict={dict} />
-                  </span>
-                  <span className="text-[11.5px] text-ink-muted">
-                    {formatDate(material.created_at, lang)}
-                  </span>
-                  <span className="flex items-center justify-end gap-1">
-                    <Link
-                      href={`/dashboard/materials/${material.id}`}
-                      aria-label={dict.materials.open}
-                      className="grid size-8 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink"
-                    >
-                      <ArrowRight className="size-3.5 rtl:hidden" aria-hidden="true" />
-                      <ArrowLeft className="size-3.5 ltr:hidden" aria-hidden="true" />
-                    </Link>
-                    <ConfirmAction
-                      action={deleteMaterialAction.bind(null, material.id)}
-                      title={dict.materials.deleteTitle}
-                      description={dict.materials.deleteBody}
-                      confirmLabel={dict.materials.deleteConfirm}
-                      cancelLabel={dict.common.cancel}
-                      successMessage={dict.materials.deleteSuccess}
-                      iconOnly
-                    />
-                  </span>
+                  <div className="col-span-2 flex flex-wrap items-center gap-x-3 gap-y-1 sm:contents">
+                    <span className="text-[11.5px] text-ink-muted" dir="ltr">
+                      {formatBytes(material.file_size, lang)}
+                    </span>
+                    <span>
+                      <StatusBadge status={material.status} dict={dict} />
+                    </span>
+                    <span className="text-[11.5px] text-ink-muted">
+                      {formatDate(material.created_at, lang)}
+                    </span>
+                    <span className="ms-auto flex items-center justify-end gap-1 sm:ms-0">
+                      <Link
+                        href={`/dashboard/materials/${material.id}`}
+                        aria-label={dict.materials.open}
+                        className="grid size-8 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink"
+                      >
+                        <ArrowRight className="size-3.5 rtl:hidden" aria-hidden="true" />
+                        <ArrowLeft className="size-3.5 ltr:hidden" aria-hidden="true" />
+                      </Link>
+                      <ConfirmAction
+                        action={deleteMaterialAction.bind(null, material.id)}
+                        title={dict.materials.deleteTitle}
+                        description={dict.materials.deleteBody}
+                        confirmLabel={dict.materials.deleteConfirm}
+                        cancelLabel={dict.common.cancel}
+                        successMessage={dict.materials.deleteSuccess}
+                        iconOnly
+                      />
+                    </span>
+                  </div>
                 </li>
               ))}
             </ul>

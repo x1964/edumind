@@ -154,7 +154,9 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the br
 | `AI_BASE_URL`                      | For AI      | Base URL ending in `/v1` (for example `https://api.openai.com/v1`).                                                                              |
 | `AI_API_KEY`                       | For AI      | Server-only API key. Never exposed to the client.                                                                                                |
 | `AI_MODEL`                         | For AI      | Model name accepted by the provider.                                                                                                             |
-| `AI_MAX_OUTPUT_TOKENS`             | No          | Maximum completion tokens. Defaults to `2048`.                                                                                                   |
+| `AI_MODEL_FALLBACKS`               | No          | Comma-separated model names tried when the primary model is rate-limited or unavailable (429 / 5xx).                                             |
+| `AI_MAX_OUTPUT_TOKENS`             | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
+| `AI_TIMEOUT_MS`                    | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
 
 **Never** put a Supabase service-role key in any `NEXT_PUBLIC_*` variable.
 
@@ -250,16 +252,19 @@ To enable Google sign-in:
 
 EduMind uses a small adapter in `src/lib/ai/provider.ts` that calls any OpenAI-compatible `POST /chat/completions` endpoint. Switching providers is only an environment change:
 
-| Provider     | `AI_BASE_URL`                    | Example `AI_MODEL`        |
-| ------------ | -------------------------------- | ------------------------- |
-| OpenAI       | `https://api.openai.com/v1`      | `gpt-4o-mini`             |
-| OpenRouter   | `https://openrouter.ai/api/v1`   | `openai/gpt-4o-mini`      |
-| Groq         | `https://api.groq.com/openai/v1` | `llama-3.3-70b-versatile` |
-| Local Ollama | `http://localhost:11434/v1`      | `llama3.1`                |
+| Provider      | `AI_BASE_URL`                                             | Example `AI_MODEL`        |
+| ------------- | --------------------------------------------------------- | ------------------------- |
+| Google Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-3.6-flash`        |
+| OpenAI        | `https://api.openai.com/v1`                               | `gpt-4o-mini`             |
+| OpenRouter    | `https://openrouter.ai/api/v1`                            | `openai/gpt-4o-mini`      |
+| Groq          | `https://api.groq.com/openai/v1`                          | `llama-3.3-70b-versatile` |
+| Local Ollama  | `http://localhost:11434/v1`                               | `llama3.1`                |
 
 Notes:
 
 - `AI_BASE_URL`, `AI_API_KEY` and `AI_MODEL` must all be present; otherwise `isAiConfigured()` returns false.
+- `AI_MODEL_FALLBACKS` adds resilience: models are tried in order when the previous one returns 408 / 429 / 5xx or is unreachable.
+- Thinking models (Gemini Flash) need a large `AI_MAX_OUTPUT_TOKENS` (4096) or they can return an empty body with `finish_reason: length`.
 - The tutor streams tokens through an AI SDK UI message stream at `/api/ai/tutor`.
 - Summaries, quizzes, mind maps and flashcards use structured JSON output validated with Zod before anything is saved.
 - Prompts are grounded in chunks retrieved from the selected material. Provider errors are surfaced as friendly messages; prompt/document content is not logged.

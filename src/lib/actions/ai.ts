@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
-import { AiNotConfiguredError, isAiConfigured } from "@/lib/ai/provider";
+import { AiNotConfiguredError, AiProviderError, isAiConfigured } from "@/lib/ai/provider";
 import { loadMaterialContext } from "@/lib/ai/context";
 import {
   generateFlashcards,
@@ -16,7 +16,20 @@ import {
 import { checkRateLimit, AI_RATE_LIMIT } from "@/lib/rate-limit";
 import { quizCountSchema, quizDifficultySchema, summaryStyleSchema } from "@/lib/validation";
 import type { ActionResult } from "@/lib/actions/types";
+import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
+
+function aiErrorMessage(error: unknown, dict: AppMessages): string {
+  if (error instanceof AiNotConfiguredError) return dict.errors.aiNotConfigured;
+  if (error instanceof AiProviderError) {
+    if (error.status === 429 || error.status === 503) return dict.errors.aiBusy;
+    if (error.status === 504) return dict.errors.aiTimeout;
+  }
+  if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
+    return dict.errors.aiTimeout;
+  }
+  return dict.errors.aiFailed;
+}
 
 async function guard() {
   const { dict, lang } = await getAppMessages();
@@ -67,8 +80,7 @@ export async function generateSummaryAction(
   } catch (error) {
     return {
       ok: false,
-      error:
-        error instanceof AiNotConfiguredError ? dict.errors.aiNotConfigured : dict.errors.aiFailed,
+      error: aiErrorMessage(error, dict),
     };
   }
 }
@@ -162,8 +174,7 @@ export async function generateQuizAction(
   } catch (error) {
     return {
       ok: false,
-      error:
-        error instanceof AiNotConfiguredError ? dict.errors.aiNotConfigured : dict.errors.aiFailed,
+      error: aiErrorMessage(error, dict),
     };
   }
 }
@@ -200,8 +211,7 @@ export async function generateMindMapAction(materialId: string): Promise<ActionR
   } catch (error) {
     return {
       ok: false,
-      error:
-        error instanceof AiNotConfiguredError ? dict.errors.aiNotConfigured : dict.errors.aiFailed,
+      error: aiErrorMessage(error, dict),
     };
   }
 }
@@ -237,8 +247,7 @@ export async function generateFlashcardsAction(materialId: string): Promise<Acti
   } catch (error) {
     return {
       ok: false,
-      error:
-        error instanceof AiNotConfiguredError ? dict.errors.aiNotConfigured : dict.errors.aiFailed,
+      error: aiErrorMessage(error, dict),
     };
   }
 }

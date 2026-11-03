@@ -162,7 +162,7 @@ export function TutorWorkspace({
 
   return (
     <div className="grid gap-4 xl:grid-cols-[250px_minmax(0,1fr)]">
-      <aside className="min-w-0">
+      <aside className="hidden min-w-0 xl:block">
         <div className="rounded-2xl border border-hairline bg-surface-raised/70 p-2.5">
           <Link
             href="/dashboard/tutor"
@@ -222,6 +222,38 @@ export function TutorWorkspace({
           )}
         </div>
       </aside>
+
+      <div className="flex min-w-0 items-center gap-2 xl:hidden">
+        <Link
+          href="/dashboard/tutor"
+          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-brand/[0.1] px-3 text-[12px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
+        >
+          <Plus className="size-3.5" aria-hidden="true" />
+          {dict.tutor.newChat}
+        </Link>
+        {threads.length > 0 ? (
+          <div className="em-scrollbar-none flex min-w-0 flex-1 gap-1.5 overflow-x-auto">
+            {threads.map((thread) => {
+              const active = thread.id === threadId;
+              return (
+                <Link
+                  key={thread.id}
+                  href={`/dashboard/tutor?thread=${thread.id}`}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "block max-w-[150px] shrink-0 truncate rounded-xl border px-2.5 py-2 text-[11.5px] transition-colors",
+                    active
+                      ? "border-brand/30 bg-brand/[0.08] font-medium text-brand-ink"
+                      : "border-hairline text-ink-muted hover:bg-black/[0.04]"
+                  )}
+                >
+                  {thread.title || dict.tutor.untitled}
+                </Link>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
 
       <section className="flex min-h-[70dvh] min-w-0 flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/70">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-4 py-3">

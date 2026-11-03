@@ -31,11 +31,16 @@ export class AiProviderError extends Error {
 
 const BASE_URL = (process.env.AI_BASE_URL ?? "").replace(/\/+$/, "");
 const API_KEY = process.env.AI_API_KEY ?? "";
-const MODEL = process.env.AI_MODEL ?? "";
+const MODELS = [process.env.AI_MODEL ?? "", ...(process.env.AI_MODEL_FALLBACKS ?? "").split(",")]
+  .map((model) => model.trim())
+  .filter(Boolean);
 const MAX_TOKENS = Number(process.env.AI_MAX_OUTPUT_TOKENS ?? "2048");
+const TIMEOUT_MS = Number(process.env.AI_TIMEOUT_MS ?? "90000");
+
+const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 
 export function isAiConfigured(): boolean {
-  return Boolean(BASE_URL && MODEL && API_KEY);
+  return Boolean(BASE_URL && MODELS.length > 0 && API_KEY);
 }
 
 function assertConfigured() {
@@ -52,32 +57,55 @@ interface CompletionOptions {
 
 async function request(options: CompletionOptions, stream: boolean): Promise<Response> {
   assertConfigured();
-  const response = await fetch(`${BASE_URL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: options.messages,
-      temperature: options.temperature ?? 0.4,
-      max_tokens: options.maxTokens ?? MAX_TOKENS,
-      stream,
-      ...(options.json ? { response_format: { type: "json_object" } } : {}),
-    }),
-    signal: options.signal,
-  });
 
-  if (!response.ok) {
+  let lastError: AiProviderError | null = null;
+
+  for (const [index, model] of MODELS.entries()) {
+    const isLastModel = index === MODELS.length - 1;
+
+    let response: Response;
+    try {
+      response = await fetch(`${BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: options.messages,
+          temperature: options.temperature ?? 0.4,
+          max_tokens: options.maxTokens ?? MAX_TOKENS,
+          stream,
+          ...(options.json ? { response_format: { type: "json_object" } } : {}),
+        }),
+        signal: options.signal ?? AbortSignal.timeout(TIMEOUT_MS),
+      });
+    } catch (error) {
+      // The caller cancelled the request: do not burn another model attempt.
+      if (options.signal?.aborted) throw error;
+      lastError = new AiProviderError("The AI provider could not be reached.", 503);
+      if (isLastModel) throw lastError;
+      continue;
+    }
+
+    if (response.ok) return response;
+
     // Do not log prompt or document content.
-    throw new AiProviderError(
+    const providerError = new AiProviderError(
       `The AI provider returned status ${response.status}.`,
       response.status
     );
+
+    if (RETRYABLE_STATUS.has(response.status) && !isLastModel) {
+      lastError = providerError;
+      continue;
+    }
+
+    throw providerError;
   }
 
-  return response;
+  throw lastError ?? new AiProviderError("No AI model is configured.", 500);
 }
 
 export async function complete(options: CompletionOptions): Promise<string> {

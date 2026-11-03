@@ -25,6 +25,7 @@ import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentProfile } from "@/lib/supabase/auth";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { formatDate, formatDuration, formatNumber } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { AppMessages } from "@/lib/i18n/app";
 
 export const instant = false;
@@ -97,9 +98,15 @@ export default async function DashboardOverviewPage() {
       />
 
       <section aria-label={dict.dashboard.quickStats}>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          {stats.map(({ label, value, note, icon: Icon }) => (
-            <Card key={label} className="relative overflow-hidden">
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
+          {stats.map(({ label, value, note, icon: Icon }, index) => (
+            <Card
+              key={label}
+              className={cn(
+                "relative overflow-hidden",
+                index === stats.length - 1 && "col-span-2 xl:col-span-1"
+              )}
+            >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
