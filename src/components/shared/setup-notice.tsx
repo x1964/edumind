@@ -1,0 +1,43 @@
+import { Database, Sparkles } from "lucide-react";
+
+export function SupabaseSetupNotice({
+  title,
+  body,
+  docs,
+  env,
+}: {
+  title: string;
+  body: string;
+  docs: string;
+  env: string;
+}) {
+  return (
+    <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] px-6 py-10 text-center">
+      <div className="grid size-12 place-items-center rounded-2xl border border-amber-400/25 bg-amber-400/10 text-amber-200">
+        <Database className="size-5" aria-hidden="true" />
+      </div>
+      <h2 className="mt-4 text-lg font-semibold text-ink">{title}</h2>
+      <p className="mt-2 text-[13px] leading-relaxed text-ink-soft">{body}</p>
+      <code className="mt-4 rounded-lg border border-hairline bg-surface-deep px-3 py-2 font-mono text-[11px] text-ink-soft">
+        NEXT_PUBLIC_SUPABASE_URL · NEXT_PUBLIC_SUPABASE_ANON_KEY
+      </code>
+      <p className="mt-3 text-[11.5px] text-ink-muted">{env}</p>
+      <p className="mt-1 text-[11.5px] text-ink-muted">{docs}</p>
+    </div>
+  );
+}
+
+export function AiSetupNotice({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="flex flex-col items-center rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] px-6 py-10 text-center">
+      <div className="grid size-12 place-items-center rounded-2xl border border-amber-400/25 bg-amber-400/10 text-amber-200">
+        <Sparkles className="size-5" aria-hidden="true" />
+      </div>
+      <h2 className="mt-4 text-[15px] font-semibold text-ink">{title}</h2>
+      <p className="mt-2 max-w-md text-[12.5px] leading-relaxed text-ink-soft">{body}</p>
+      <code className="mt-4 rounded-lg border border-hairline bg-surface-deep px-3 py-2 font-mono text-[11px] text-ink-soft">
+        AI_BASE_URL · AI_API_KEY · AI_MODEL
+      </code>
+    </div>
+  );
+}

@@ -1,0 +1,450 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BrainCircuit,
+  Check,
+  Copy,
+  CornerDownLeft,
+  LoaderCircle,
+  Plus,
+  RefreshCw,
+  Send,
+  Square,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
+import { ConfirmAction } from "@/components/ui/confirm-action";
+import { AiSetupNotice } from "@/components/shared/setup-notice";
+import { MarkdownMessage } from "@/components/tutor/markdown-message";
+import { createTutorThreadAction, deleteTutorThreadAction } from "@/lib/actions/tutor";
+import type { AppMessages } from "@/lib/i18n/app";
+import type { Lang } from "@/lib/i18n";
+import type { TutorThread } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+interface ThreadRow extends TutorThread {
+  materials?: { file_name: string } | null;
+}
+
+interface MaterialOption {
+  id: string;
+  file_name: string;
+}
+
+interface ActiveThread {
+  id: string;
+  title: string;
+  materialId: string | null;
+  materialName: string | null;
+}
+
+export function TutorWorkspace({
+  dict,
+  lang,
+  threads,
+  materials,
+  activeThread,
+  initialMessages,
+  aiConfigured,
+  defaultMaterialId,
+  missingThread,
+}: {
+  dict: AppMessages;
+  lang: Lang;
+  threads: ThreadRow[];
+  materials: MaterialOption[];
+  activeThread: ActiveThread | null;
+  initialMessages: UIMessage[];
+  aiConfigured: boolean;
+  defaultMaterialId: string | null;
+  missingThread: boolean;
+}) {
+  const router = useRouter();
+  const [threadId, setThreadId] = useState<string | null>(activeThread?.id ?? null);
+  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(
+    activeThread?.materialId ?? defaultMaterialId ?? null
+  );
+  const [input, setInput] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/ai/tutor",
+      }),
+    []
+  );
+
+  const { messages, sendMessage, status, stop, error, regenerate } = useChat({
+    id: activeThread?.id,
+    messages: initialMessages,
+    transport,
+    onFinish: () => router.refresh(),
+  });
+
+  const busy = status === "submitted" || status === "streaming";
+  const canSend = aiConfigured && !busy;
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages, busy]);
+
+  async function ensureThread(): Promise<string | null> {
+    if (threadId) return threadId;
+    setCreating(true);
+    const result = await createTutorThreadAction(selectedMaterial);
+    setCreating(false);
+    if (!result.ok || !result.id) {
+      setLocalError(result.error ?? dict.errors.saveFailed);
+      return null;
+    }
+    setThreadId(result.id);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("thread", result.id);
+      window.history.replaceState(null, "", url.toString());
+    }
+    return result.id;
+  }
+
+  async function submitText(raw: string) {
+    const text = raw.trim();
+    if (!text || !canSend || creating) return;
+    setLocalError(null);
+    const id = await ensureThread();
+    if (!id) return;
+    setInput("");
+    try {
+      await sendMessage(
+        { text },
+        {
+          body: {
+            threadId: id,
+            materialId: selectedMaterial,
+            lang,
+          },
+        }
+      );
+    } catch {
+      setLocalError(dict.tutor.error);
+    }
+  }
+
+  function retry() {
+    if (!threadId) return;
+    void regenerate({
+      body: { threadId, materialId: selectedMaterial, lang },
+    });
+  }
+
+  async function copyMessage(id: string, text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1600);
+    } catch {
+      toast.error(dict.errors.generic);
+    }
+  }
+
+  const heading = activeThread?.title ?? dict.tutor.newChat;
+  const sourceLabel = activeThread?.materialName ?? null;
+
+  return (
+    <div className="grid gap-4 xl:grid-cols-[250px_minmax(0,1fr)]">
+      <aside className="min-w-0">
+        <div className="rounded-2xl border border-hairline bg-surface-raised/70 p-2.5">
+          <Link
+            href="/dashboard/tutor"
+            className="flex h-9 items-center justify-center gap-2 rounded-xl bg-brand/[0.1] text-[12.5px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
+          >
+            <Plus className="size-3.5" aria-hidden="true" />
+            {dict.tutor.newChat}
+          </Link>
+
+          <p className="px-2 pb-1.5 pt-3 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-muted">
+            {dict.tutor.conversations}
+          </p>
+
+          {threads.length === 0 ? (
+            <p className="px-2 py-4 text-[11.5px] text-ink-muted">{dict.tutor.noConversations}</p>
+          ) : (
+            <ul className="max-h-[42dvh] space-y-0.5 overflow-y-auto xl:max-h-[calc(100dvh-22rem)]">
+              {threads.map((thread) => {
+                const active = thread.id === threadId;
+                return (
+                  <li key={thread.id} className="group relative">
+                    <Link
+                      href={`/dashboard/tutor?thread=${thread.id}`}
+                      className={cn(
+                        "block rounded-lg px-2.5 py-2 pe-8 transition-colors",
+                        active ? "bg-black/[0.055]" : "hover:bg-black/[0.035]"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "block truncate text-[12px] font-medium",
+                          active ? "text-ink" : "text-ink-soft"
+                        )}
+                      >
+                        {thread.title || dict.tutor.untitled}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[10px] text-ink-muted">
+                        {thread.materials?.file_name ?? dict.tutor.generalKnowledge}
+                      </span>
+                    </Link>
+                    <div className="absolute end-1 top-1.5">
+                      <ConfirmAction
+                        action={() => deleteTutorThreadAction(thread.id)}
+                        title={dict.tutor.deleteThread}
+                        description={dict.tutor.deleteThreadBody}
+                        confirmLabel={dict.common.delete}
+                        cancelLabel={dict.common.cancel}
+                        successMessage={dict.tutor.threadDeleted}
+                        iconOnly
+                        className="size-7 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </aside>
+
+      <section className="flex min-h-[70dvh] min-w-0 flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/70">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-4 py-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.07] text-brand-ink">
+              <BrainCircuit className="size-4" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <h1 className="truncate text-[13.5px] font-semibold text-ink">{heading}</h1>
+              <p className="truncate text-[10.5px] text-ink-muted">
+                {sourceLabel
+                  ? `${dict.tutor.selectMaterial}: ${sourceLabel}`
+                  : dict.tutor.noMaterial}
+              </p>
+            </div>
+          </div>
+
+          {!activeThread ? (
+            <label className="flex min-w-0 items-center gap-2 text-[11px] text-ink-muted">
+              <span className="shrink-0">{dict.tutor.selectMaterial}</span>
+              <select
+                value={selectedMaterial ?? ""}
+                onChange={(event) => setSelectedMaterial(event.target.value || null)}
+                className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[11.5px] text-ink-soft focus:border-brand/50 focus:outline-none"
+              >
+                <option value="">{dict.tutor.noMaterial}</option>
+                {materials.map((material) => (
+                  <option key={material.id} value={material.id}>
+                    {material.file_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+        </header>
+
+        {missingThread ? (
+          <div className="border-b border-hairline bg-[#ef4444]/[0.06] px-4 py-2 text-[11.5px] text-[#b91c1c]">
+            {dict.tutor.loadError}
+          </div>
+        ) : null}
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5">
+          {!aiConfigured ? (
+            <AiSetupNotice title={dict.tutor.notConfigured} body={dict.tutor.notConfiguredBody} />
+          ) : messages.length === 0 ? (
+            <div className="mx-auto flex max-w-md flex-col items-center py-10 text-center">
+              <div className="grid size-12 place-items-center rounded-2xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
+                <BrainCircuit className="size-5" aria-hidden="true" />
+              </div>
+              <h2 className="mt-4 text-[16px] font-semibold text-ink">{dict.tutor.emptyTitle}</h2>
+              <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">
+                {dict.tutor.emptyBody}
+              </p>
+              <div className="mt-5 grid w-full gap-2">
+                {[dict.tutor.suggestion_1, dict.tutor.suggestion_2, dict.tutor.suggestion_3].map(
+                  (suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => void submitText(suggestion)}
+                      disabled={!canSend || creating}
+                      className="rounded-xl border border-hairline bg-black/[0.02] px-3.5 py-2.5 text-start text-[11.5px] text-ink-soft transition-colors hover:border-brand/30 hover:bg-brand/[0.05] disabled:opacity-50"
+                    >
+                      {suggestion}
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="mx-auto max-w-3xl space-y-5">
+              {messages.map((message) => {
+                const text = message.parts
+                  .filter((part): part is { type: "text"; text: string } => part.type === "text")
+                  .map((part) => part.text)
+                  .join("\n");
+                if (!text) return null;
+                const isUser = message.role === "user";
+                return (
+                  <div key={message.id} className={cn("flex gap-3", isUser && "flex-row-reverse")}>
+                    <span
+                      className={cn(
+                        "mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border text-[10px] font-semibold",
+                        isUser
+                          ? "border-hairline bg-black/[0.04] text-ink-soft"
+                          : "border-brand/20 bg-brand/[0.08] text-brand-ink"
+                      )}
+                      aria-hidden="true"
+                    >
+                      {isUser ? "U" : "AI"}
+                    </span>
+                    <div className={cn("min-w-0 max-w-[92%]", isUser && "text-end")}>
+                      <div
+                        className={cn(
+                          "rounded-2xl px-3.5 py-2.5",
+                          isUser
+                            ? "border border-hairline bg-black/[0.035] text-start text-[13px] leading-relaxed text-ink"
+                            : "border border-hairline/60 bg-surface-deep/50"
+                        )}
+                      >
+                        {isUser ? (
+                          <p className="whitespace-pre-wrap">{text}</p>
+                        ) : (
+                          <MarkdownMessage content={text} />
+                        )}
+                      </div>
+                      {!isUser ? (
+                        <div className="mt-1 flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => void copyMessage(message.id, text)}
+                            aria-label={dict.tutor.copy}
+                            className="grid size-6 place-items-center rounded-md text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink"
+                          >
+                            {copiedId === message.id ? (
+                              <Check className="size-3" aria-hidden="true" />
+                            ) : (
+                              <Copy className="size-3" aria-hidden="true" />
+                            )}
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {busy ? (
+                <div className="flex items-center gap-2 text-[11.5px] text-ink-muted">
+                  <LoaderCircle
+                    className="size-3.5 animate-spin text-brand-ink"
+                    aria-hidden="true"
+                  />
+                  {dict.tutor.thinking}
+                </div>
+              ) : null}
+
+              {error || localError ? (
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3.5 py-2.5 text-[11.5px] text-[#b91c1c]">
+                  <span>{localError ?? dict.tutor.error}</span>
+                  <button
+                    type="button"
+                    onClick={retry}
+                    disabled={!threadId || busy}
+                    className="inline-flex items-center gap-1 rounded-md border border-[#ef4444]/30 px-2 py-1 text-[10.5px] font-medium disabled:opacity-50"
+                  >
+                    <RefreshCw className="size-3" aria-hidden="true" />
+                    {dict.tutor.retry}
+                  </button>
+                </div>
+              ) : null}
+
+              <div ref={bottomRef} />
+            </div>
+          )}
+        </div>
+
+        <div className="border-t border-hairline p-3 sm:p-4">
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void submitText(input);
+            }}
+            className="flex items-end gap-2"
+          >
+            <textarea
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  void submitText(input);
+                }
+              }}
+              rows={1}
+              disabled={!aiConfigured}
+              placeholder={dict.tutor.placeholder}
+              aria-label={dict.tutor.placeholder}
+              className="max-h-40 min-h-[42px] flex-1 resize-none rounded-xl border border-hairline bg-surface-deep/70 px-3.5 py-2.5 text-[13px] leading-relaxed text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none disabled:opacity-60"
+            />
+            {busy ? (
+              <button
+                type="button"
+                onClick={() => stop()}
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl border border-hairline px-3 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.05]"
+              >
+                <Square className="size-3.5" aria-hidden="true" />
+                {dict.tutor.stop}
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!canSend || !input.trim() || creating}
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-[#10b981] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {creating ? (
+                  <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Send className="size-4 rtl:-scale-x-100" aria-hidden="true" />
+                )}
+                <span className="hidden sm:inline">{dict.tutor.send}</span>
+              </button>
+            )}
+          </form>
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] text-ink-muted">
+            <CornerDownLeft className="size-3" aria-hidden="true" />
+            {dict.quizzes.reviewNote}
+          </p>
+        </div>
+      </section>
+
+      <div className="flex items-center justify-between gap-2 text-[10.5px] text-ink-muted xl:hidden">
+        <Link href="/dashboard/materials" className="inline-flex items-center gap-1">
+          <ArrowLeft className="size-3 rtl:hidden" aria-hidden="true" />
+          <ArrowRight className="size-3 ltr:hidden" aria-hidden="true" />
+          {dict.nav.materials}
+        </Link>
+        <span className="inline-flex items-center gap-1">
+          <Trash2 className="size-3" aria-hidden="true" />
+          {dict.mindMaps.autosaveNote}
+        </span>
+      </div>
+    </div>
+  );
+}
