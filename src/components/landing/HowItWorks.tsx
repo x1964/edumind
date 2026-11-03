@@ -12,7 +12,7 @@ function StepVisual({ index }: { index: number }) {
         {["PDF", "DOCX", "TXT"].map((format) => (
           <span
             key={format}
-            className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 font-mono text-[9px] tracking-wide text-ink-muted"
+            className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 font-mono text-[12px] tracking-wide text-ink-muted"
           >
             {format}
           </span>
@@ -27,17 +27,17 @@ function StepVisual({ index }: { index: number }) {
         <div className="flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-brand/70" />
           <span className="h-1 w-[54%] rounded-full bg-black/15" />
-          <span className="ms-auto font-mono text-[8px] text-ink-muted/60">01</span>
+          <span className="ms-auto font-mono text-[12px] text-ink-muted/60">01</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-brand/40" />
           <span className="h-1 w-[72%] rounded-full bg-black/10" />
-          <span className="ms-auto font-mono text-[8px] text-ink-muted/60">02</span>
+          <span className="ms-auto font-mono text-[12px] text-ink-muted/60">02</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-surface-deep" />
           <span className="h-1 w-[40%] rounded-full bg-black/[0.07]" />
-          <span className="ms-auto font-mono text-[8px] text-ink-muted/60">03</span>
+          <span className="ms-auto font-mono text-[12px] text-ink-muted/60">03</span>
         </div>
       </div>
     );
@@ -48,7 +48,7 @@ function StepVisual({ index }: { index: number }) {
       {["شرح", "ملخص", "اختبار", "خريطة"].map((tool) => (
         <span
           key={tool}
-          className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 text-[9px] text-ink-muted"
+          className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 text-[12px] text-ink-muted"
         >
           {tool}
         </span>
@@ -72,7 +72,7 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
             <SectionHeading eyebrow={how.eyebrow} title={how.title} description={how.description} />
           </Reveal>
           <Reveal delay={0.08} className="hidden shrink-0 pb-2 md:block">
-            <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3.5 py-2 text-[11px] text-ink-muted">
+            <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3.5 py-2 text-[12px] text-ink-muted">
               <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
               {how.footnote}
             </span>
@@ -100,23 +100,23 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
                     <div className="relative flex items-center justify-between md:-mt-px">
                       <span className="relative grid size-[60px] place-items-center rounded-2xl border border-hairline-strong bg-muted text-brand-ink transition-transform duration-300 group-hover:-translate-y-0.5">
                         <Icon className="size-5" aria-hidden="true" />
-                        <span className="absolute -top-2 -end-2 rounded-full border border-hairline bg-surface px-1.5 py-0.5 font-mono text-[9px] text-ink-muted">
+                        <span className="absolute -top-2 -end-2 rounded-full border border-hairline bg-surface px-1.5 py-0.5 font-mono text-[12px] text-ink-muted">
                           {step.number}
                         </span>
                       </span>
-                      <span className="hidden font-mono text-[10px] uppercase tracking-[0.18em] text-ink-muted md:block">
+                      <span className="hidden font-mono text-[12px] uppercase tracking-[0.18em] text-ink-muted md:block">
                         {step.english}
                       </span>
                     </div>
 
                     <div className="relative mt-5">
-                      <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-brand-ink/80 md:hidden">
+                      <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-brand-ink/80 md:hidden">
                         {step.english}
                       </p>
                       <h3 className="mt-1.5 text-[17px] font-semibold leading-snug tracking-tight text-ink md:text-[18px]">
                         {step.title}
                       </h3>
-                      <p className="mt-2 text-[12.5px] leading-[1.85] text-ink-soft">
+                      <p className="mt-2 text-[13px] leading-[1.85] text-ink-soft">
                         {step.description}
                       </p>
                       <StepVisual index={index} />
@@ -129,7 +129,7 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
         </div>
 
         <Reveal delay={0.1} className="mt-6 md:hidden">
-          <p className="inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3.5 py-2 text-[11px] text-ink-muted">
+          <p className="inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3.5 py-2 text-[12px] text-ink-muted">
             <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
             {how.footnote}
           </p>

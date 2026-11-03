@@ -132,8 +132,8 @@ export function SettingsClient({
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
-        <div className="space-y-5">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
+        <div className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -141,13 +141,25 @@ export function SettingsClient({
                 <CardTitle>{dict.settings.profile}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-5 pt-5">
+            <CardContent className="space-y-5 pt-4">
               <div className="flex flex-wrap items-center gap-4">
                 <span
                   className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-2xl border border-brand/25 bg-brand/[0.08] text-[20px] font-semibold text-brand-ink"
                   aria-hidden="true"
                 >
-                  {initialLetter}
+                  {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="size-full object-cover"
+                      onError={(event) => {
+                        event.currentTarget.style.visibility = "hidden";
+                      }}
+                    />
+                  ) : (
+                    initialLetter
+                  )}
                 </span>
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <label
@@ -161,10 +173,10 @@ export function SettingsClient({
                     value={avatarUrl}
                     onChange={(event) => setAvatarUrl(event.target.value)}
                     placeholder="https://…"
-                    dir="ltr"
-                    className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[12.5px] text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none"
+                    dir="auto"
+                    className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none"
                   />
-                  <p className="text-[10.5px] text-ink-muted">{dict.settings.avatarHint}</p>
+                  <p className="text-[12px] text-ink-muted">{dict.settings.avatarHint}</p>
                 </div>
               </div>
 
@@ -219,7 +231,7 @@ export function SettingsClient({
                         onClick={() => toggle(interests, option, setInterests, 8)}
                         aria-pressed={active}
                         className={cn(
-                          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11.5px] font-medium transition-colors",
+                          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors",
                           active
                             ? "border-brand/50 bg-brand/[0.08] text-brand-ink"
                             : "border-hairline bg-black/[0.02] text-ink-soft hover:border-hairline-strong"
@@ -247,7 +259,7 @@ export function SettingsClient({
                         onClick={() => toggle(goals, option, setGoals, 5)}
                         aria-pressed={active}
                         className={cn(
-                          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11.5px] font-medium transition-colors",
+                          "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors",
                           active
                             ? "border-brand/50 bg-brand/[0.08] text-brand-ink"
                             : "border-hairline bg-black/[0.02] text-ink-soft hover:border-hairline-strong"
@@ -270,7 +282,7 @@ export function SettingsClient({
                 <CardTitle>{dict.settings.preferences}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-5 pt-5">
+            <CardContent className="space-y-5 pt-4">
               <div className="space-y-1.5">
                 <span className="block text-[12px] font-medium text-ink-soft">
                   {dict.settings.language}
@@ -285,7 +297,7 @@ export function SettingsClient({
                         onClick={() => setLearningLanguage(code)}
                         aria-pressed={active}
                         className={cn(
-                          "rounded-xl border px-3 py-2.5 text-[12.5px] font-medium transition-colors",
+                          "rounded-xl border px-3 py-2.5 text-[13px] font-medium transition-colors",
                           active
                             ? "border-brand/50 bg-brand/[0.08] text-ink"
                             : "border-hairline bg-black/[0.02] text-ink-soft hover:border-hairline-strong"
@@ -323,7 +335,7 @@ export function SettingsClient({
                     );
                   })}
                 </div>
-                <p className="text-[10.5px] text-ink-muted">{dict.settings.themeNote}</p>
+                <p className="text-[12px] text-ink-muted">{dict.settings.themeNote}</p>
               </div>
 
               <div className="space-y-2.5">
@@ -341,11 +353,11 @@ export function SettingsClient({
                   checked={studyReminders}
                   onChange={setStudyReminders}
                 />
-                <p className="text-[10.5px] text-ink-muted">{dict.settings.notifyNote}</p>
+                <p className="text-[12px] text-ink-muted">{dict.settings.notifyNote}</p>
               </div>
 
               {error ? (
-                <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-danger">
+                <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[12px] text-danger">
                   {error}
                 </p>
               ) : null}
@@ -355,7 +367,7 @@ export function SettingsClient({
                   type="button"
                   onClick={save}
                   disabled={isPending}
-                  className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
+                  className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
                 >
                   {isPending ? (
                     <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -377,27 +389,27 @@ export function SettingsClient({
                 <CardTitle>{dict.settings.account}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3.5 pt-5">
+            <CardContent className="space-y-3.5 pt-4">
               <div>
-                <p className="text-[10.5px] uppercase tracking-wide text-ink-muted">
+                <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                   {dict.settings.emailLabel}
                 </p>
                 <p
-                  className="mt-0.5 flex items-center gap-1.5 break-all text-[12.5px] text-ink"
-                  dir="ltr"
+                  className="mt-0.5 flex items-center gap-1.5 break-all text-[13px] text-ink"
+                  dir="auto"
                 >
                   <Mail className="size-3 shrink-0 text-ink-muted" aria-hidden="true" />
                   {email}
                 </p>
-                <p className="mt-1 text-[10.5px] text-ink-muted">{dict.settings.emailReadonly}</p>
+                <p className="mt-1 text-[12px] text-ink-muted">{dict.settings.emailReadonly}</p>
               </div>
               <div className="border-t border-hairline/60 pt-3">
-                <p className="text-[10.5px] uppercase tracking-wide text-ink-muted">
+                <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                   {dict.settings.memberSince}
                 </p>
-                <p className="mt-0.5 text-[12.5px] text-ink">{memberSince}</p>
+                <p className="mt-0.5 text-[13px] text-ink">{memberSince}</p>
               </div>
-              <p className="rounded-lg border border-hairline/70 bg-black/[0.015] px-2.5 py-2 text-[10.5px] leading-relaxed text-ink-muted">
+              <p className="rounded-lg border border-hairline/70 bg-black/[0.015] px-2.5 py-2 text-[12px] leading-relaxed text-ink-muted">
                 {dict.settings.adminNotice}
               </p>
             </CardContent>
@@ -412,8 +424,8 @@ export function SettingsClient({
                 <CardTitle>{dict.settings.security}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3 pt-5">
-              <p className="text-[11.5px] leading-relaxed text-ink-muted">
+            <CardContent className="space-y-3 pt-4">
+              <p className="text-[12px] leading-relaxed text-ink-muted">
                 {dict.settings.sessionsBody}
               </p>
               <button
@@ -452,16 +464,16 @@ export function SettingsClient({
                 <CardTitle>{dict.settings.privacy}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3 pt-5">
-              <p className="text-[11.5px] leading-relaxed text-ink-muted">
+            <CardContent className="space-y-3 pt-4">
+              <p className="text-[12px] leading-relaxed text-ink-muted">
                 {dict.settings.privacyBody}
               </p>
-              <p className="text-[11.5px] leading-relaxed text-ink-muted">
+              <p className="text-[12px] leading-relaxed text-ink-muted">
                 {dict.settings.privacyFilesBody}
               </p>
               <div className="rounded-xl border border-[#ef4444]/20 bg-[#ef4444]/[0.035] p-3">
-                <p className="text-[11px] font-medium text-danger">{dict.settings.dangerZone}</p>
-                <p className="mt-1 text-[10.5px] leading-relaxed text-ink-muted">
+                <p className="text-[12px] font-medium text-danger">{dict.settings.dangerZone}</p>
+                <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">
                   {dict.settings.deleteAllBody}
                 </p>
                 <div className="mt-2.5">
@@ -482,7 +494,7 @@ export function SettingsClient({
         </div>
       </div>
 
-      <p className="flex items-center justify-center gap-1.5 pb-2 text-[10.5px] text-ink-muted">
+      <p className="flex items-center justify-center gap-1.5 pb-2 text-[12px] text-ink-muted">
         <Trash2 className="size-3 text-ink-muted" aria-hidden="true" />
         {dict.settings.privacyFilesBody}
       </p>

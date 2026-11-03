@@ -90,15 +90,12 @@ export function CreateMindMapDialog({
         ) : materials.length === 0 ? (
           <div className="rounded-xl border border-dashed border-hairline px-4 py-8 text-center">
             <FileText className="mx-auto size-6 text-ink-muted" aria-hidden="true" />
-            <p className="mt-2 text-[12.5px] text-ink-muted">{dict.mindMaps.noMaterial}</p>
+            <p className="mt-2 text-[13px] text-ink-muted">{dict.mindMaps.noMaterial}</p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label
-                htmlFor="map-material"
-                className="block text-[12.5px] font-medium text-ink-soft"
-              >
+              <label htmlFor="map-material" className="block text-[13px] font-medium text-ink-soft">
                 {dict.mindMaps.chooseMaterial}
               </label>
               <select
@@ -114,7 +111,7 @@ export function CreateMindMapDialog({
                 ))}
               </select>
             </div>
-            <p className="flex items-start gap-2 rounded-lg border border-hairline/70 bg-black/[0.015] p-2.5 text-[11px] leading-relaxed text-ink-muted">
+            <p className="flex items-start gap-2 rounded-lg border border-hairline/70 bg-black/[0.015] p-2.5 text-[12px] leading-relaxed text-ink-muted">
               <Network className="mt-0.5 size-3.5 shrink-0 text-brand-ink" aria-hidden="true" />
               {dict.mindMaps.dragHint}
             </p>

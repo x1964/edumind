@@ -88,7 +88,7 @@ export function MobileBottomNav({
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[10px] leading-none",
+                  "max-w-full truncate text-[12px] leading-none",
                   active ? "font-semibold" : "font-medium"
                 )}
               >
@@ -132,7 +132,7 @@ export function MobileBottomNav({
           </span>
           <span
             className={cn(
-              "max-w-full truncate text-[10px] leading-none",
+              "max-w-full truncate text-[12px] leading-none",
               moreActive ? "font-semibold" : "font-medium"
             )}
           >

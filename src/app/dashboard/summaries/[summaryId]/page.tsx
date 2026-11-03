@@ -60,11 +60,11 @@ export default async function SummaryDetailPage({
           <h1 className="mt-2.5 break-words text-[24px] font-semibold leading-snug tracking-[-0.03em] text-ink">
             {summary.title}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-ink-muted">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-ink-muted">
             {summary.materials?.file_name ? (
               <span className="inline-flex min-w-0 items-center gap-1.5">
                 <FileText className="size-3 shrink-0" aria-hidden="true" />
-                <span className="truncate" dir="ltr">
+                <span className="truncate" dir="auto">
                   {summary.materials.file_name}
                 </span>
               </span>

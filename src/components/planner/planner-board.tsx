@@ -180,7 +180,7 @@ export function PlannerBoard({
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
+          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
         >
           <Plus className="size-4" aria-hidden="true" />
           {dict.planner.addTask}
@@ -195,7 +195,7 @@ export function PlannerBoard({
           <button
             type="button"
             onClick={openCreate}
-            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
+            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
           >
             <Plus className="size-3.5" aria-hidden="true" />
             {dict.planner.addTask}
@@ -275,7 +275,7 @@ export function PlannerBoard({
       >
         <div className="space-y-3.5">
           {error ? (
-            <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-danger">
+            <p className="rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[12px] text-danger">
               {error}
             </p>
           ) : null}
@@ -324,7 +324,7 @@ export function PlannerBoard({
                 onChange={(event) =>
                   setForm((state) => ({ ...state, dueDate: event.target.value }))
                 }
-                className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[12.5px] text-ink focus:border-brand/50 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink focus:border-brand/50 focus:outline-none"
               />
             </Field>
           </div>
@@ -369,7 +369,7 @@ export function PlannerBoard({
                 onChange={(event) =>
                   setForm((state) => ({ ...state, materialId: event.target.value }))
                 }
-                className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[12.5px] text-ink focus:border-brand/50 focus:outline-none"
+                className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink focus:border-brand/50 focus:outline-none"
               >
                 <option value="">{dict.common.none}</option>
                 {materials.map((material) => (
@@ -389,8 +389,8 @@ export function PlannerBoard({
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-hairline bg-surface-raised/80 p-4">
-      <p className="text-[10.5px] uppercase tracking-wide text-ink-muted">{label}</p>
-      <p className="mt-1 text-[22px] font-semibold text-ink" dir="ltr">
+      <p className="text-[12px] uppercase tracking-wide text-ink-muted">{label}</p>
+      <p className="mt-1 text-[22px] font-semibold text-ink" dir="auto">
         {value}
       </p>
     </div>
@@ -429,15 +429,15 @@ function TaskSection({
             )}
             aria-hidden="true"
           />
-          <h3 className="text-[12.5px] font-semibold text-ink">{title}</h3>
+          <h3 className="text-[13px] font-semibold text-ink">{title}</h3>
         </div>
-        <span className="text-[10.5px] text-ink-muted">
+        <span className="text-[12px] text-ink-muted">
           {dict.planner.tasksCount.replace("{count}", String(tasks.length))}
         </span>
       </header>
 
       {tasks.length === 0 ? (
-        <p className="px-4 py-5 text-center text-[11.5px] text-ink-muted">
+        <p className="px-4 py-5 text-center text-[12px] text-ink-muted">
           {tone === "danger"
             ? dict.planner.noToday
             : muted
@@ -474,18 +474,18 @@ function TaskSection({
               <div className="min-w-0 flex-1">
                 <p
                   className={cn(
-                    "break-words text-[12.5px] font-medium",
+                    "break-words text-[13px] font-medium",
                     task.completed ? "text-ink-muted line-through" : "text-ink"
                   )}
                 >
                   {task.title}
                 </p>
                 {task.description ? (
-                  <p className="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-ink-muted">
+                  <p className="mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-ink-muted">
                     {task.description}
                   </p>
                 ) : null}
-                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-ink-muted">
+                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink-muted">
                   {task.subject ? <span>{task.subject}</span> : null}
                   {task.due_date ? (
                     <span className="inline-flex items-center gap-1">

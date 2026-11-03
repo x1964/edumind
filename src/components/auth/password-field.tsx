@@ -53,7 +53,7 @@ export function PasswordField({
           placeholder={placeholder}
           defaultValue={defaultValue}
           required={required}
-          dir="ltr"
+          dir="auto"
           className="px-9 text-start"
           {...inputProps}
         />

@@ -119,7 +119,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
       >
         <Search className="size-3.5 shrink-0" aria-hidden="true" />
         <span className="hidden truncate text-[12px] sm:inline">{dict.nav.searchPlaceholder}</span>
-        <kbd className="ms-auto hidden shrink-0 rounded border border-hairline bg-surface-deep px-1.5 py-0.5 font-mono text-[9.5px] text-ink-muted sm:inline">
+        <kbd className="ms-auto hidden shrink-0 rounded border border-hairline bg-surface-deep px-1.5 py-0.5 font-mono text-[12px] text-ink-muted sm:inline">
           ⌘K
         </kbd>
       </button>
@@ -133,7 +133,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
       >
         <div className="relative">
           <Search
-            className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted"
+            className="pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 text-ink-muted ltr:start-3 ltr:right-auto rtl:end-3 rtl:left-auto"
             aria-hidden="true"
           />
           <input
@@ -145,7 +145,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
           />
           {loading ? (
             <LoaderCircle
-              className="absolute end-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-brand-ink"
+              className="absolute top-1/2 size-4 -translate-y-1/2 animate-spin text-brand-ink ltr:end-3 ltr:left-auto rtl:start-3 rtl:right-auto"
               aria-hidden="true"
             />
           ) : null}
@@ -153,17 +153,15 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
 
         <div className="mt-3 max-h-[50dvh] overflow-y-auto">
           {query.trim().length < 2 ? (
-            <p className="px-1 py-6 text-center text-[12.5px] text-ink-muted">
+            <p className="px-1 py-6 text-center text-[13px] text-ink-muted">
               {dict.nav.searchPlaceholder}
             </p>
           ) : error ? (
-            <p className="px-1 py-6 text-center text-[12.5px] text-danger">
+            <p className="px-1 py-6 text-center text-[13px] text-danger">
               {dict.errors.loadFailed}
             </p>
           ) : !loading && results.length === 0 ? (
-            <p className="px-1 py-6 text-center text-[12.5px] text-ink-muted">
-              {dict.common.noData}
-            </p>
+            <p className="px-1 py-6 text-center text-[13px] text-ink-muted">{dict.common.noData}</p>
           ) : (
             <ul className="space-y-1">
               {results.map((item) => {
@@ -183,7 +181,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
                           {item.title}
                         </span>
                         {item.subtitle ? (
-                          <span className="block truncate text-[11px] text-ink-muted">
+                          <span className="block truncate text-[12px] text-ink-muted">
                             {item.subtitle}
                           </span>
                         ) : null}

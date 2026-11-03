@@ -51,7 +51,7 @@ export default async function SummariesPage({
       : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title={dict.summaries.title}
         description={dict.summaries.subtitle}
@@ -81,7 +81,7 @@ export default async function SummariesPage({
             ) : (
               <Link
                 href="/dashboard/materials?upload=1"
-                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
+                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
               >
                 {dict.nav.materials}
               </Link>
@@ -89,9 +89,12 @@ export default async function SummariesPage({
           }
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {summaries.map((summary) => (
-            <Card key={summary.id} className="group flex flex-col">
+            <Card
+              key={summary.id}
+              className="group flex flex-col border-hairline/60 bg-surface-raised/80"
+            >
               <CardContent className="flex flex-1 flex-col p-4">
                 <div className="flex items-start justify-between gap-2">
                   <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
@@ -115,23 +118,23 @@ export default async function SummariesPage({
                   <h2 className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink transition-colors group-hover:text-brand-ink">
                     {summary.title}
                   </h2>
-                  <p className="mt-1.5 line-clamp-3 text-[11.5px] leading-relaxed text-ink-muted">
+                  <p className="mt-1.5 line-clamp-3 text-[12px] leading-relaxed text-ink-muted">
                     {summary.content.replace(/[#*_`>-]/g, "").slice(0, 180)}
                   </p>
                 </Link>
 
                 <div className="mt-3 flex items-center justify-between gap-2 border-t border-hairline/60 pt-2.5">
-                  <span className="min-w-0 truncate text-[10.5px] text-ink-muted" dir="ltr">
+                  <span className="min-w-0 truncate text-[12px] text-ink-muted" dir="auto">
                     {summary.materials?.file_name ?? "—"}
                   </span>
-                  <span className="shrink-0 text-[10.5px] text-ink-muted">
+                  <span className="shrink-0 text-[12px] text-ink-muted">
                     {formatDate(summary.created_at, lang)}
                   </span>
                 </div>
 
                 <Link
                   href={`/dashboard/summaries/${summary.id}`}
-                  className="mt-2.5 inline-flex items-center gap-1 text-[11.5px] font-medium text-brand-ink hover:opacity-80"
+                  className="mt-2.5 inline-flex items-center gap-1 text-[12px] font-medium text-brand-ink hover:opacity-80"
                 >
                   {dict.summaries.open}
                   <ArrowRight className="size-3 rtl:hidden" aria-hidden="true" />
@@ -144,7 +147,7 @@ export default async function SummariesPage({
       )}
 
       {summaries.length === 0 ? null : (
-        <p className="flex items-center justify-center gap-1.5 pb-2 text-[10.5px] text-ink-muted">
+        <p className="flex items-center justify-center gap-1.5 pb-2 text-[12px] text-ink-muted">
           <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
           {dict.progress.dataNote}
         </p>

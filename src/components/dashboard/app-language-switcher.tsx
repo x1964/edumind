@@ -52,7 +52,7 @@ export function AppLanguageSwitcher({
           aria-pressed={code === lang}
           aria-label={code === "ar" ? "العربية" : "English"}
           className={cn(
-            "relative z-10 h-6 min-w-7 rounded-full px-1.5 text-[10.5px] font-semibold uppercase tracking-wide transition-colors",
+            "relative z-10 h-6 min-w-7 rounded-full px-1.5 text-[12px] font-semibold uppercase tracking-wide transition-colors",
             code === lang ? "bg-brand/15 text-brand-ink" : "text-ink-muted hover:text-ink-soft"
           )}
         >

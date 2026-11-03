@@ -115,14 +115,14 @@ export function LearningPreview({ dict }: { dict: Dictionary }) {
             <div className="relative grid lg:grid-cols-[292px_minmax(0,1fr)]">
               <aside className="flex min-w-0 flex-col gap-5 border-b border-hairline bg-black/[0.015] p-5 sm:p-6 lg:border-b-0 lg:border-e">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted">
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-[0.18em] text-ink-muted">
                     <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
                     EduMind workspace
                   </span>
                   <h3 className="mt-3 text-[17px] font-medium leading-snug text-ink">
                     {learning.lessonTitle}
                   </h3>
-                  <p className="mt-1 text-[11.5px] text-ink-muted">{learning.lessonMeta}</p>
+                  <p className="mt-1 text-[12px] text-ink-muted">{learning.lessonMeta}</p>
                 </div>
 
                 <div className="hidden h-px w-full bg-hairline/80 lg:block" aria-hidden="true" />
@@ -147,7 +147,7 @@ export function LearningPreview({ dict }: { dict: Dictionary }) {
                         onClick={() => setTab(key)}
                         onKeyDown={(event) => onTabKeyDown(event, key)}
                         className={cn(
-                          "group inline-flex shrink-0 items-center gap-2.5 rounded-xl border px-3 py-2.5 text-start text-[12.5px] font-medium transition-all duration-200",
+                          "group inline-flex shrink-0 items-center gap-2.5 rounded-xl border px-3 py-2.5 text-start text-[13px] font-medium transition-all duration-200",
                           active
                             ? "border-brand/25 bg-brand/[0.08] text-ink"
                             : "border-transparent text-ink-muted hover:bg-black/[0.03] hover:text-ink-soft"
@@ -169,7 +169,7 @@ export function LearningPreview({ dict }: { dict: Dictionary }) {
                   })}
                 </div>
 
-                <p className="mt-auto hidden text-[10.5px] leading-relaxed text-ink-muted lg:block">
+                <p className="mt-auto hidden text-[12px] leading-relaxed text-ink-muted lg:block">
                   {learning.demoNote}
                 </p>
               </aside>
@@ -230,13 +230,13 @@ function ExplainNote({
 }) {
   return (
     <div className={cn("rounded-xl border border-hairline bg-black/[0.02] p-4", className)}>
-      <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
+      <div className="flex items-center gap-2 text-[12px] font-medium text-ink-soft">
         <span className="grid size-6 place-items-center rounded-md bg-black/[0.05] text-brand-ink">
           {icon}
         </span>
         {label}
       </div>
-      <p className="mt-2 text-[12.5px] leading-[1.85] text-ink-soft">{text}</p>
+      <p className="mt-2 text-[13px] leading-[1.85] text-ink-soft">{text}</p>
     </div>
   );
 }
@@ -247,11 +247,11 @@ function ExplanationPanel({ learning }: { learning: Dictionary["learning"] }) {
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
+        <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
           <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
           {e.label}
         </span>
-        <span className="inline-flex items-center gap-1 rounded-full border border-hairline bg-black/[0.02] px-2 py-1 text-[9.5px] text-ink-muted">
+        <span className="inline-flex items-center gap-1 rounded-full border border-hairline bg-black/[0.02] px-2 py-1 text-[12px] text-ink-muted">
           <Sparkles className="size-2.5 text-brand-ink/80" aria-hidden="true" />
           AI
         </span>
@@ -274,20 +274,20 @@ function ExplanationPanel({ learning }: { learning: Dictionary["learning"] }) {
       </div>
 
       <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-hairline/70 bg-surface-deep px-4 py-3">
-        <span className="mt-0.5 font-mono text-[10px] font-semibold text-brand-ink">!</span>
-        <p className="text-[11.5px] leading-relaxed text-ink-muted">
+        <span className="mt-0.5 font-mono text-[12px] font-semibold text-brand-ink">!</span>
+        <p className="text-[12px] leading-relaxed text-ink-muted">
           <span className="font-medium text-ink-soft">{e.noteLabel}: </span>
           {e.note}
         </p>
       </div>
 
       <div className="mt-5 flex flex-col gap-2.5">
-        <span className="text-[10.5px] font-medium text-ink-muted">{e.askLabel}</span>
+        <span className="text-[12px] font-medium text-ink-muted">{e.askLabel}</span>
         <div className="flex flex-wrap gap-1.5">
           {e.chips.map((chip) => (
             <span
               key={chip}
-              className="rounded-full border border-hairline bg-black/[0.02] px-3 py-1.5 text-[11px] text-ink-soft"
+              className="rounded-full border border-hairline bg-black/[0.02] px-3 py-1.5 text-[12px] text-ink-soft"
             >
               {chip}
             </span>
@@ -304,11 +304,11 @@ function SummaryPanel({ learning }: { learning: Dictionary["learning"] }) {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
+        <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
           <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
           {s.label}
         </span>
-        <span className="text-[10px] text-ink-muted">{s.meta}</span>
+        <span className="text-[12px] text-ink-muted">{s.meta}</span>
       </div>
 
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
@@ -317,24 +317,24 @@ function SummaryPanel({ learning }: { learning: Dictionary["learning"] }) {
             key={point.title}
             className="group rounded-xl border border-hairline bg-black/[0.02] p-4 transition-colors hover:border-brand/25 hover:bg-brand/[0.03]"
           >
-            <span className="font-mono text-[10px] text-brand-ink/70">
+            <span className="font-mono text-[12px] text-brand-ink/70">
               {String(index + 1).padStart(2, "0")}
             </span>
             <h4 className="mt-2 text-[13px] font-medium text-ink">{point.title}</h4>
-            <p className="mt-1.5 text-[11.5px] leading-[1.8] text-ink-soft">{point.text}</p>
+            <p className="mt-1.5 text-[12px] leading-[1.8] text-ink-soft">{point.text}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-5 rounded-xl border border-hairline/70 bg-surface-deep p-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+        <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-muted">
           {s.termsLabel}
         </p>
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           {s.terms.map((term) => (
             <span
               key={term}
-              className="rounded-md border border-brand/15 bg-brand/[0.05] px-2.5 py-1 text-[11px] text-brand-ink/90"
+              className="rounded-md border border-brand/15 bg-brand/[0.05] px-2.5 py-1 text-[12px] text-brand-ink/90"
             >
               {term}
             </span>
@@ -398,7 +398,7 @@ function QuizPanel({
         <button
           type="button"
           onClick={onReset}
-          className="mt-2 inline-flex h-10 items-center gap-2 rounded-full border border-hairline-strong bg-black/[0.03] px-4 text-[12.5px] font-medium text-ink transition-colors hover:border-brand/40 hover:bg-brand/[0.06]"
+          className="mt-2 inline-flex h-10 items-center gap-2 rounded-full border border-hairline-strong bg-black/[0.03] px-4 text-[13px] font-medium text-ink transition-colors hover:border-brand/40 hover:bg-brand/[0.06]"
         >
           <RotateCcw className="size-3.5" aria-hidden="true" />
           {q.retry}
@@ -410,12 +410,12 @@ function QuizPanel({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
+        <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
           <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
           {q.label}
         </span>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] text-ink-muted">
+          <span className="font-mono text-[12px] text-ink-muted">
             {q.questionLabel} {quizIndex + 1} / {q.questions.length}
           </span>
           <div className="flex items-center gap-1" aria-hidden="true">
@@ -453,7 +453,7 @@ function QuizPanel({
               disabled={revealed}
               aria-pressed={isSelected}
               className={cn(
-                "group flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-start text-[12.5px] transition-all duration-200",
+                "group flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-start text-[13px] transition-all duration-200",
                 !revealed &&
                   "border-hairline bg-black/[0.02] text-ink-soft hover:border-brand/30 hover:bg-brand/[0.04] hover:text-ink",
                 revealed && isCorrect && "border-brand/40 bg-brand/[0.07] text-ink",
@@ -469,7 +469,7 @@ function QuizPanel({
             >
               <span
                 className={cn(
-                  "grid size-6 shrink-0 place-items-center rounded-full border font-mono text-[10px]",
+                  "grid size-6 shrink-0 place-items-center rounded-full border font-mono text-[12px]",
                   revealed && isCorrect
                     ? "border-brand bg-brand text-primary-foreground"
                     : revealed && isSelected && !isCorrect
@@ -503,13 +503,13 @@ function QuizPanel({
             <div className="mt-3 rounded-xl border border-hairline bg-black/[0.02] p-3.5">
               <p
                 className={cn(
-                  "text-[11.5px] font-medium",
+                  "text-[12px] font-medium",
                   selected === question.correct ? "text-brand-ink" : "text-danger"
                 )}
               >
                 {selected === question.correct ? q.correct : q.incorrect}
               </p>
-              <p className="mt-1.5 text-[11.5px] leading-[1.8] text-ink-soft">
+              <p className="mt-1.5 text-[12px] leading-[1.8] text-ink-soft">
                 {question.explanation}
               </p>
             </div>
@@ -552,11 +552,11 @@ function MindMapPanel({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
+        <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.16em] text-brand-ink/90">
           <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
           {m.label}
         </span>
-        <span className="text-[10px] text-ink-muted">{m.hint}</span>
+        <span className="text-[12px] text-ink-muted">{m.hint}</span>
       </div>
 
       <div
@@ -635,7 +635,7 @@ function MindMapPanel({
             onClick={() => onBranch(index)}
             aria-pressed={branch === index}
             className={cn(
-              "absolute z-10 max-w-[112px] rounded-xl border px-2.5 py-2 text-center text-[10px] leading-tight transition-all duration-200 sm:max-w-[132px] sm:text-[10.5px]",
+              "absolute z-10 max-w-[112px] rounded-xl border px-2.5 py-2 text-center text-[12px] leading-tight transition-all duration-200 sm:max-w-[132px] sm:text-[12px]",
               positions[index],
               branch === index
                 ? "border-brand/45 bg-brand/[0.1] text-ink shadow-[0_0_0_3px_rgba(5,150,105,0.06)]"
@@ -648,7 +648,7 @@ function MindMapPanel({
       </div>
 
       <div className="mt-2 min-h-[62px] rounded-xl border border-hairline/70 bg-surface-deep p-3.5">
-        <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+        <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-muted">
           {m.branches[branch].label}
         </p>
         <p className="mt-1 text-[12px] leading-relaxed text-ink-soft">

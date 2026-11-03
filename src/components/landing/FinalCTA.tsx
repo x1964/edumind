@@ -21,13 +21,13 @@ export function FinalCTA({ dict }: { dict: Dictionary }) {
             </div>
 
             <div className="mx-auto flex max-w-2xl flex-col items-center">
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/[0.06] px-3.5 py-1.5 text-[11px] font-medium text-brand-ink/95">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-brand-ink/95">
                 <Sparkles className="size-3" aria-hidden="true" />
                 {final.eyebrow}
               </span>
 
               <p
-                dir="ltr"
+                dir="auto"
                 className="mt-6 text-balance text-[13px] font-medium uppercase tracking-[0.14em] text-ink-soft sm:text-[14px]"
               >
                 {final.englishHeadline}
@@ -45,7 +45,7 @@ export function FinalCTA({ dict }: { dict: Dictionary }) {
                 {final.cta}
               </CtaLink>
 
-              <p className="mt-4 flex items-center gap-2 text-[11.5px] text-ink-muted">
+              <p className="mt-4 flex items-center gap-2 text-[12px] text-ink-muted">
                 <ArrowUpRight className="size-3 text-brand-ink/70" aria-hidden="true" />
                 {final.note}
               </p>

@@ -25,7 +25,7 @@ export function WhyEduMind({ dict }: { dict: Dictionary }) {
         <div className="grid gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
           <div className="flex flex-col">
             <Reveal>
-              <span className="inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
+              <span className="inline-flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
                 <span className="h-px w-6 bg-brand/60" aria-hidden="true" />
                 {why.eyebrow}
               </span>
@@ -48,7 +48,7 @@ export function WhyEduMind({ dict }: { dict: Dictionary }) {
                     className="mt-0.5 size-3 shrink-0 text-brand-ink/70"
                     aria-hidden="true"
                   />
-                  <p className="text-[11.5px] leading-relaxed text-ink-muted">{why.closingNote}</p>
+                  <p className="text-[12px] leading-relaxed text-ink-muted">{why.closingNote}</p>
                 </div>
               </div>
             </Reveal>
@@ -59,7 +59,7 @@ export function WhyEduMind({ dict }: { dict: Dictionary }) {
               <Reveal key={point.title} delay={Math.min(index * 0.06, 0.3)}>
                 <div className="group border-t border-hairline py-5">
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-mono text-[10px] tracking-[0.14em] text-brand-ink/60 transition-colors group-hover:text-brand-ink">
+                    <span className="font-mono text-[12px] tracking-[0.14em] text-brand-ink/60 transition-colors group-hover:text-brand-ink">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span

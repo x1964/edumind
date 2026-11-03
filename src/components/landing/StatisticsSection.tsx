@@ -38,7 +38,7 @@ function StatCard({ icon: Icon, value, suffix = "", label, delay }: StatCardProp
           <Icon className="size-[18px]" />
         </span>
 
-        <div className="mt-5 flex items-baseline gap-1" dir="ltr">
+        <div className="mt-5 flex items-baseline gap-1" dir="auto">
           <motion.span className="em-num text-[32px] font-semibold leading-none tracking-[-0.04em] text-ink sm:text-[36px]">
             {display}
           </motion.span>
@@ -70,7 +70,7 @@ export function StatisticsSection({ dict }: { dict: Dictionary }) {
       <div className="em-container">
         <Reveal>
           <div className="mb-12 text-center">
-            <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
+            <span className="text-[12px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
               {copy.eyebrow}
             </span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl">
@@ -96,7 +96,7 @@ export function StatisticsSection({ dict }: { dict: Dictionary }) {
         <Reveal delay={0.3} className="mt-12">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-hairline/60 pt-8">
             {copy.trust.map((item) => (
-              <div key={item} className="flex items-center gap-2 text-[12.5px] text-ink-muted">
+              <div key={item} className="flex items-center gap-2 text-[13px] text-ink-muted">
                 <span className="size-1.5 rounded-full bg-brand/60" aria-hidden="true" />
                 {item}
               </div>

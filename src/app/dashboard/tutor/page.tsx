@@ -76,7 +76,7 @@ export default async function TutorPage({
       : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <PageHeader title={dict.tutor.title} description={dict.tutor.subtitle} />
         <Link

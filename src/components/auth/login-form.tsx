@@ -58,7 +58,7 @@ export function LoginForm({
               autoComplete="email"
               placeholder="you@example.com"
               required
-              dir="ltr"
+              dir="auto"
               className="px-9"
             />
           </div>

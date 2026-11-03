@@ -84,6 +84,8 @@ const ar = {
     readMore: "اقرأ المزيد",
     showLess: "عرض أقل",
     size: "الحجم",
+
+    clearFilters: "مسح الفلاتر",
   },
   nav: {
     overview: "نظرة عامة",
@@ -108,6 +110,7 @@ const ar = {
     searchPlaceholder: "ابحث في موادك وملخصاتك…",
     notifications: "الإشعارات",
     more: "المزيد",
+    skipToContent: "انتقل إلى المحتوى الرئيسي",
   },
   auth: {
     loginTitle: "أهلاً بعودتك",
@@ -727,6 +730,7 @@ const en: AppMessages = {
     readMore: "Read more",
     showLess: "Show less",
     size: "Size",
+    clearFilters: "Clear filters",
   },
   nav: {
     overview: "Overview",
@@ -751,6 +755,7 @@ const en: AppMessages = {
     searchPlaceholder: "Search your materials and summaries…",
     notifications: "Notifications",
     more: "More",
+    skipToContent: "Skip to main content",
   },
   auth: {
     loginTitle: "Welcome back",

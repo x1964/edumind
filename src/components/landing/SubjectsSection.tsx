@@ -101,12 +101,12 @@ export function SubjectsSection({ dict, lang }: { dict: Dictionary; lang: Lang }
                       <Icon className="size-4" aria-hidden="true" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[12.5px] font-medium">{item.name}</span>
-                      <span className="mt-0.5 hidden truncate text-[10px] text-ink-muted lg:block">
+                      <span className="block text-[13px] font-medium">{item.name}</span>
+                      <span className="mt-0.5 hidden truncate text-[12px] text-ink-muted lg:block">
                         {item.tagline}
                       </span>
                     </span>
-                    <span className="ms-auto hidden font-mono text-[9px] text-ink-muted/60 lg:block">
+                    <span className="ms-auto hidden font-mono text-[12px] text-ink-muted/60 lg:block">
                       0{index + 1}
                     </span>
                   </button>
@@ -134,7 +134,7 @@ export function SubjectsSection({ dict, lang }: { dict: Dictionary; lang: Lang }
                   className="relative grid h-full gap-6 p-5 sm:p-7 md:grid-cols-[1.02fr_0.98fr] md:items-center md:p-8"
                 >
                   <div className="flex min-w-0 flex-col">
-                    <span className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-brand-ink/85">
+                    <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.18em] text-brand-ink/85">
                       <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
                       {subjects.visualLabel}
                     </span>
@@ -146,7 +146,7 @@ export function SubjectsSection({ dict, lang }: { dict: Dictionary; lang: Lang }
                         <h3 className="text-[22px] font-semibold leading-tight tracking-tight text-ink">
                           {subject.name}
                         </h3>
-                        <p className="text-[11.5px] text-ink-muted">{subject.tagline}</p>
+                        <p className="text-[12px] text-ink-muted">{subject.tagline}</p>
                       </div>
                     </div>
                     <p className="mt-4 max-w-md text-[13px] leading-[1.9] text-ink-soft">
@@ -169,7 +169,7 @@ export function SubjectsSection({ dict, lang }: { dict: Dictionary; lang: Lang }
 
                   <div className="min-w-0 rounded-2xl border border-hairline/80 bg-surface-deep p-3 sm:p-4">
                     <div className="flex items-center justify-between gap-2 pb-2">
-                      <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] text-ink-muted">
+                      <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-ink-muted">
                         {subject.id} / visual
                       </span>
                       <div className="flex gap-1" aria-hidden="true">
@@ -181,7 +181,7 @@ export function SubjectsSection({ dict, lang }: { dict: Dictionary; lang: Lang }
                     <div className="rounded-xl border border-hairline/60 bg-background p-3">
                       <SubjectVisual id={subject.id} dict={dict} lang={lang} />
                     </div>
-                    <p className="mt-2.5 text-center text-[9.5px] text-ink-muted">
+                    <p className="mt-2.5 text-center text-[12px] text-ink-muted">
                       {subject.visualCaption}
                     </p>
                   </div>
@@ -217,7 +217,7 @@ function MathVisual() {
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
       <div
         className="rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[12px] text-ink"
-        dir="ltr"
+        dir="auto"
       >
         <span className="text-brand-ink">f(x)</span> = ax² + bx + c
       </div>
@@ -280,8 +280,8 @@ function PhysicsVisual() {
   return (
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
       <div
-        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[10px] text-ink-muted"
-        dir="ltr"
+        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[12px] text-ink-muted"
+        dir="auto"
       >
         <span className="text-brand-ink">v₀</span>
         <span>θ</span>
@@ -345,7 +345,7 @@ function BiologyVisual({ dict }: { dict: Dictionary }) {
   const branches = dict.learning.mindmap.branches;
   return (
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
-      <div className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 text-[9.5px] text-ink-muted">
+      <div className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 text-[12px] text-ink-muted">
         <span>{dict.learning.lessonMeta}</span>
         <Dna className="size-3 text-brand-ink" aria-hidden="true" />
       </div>
@@ -430,8 +430,8 @@ function ChemistryVisual() {
   return (
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
       <div
-        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[10px] text-ink"
-        dir="ltr"
+        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[12px] text-ink"
+        dir="auto"
       >
         <span>2H₂ + O₂</span>
         <span className="text-brand-ink">→</span>
@@ -521,7 +521,7 @@ function HistoryVisual({ lang }: { lang: Lang }) {
 
   return (
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
-      <div className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 text-[9.5px] text-ink-muted">
+      <div className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 text-[12px] text-ink-muted">
         <span>{lang === "ar" ? "خط زمني مترابط" : "Connected timeline"}</span>
         <Landmark className="size-3 text-brand-ink" aria-hidden="true" />
       </div>
@@ -542,7 +542,7 @@ function HistoryVisual({ lang }: { lang: Lang }) {
                 )}
                 aria-hidden="true"
               />
-              <span className="font-mono text-[8.5px] text-ink-muted" dir="ltr">
+              <span className="font-mono text-[12px] text-ink-muted" dir="auto">
                 {years[index]}
               </span>
               <span
@@ -550,7 +550,7 @@ function HistoryVisual({ lang }: { lang: Lang }) {
                 aria-hidden="true"
               />
               <span
-                className={cn("text-[8.5px]", index === 2 ? "text-brand-ink/90" : "text-ink-soft")}
+                className={cn("text-[12px]", index === 2 ? "text-brand-ink/90" : "text-ink-soft")}
               >
                 {label}
               </span>
@@ -602,8 +602,8 @@ function ProgrammingVisual() {
   return (
     <div className="flex h-[172px] flex-col justify-between sm:h-[190px]">
       <div
-        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[9px] text-ink-muted"
-        dir="ltr"
+        className="flex items-center justify-between rounded-lg border border-hairline/70 bg-black/[0.02] px-3 py-2 font-mono text-[12px] text-ink-muted"
+        dir="auto"
       >
         <span>study.js</span>
         <div className="flex gap-1" aria-hidden="true">
@@ -612,8 +612,8 @@ function ProgrammingVisual() {
         </div>
       </div>
       <div
-        className="mt-2.5 rounded-lg border border-hairline/60 bg-surface-deep p-2.5 font-mono text-[9px] leading-[2]"
-        dir="ltr"
+        className="mt-2.5 rounded-lg border border-hairline/60 bg-surface-deep p-2.5 font-mono text-[12px] leading-[2]"
+        dir="auto"
       >
         {lines.map((line) => (
           <div key={line.n} className="flex gap-2.5">
@@ -622,9 +622,9 @@ function ProgrammingVisual() {
           </div>
         ))}
       </div>
-      <div className="mt-2 flex items-center gap-1.5 rounded-md border border-brand/15 bg-brand/[0.04] px-2 py-1 text-[8px] text-brand-ink/80">
+      <div className="mt-2 flex items-center gap-1.5 rounded-md border border-brand/15 bg-brand/[0.04] px-2 py-1 text-[12px] text-brand-ink/80">
         <Check className="size-2.5" aria-hidden="true" />
-        <span dir="ltr">lesson.quiz()</span>
+        <span dir="auto">lesson.quiz()</span>
       </div>
     </div>
   );

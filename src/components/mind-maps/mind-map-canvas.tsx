@@ -220,20 +220,20 @@ export function MindMapCanvas({
             className="h-9 min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 text-[14px] font-semibold text-ink transition-colors hover:border-hairline focus:border-brand/50 focus:bg-surface-deep focus:outline-none"
           />
           {dirty ? (
-            <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/[0.12] px-2 py-0.5 text-[10px] font-medium text-amber-700">
+            <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/[0.12] px-2 py-0.5 text-[12px] font-medium text-amber-700">
               {dict.mindMaps.unsaved}
             </span>
           ) : null}
         </div>
         <div className="flex items-center gap-2">
-          <span className="hidden text-[10.5px] text-ink-muted sm:inline">
+          <span className="hidden text-[12px] text-ink-muted sm:inline">
             {dict.mindMaps.autosaveNote}
           </span>
           <button
             type="button"
             onClick={save}
             disabled={isPending}
-            className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
           >
             {isPending ? (
               <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
@@ -270,7 +270,7 @@ export function MindMapCanvas({
           <Controls showInteractive={false} />
         </ReactFlow>
       </div>
-      <p className="text-[10.5px] text-ink-muted">{dict.mindMaps.dragHint}</p>
+      <p className="text-[12px] text-ink-muted">{dict.mindMaps.dragHint}</p>
     </div>
   );
 }

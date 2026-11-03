@@ -35,7 +35,7 @@ function SummaryVisual({ dict }: { dict: Dictionary }) {
   return (
     <div className="mt-4 rounded-xl border border-hairline/80 bg-surface-deep p-3">
       <div className="flex items-center justify-between">
-        <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-ink-muted">
+        <span className="text-[12px] font-medium uppercase tracking-[0.14em] text-ink-muted">
           {p.summaryTitle}
         </span>
         <Sparkles className="size-2.5 text-brand-ink/70" aria-hidden="true" />
@@ -49,7 +49,7 @@ function SummaryVisual({ dict }: { dict: Dictionary }) {
         {dict.learning.summary.terms.slice(0, 2).map((term) => (
           <span
             key={term}
-            className="rounded border border-brand/15 bg-brand/[0.05] px-1.5 py-0.5 text-[8.5px] text-brand-ink/80"
+            className="rounded border border-brand/15 bg-brand/[0.05] px-1.5 py-0.5 text-[12px] text-brand-ink/80"
           >
             {term}
           </span>
@@ -63,13 +63,13 @@ function QuizVisual({ dict }: { dict: Dictionary }) {
   const p = dict.productPreview;
   return (
     <div className="mt-4 rounded-xl border border-hairline/80 bg-surface-deep p-3">
-      <p className="text-[9.5px] leading-snug text-ink-soft">{p.quizQuestion}</p>
+      <p className="text-[12px] leading-snug text-ink-soft">{p.quizQuestion}</p>
       <div className="mt-2 space-y-1">
         {p.quizOptions.map((option, index) => (
           <div
             key={option}
             className={cn(
-              "flex items-center gap-1.5 rounded-md border px-1.5 py-1 text-[8.5px]",
+              "flex items-center gap-1.5 rounded-md border px-1.5 py-1 text-[12px]",
               index === p.quizCorrectIndex
                 ? "border-brand/30 bg-brand/[0.08] text-brand-ink"
                 : "border-hairline/60 text-ink-muted"
@@ -112,7 +112,7 @@ function MindMapVisual({ dict }: { dict: Dictionary }) {
         <span
           key={branch.label}
           className={cn(
-            "absolute max-w-[58px] truncate rounded border border-hairline bg-surface-high/90 px-1.5 py-0.5 text-[7.5px] text-ink-soft",
+            "absolute max-w-[58px] truncate rounded border border-hairline bg-surface-high/90 px-1.5 py-0.5 text-[12px] text-ink-soft",
             index === 0 && "left-2 top-3",
             index === 1 && "right-2 top-3",
             index === 2 && "left-2 bottom-3",
@@ -149,7 +149,7 @@ function VisualLearningMock({ dict }: { dict: Dictionary }) {
         <circle cx="100" cy="44" r="2.6" fill="#059669" />
         <circle cx="100" cy="44" r="6" fill="none" stroke="#059669" strokeOpacity="0.28" />
       </svg>
-      <span className="absolute bottom-2 start-3 font-mono text-[8px] text-ink-muted" dir="ltr">
+      <span className="absolute bottom-2 start-3 font-mono text-[12px] text-ink-muted" dir="auto">
         {dict.subjects.items[0].visualCaption}
       </span>
     </div>
@@ -175,7 +175,7 @@ function AudioVisual({ dict }: { dict: Dictionary }) {
           />
         ))}
       </div>
-      <span className="shrink-0 text-[9px] text-ink-muted">{dict.features.items[5].tag}</span>
+      <span className="shrink-0 text-[12px] text-ink-muted">{dict.features.items[5].tag}</span>
     </div>
   );
 }
@@ -184,16 +184,16 @@ function PathVisual({ dict }: { dict: Dictionary }) {
   const p = dict.productPreview;
   return (
     <div className="mt-4 rounded-xl border border-hairline/80 bg-surface-deep p-3">
-      <div className="flex items-center justify-between text-[9px] text-ink-soft">
+      <div className="flex items-center justify-between text-[12px] text-ink-soft">
         <span>{p.floatPlan}</span>
-        <span className="text-[8px] text-ink-muted">{p.floatPlanMeta}</span>
+        <span className="text-[12px] text-ink-muted">{p.floatPlanMeta}</span>
       </div>
       <div className="mt-3 flex items-center gap-1" aria-hidden="true">
         {[0, 1, 2].map((step) => (
           <div key={step} className="flex flex-1 items-center gap-1">
             <span
               className={cn(
-                "grid size-4 shrink-0 place-items-center rounded-full border text-[7px]",
+                "grid size-4 shrink-0 place-items-center rounded-full border text-[12px]",
                 step < 2
                   ? "border-brand/40 bg-brand/15 text-brand-ink"
                   : "border-hairline-strong text-ink-muted"
@@ -214,8 +214,8 @@ function AnalyticsVisual({ dict }: { dict: Dictionary }) {
   return (
     <div className="mt-4 rounded-xl border border-hairline/80 bg-surface-deep p-3">
       <div className="flex items-center justify-between">
-        <span className="text-[9px] text-ink-muted">{dict.productPreview.understandingLabel}</span>
-        <span className="font-mono text-[10px] text-brand-ink">
+        <span className="text-[12px] text-ink-muted">{dict.productPreview.understandingLabel}</span>
+        <span className="font-mono text-[12px] text-brand-ink">
           {dict.productPreview.understandingValue}
         </span>
       </div>
@@ -271,9 +271,9 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
             />
           </Reveal>
           <Reveal delay={0.08} className="hidden items-center gap-2 lg:flex">
-            <span className="font-mono text-[11px] text-ink-muted">08</span>
+            <span className="font-mono text-[12px] text-ink-muted">08</span>
             <span className="h-px w-10 bg-hairline-strong" aria-hidden="true" />
-            <span className="text-[11px] uppercase tracking-[0.18em] text-ink-muted">
+            <span className="text-[12px] uppercase tracking-[0.18em] text-ink-muted">
               {features.eyebrow}
             </span>
           </Reveal>
@@ -301,7 +301,7 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                     <span className="grid size-9 place-items-center rounded-xl border border-hairline bg-black/[0.03] text-brand-ink">
                       <Icon className="size-4" aria-hidden="true" />
                     </span>
-                    <span className="text-[9.5px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+                    <span className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-muted">
                       {feature.tag}
                     </span>
                   </div>
@@ -317,7 +317,7 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                   <p
                     className={cn(
                       "relative mt-1.5 leading-[1.8] text-ink-soft",
-                      isTutor ? "max-w-md text-[12.5px] sm:text-[13px]" : "text-[11.5px]"
+                      isTutor ? "max-w-md text-[13px] sm:text-[13px]" : "text-[12px]"
                     )}
                   >
                     {feature.description}
@@ -330,13 +330,13 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                           <Sparkles className="size-3.5" aria-hidden="true" />
                         </span>
                         <div className="rounded-xl rounded-ss-sm border border-hairline bg-black/[0.02] p-3">
-                          <p className="text-[11.5px] leading-[1.85] text-ink-soft">
+                          <p className="text-[12px] leading-[1.85] text-ink-soft">
                             {dict.productPreview.tutorMessage}
                           </p>
                         </div>
                       </div>
                       <div className="ms-auto max-w-[85%] rounded-xl rounded-se-sm border border-brand/15 bg-brand/[0.05] px-3 py-2">
-                        <p className="text-[11px] text-ink-soft">
+                        <p className="text-[12px] text-ink-soft">
                           {dict.learning.explanation.chips[2]}
                         </p>
                       </div>
@@ -345,10 +345,10 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                           <Sparkles className="size-3.5" aria-hidden="true" />
                         </span>
                         <div className="rounded-xl rounded-ss-sm border border-hairline bg-black/[0.02] p-3">
-                          <p className="text-[11.5px] leading-[1.85] text-ink-soft">
+                          <p className="text-[12px] leading-[1.85] text-ink-soft">
                             {dict.learning.explanation.example}
                           </p>
-                          <div className="mt-2.5 flex items-center gap-1.5 border-t border-hairline/60 pt-2 text-[9px] text-ink-muted">
+                          <div className="mt-2.5 flex items-center gap-1.5 border-t border-hairline/60 pt-2 text-[12px] text-ink-muted">
                             <FileText
                               className="size-2.5 shrink-0 text-brand-ink/70"
                               aria-hidden="true"
@@ -364,14 +364,14 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                         {dict.learning.explanation.chips.map((chip) => (
                           <span
                             key={chip}
-                            className="rounded-full border border-hairline bg-black/[0.02] px-2.5 py-1 text-[10px] text-ink-muted"
+                            className="rounded-full border border-hairline bg-black/[0.02] px-2.5 py-1 text-[12px] text-ink-muted"
                           >
                             {chip}
                           </span>
                         ))}
                       </div>
                       <div className="mt-1 flex items-center gap-2 rounded-xl border border-hairline bg-surface-deep px-3 py-2.5">
-                        <span className="flex-1 truncate text-[10.5px] text-ink-muted">
+                        <span className="flex-1 truncate text-[12px] text-ink-muted">
                           {dict.productPreview.tutorPrompt}
                         </span>
                         <span className="grid size-5 place-items-center rounded-lg bg-brand text-primary-foreground">

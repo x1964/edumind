@@ -44,7 +44,7 @@ export function LanguageSwitcher({ lang, label, className }: LanguageSwitcherPro
             aria-pressed={active}
             aria-label={code === "ar" ? "العربية" : "English"}
             className={cn(
-              "relative z-10 h-7 min-w-8 rounded-full px-2 text-[11px] font-semibold uppercase tracking-wide transition-colors duration-200",
+              "relative z-10 h-7 min-w-8 rounded-full px-2 text-[12px] font-semibold uppercase tracking-wide transition-colors duration-200",
               active ? "bg-brand/15 text-brand-ink" : "text-ink-muted hover:text-ink-soft"
             )}
           >

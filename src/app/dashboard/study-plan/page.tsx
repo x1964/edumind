@@ -35,7 +35,7 @@ export default async function StudyPlanPage({
   ]);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader title={dict.planner.title} description={dict.planner.subtitle} />
       <PlannerBoard
         tasks={(taskRows ?? []) as StudyTask[]}

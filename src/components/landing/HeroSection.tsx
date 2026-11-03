@@ -48,7 +48,7 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
             className="flex max-w-2xl flex-col items-start lg:max-w-none"
           >
             <motion.div variants={item}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand/25 bg-brand/[0.07] py-1.5 pe-3.5 ps-2.5 text-[12.5px] font-medium text-brand-ink">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brand/25 bg-brand/[0.07] py-1.5 pe-3.5 ps-2.5 text-[13px] font-medium text-brand-ink">
                 <span className="grid size-5 place-items-center rounded-full bg-brand/10">
                   <Sparkles className="size-3.5" aria-hidden="true" />
                 </span>
@@ -100,7 +100,7 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
               variants={item}
               className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-2.5"
             >
-              <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-ink-muted">
+              <span className="text-[12px] font-medium uppercase tracking-[0.16em] text-ink-muted">
                 {hero.formatsLabel}
               </span>
               <span className="h-3 w-px bg-hairline-strong" aria-hidden="true" />
@@ -108,7 +108,7 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
                 {hero.formats.map((format) => (
                   <span
                     key={format}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-black/[0.02] px-2.5 py-1 text-[11px] text-ink-soft"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-hairline bg-black/[0.02] px-2.5 py-1 text-[12px] text-ink-soft"
                   >
                     <FileText className="size-3 text-ink-muted" aria-hidden="true" />
                     {format}
@@ -128,7 +128,7 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
               ].map((trust) => (
                 <div key={trust.label} className="flex items-center gap-2">
                   <trust.icon className="size-4 text-brand-ink/70" aria-hidden="true" />
-                  <span className="text-[11px] font-medium text-ink-muted">{trust.label}</span>
+                  <span className="text-[12px] font-medium text-ink-muted">{trust.label}</span>
                 </div>
               ))}
             </motion.div>

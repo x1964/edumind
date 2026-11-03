@@ -45,13 +45,12 @@ export function AnimatedContainer({
   };
 
   const config = getAnimationConfig();
-
   return (
     <motion.div
       initial={config.initial}
       animate={config.animate}
       exit={config.exit}
-      transition={{ duration: 0.3, delay }}
+      transition={{ duration: 0.3, delay, ease: "easeOut" }}
       className={cn(className)}
     >
       {children}
@@ -127,11 +126,11 @@ interface AnimatedCardProps {
 export function AnimatedCard({ children, className, onClick, hover = true }: AnimatedCardProps) {
   return (
     <motion.div
-      whileHover={hover ? { scale: 1.02, y: -4 } : undefined}
-      whileTap={onClick ? { scale: 0.98 } : undefined}
+      whileHover={hover ? { scale: 1.01, y: -2 } : undefined}
+      whileTap={onClick ? { scale: 0.99 } : undefined}
       onClick={onClick}
       className={cn("rounded-lg border bg-card p-6 shadow-sm", className)}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       {children}
     </motion.div>

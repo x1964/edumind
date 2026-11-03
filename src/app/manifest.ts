@@ -7,7 +7,7 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "EduMind — تعلّم أذكى",
+    name: "EduMind",
     short_name: "EduMind",
     description:
       "حوّل مذكراتك إلى شرح ذكي وملخصات واختبارات وخرائط ذهنية. Your study documents become an AI tutor, summaries, quizzes and mind maps.",
@@ -17,8 +17,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "any",
-    background_color: "#ffffff",
-    theme_color: "#ffffff",
+    background_color: "#00C950",
+    theme_color: "#00C950",
     categories: ["education", "productivity"],
     icons: [
       {

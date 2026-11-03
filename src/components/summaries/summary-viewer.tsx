@@ -63,7 +63,7 @@ export function SummaryViewer({
               type="button"
               onClick={cancel}
               disabled={isPending}
-              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[11.5px] font-medium text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] font-medium text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
             >
               <X className="size-3.5" aria-hidden="true" />
               {dict.common.cancel}
@@ -72,7 +72,7 @@ export function SummaryViewer({
               type="button"
               onClick={save}
               disabled={isPending}
-              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-brand px-3 text-[11.5px] font-semibold text-primary-foreground hover:bg-brand-deep disabled:opacity-50"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-brand px-3 text-[12px] font-semibold text-primary-foreground hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
@@ -86,7 +86,7 @@ export function SummaryViewer({
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[11.5px] font-medium text-ink-soft hover:bg-black/[0.04]"
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] font-medium text-ink-soft hover:bg-black/[0.04]"
           >
             <Pencil className="size-3.5" aria-hidden="true" />
             {dict.summaries.edit}
@@ -125,9 +125,9 @@ export function SummaryViewer({
                 onChange={(event) => setContent(event.target.value)}
                 rows={22}
                 dir="auto"
-                className="w-full rounded-xl border border-hairline bg-surface-deep p-3 text-[12.5px] leading-relaxed text-ink focus:border-brand/50 focus:outline-none"
+                className="w-full rounded-xl border border-hairline bg-surface-deep p-3 text-[13px] leading-relaxed text-ink focus:border-brand/50 focus:outline-none"
               />
-              <p className="text-[10.5px] text-ink-muted">{dict.summaries.editHint}</p>
+              <p className="text-[12px] text-ink-muted">{dict.summaries.editHint}</p>
             </div>
           </div>
         ) : (

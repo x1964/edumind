@@ -191,7 +191,7 @@ export function InstallAppCard({ dict }: { dict: AppMessages }) {
           <CardTitle>{dict.pwa.title}</CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="pt-5">
+      <CardContent className="pt-4">
         <div className="space-y-3">
           <div className="flex items-start gap-3">
             <span

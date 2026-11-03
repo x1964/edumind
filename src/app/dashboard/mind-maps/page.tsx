@@ -50,7 +50,7 @@ export default async function MindMapsPage({
       : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title={dict.mindMaps.title}
         description={dict.mindMaps.subtitle}
@@ -80,7 +80,7 @@ export default async function MindMapsPage({
             ) : (
               <Link
                 href="/dashboard/materials?upload=1"
-                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
+                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
               >
                 {dict.nav.materials}
               </Link>
@@ -88,12 +88,15 @@ export default async function MindMapsPage({
           }
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {maps.map((map) => {
             const nodes = Array.isArray(map.nodes) ? (map.nodes as MindMapNode[]) : [];
             const edges = Array.isArray(map.edges) ? (map.edges as MindMapEdge[]) : [];
             return (
-              <Card key={map.id} className="group flex flex-col">
+              <Card
+                key={map.id}
+                className="group flex flex-col border-hairline/60 bg-surface-raised/80"
+              >
                 <CardContent className="flex flex-1 flex-col p-4">
                   <div className="flex items-start justify-between gap-2">
                     <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
@@ -114,37 +117,37 @@ export default async function MindMapsPage({
                     <h2 className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink transition-colors group-hover:text-brand-ink">
                       {map.title}
                     </h2>
-                    <p className="mt-1 truncate text-[11px] text-ink-muted" dir="ltr">
+                    <p className="mt-1 truncate text-[12px] text-ink-muted" dir="auto">
                       {map.materials?.file_name ?? "—"}
                     </p>
                   </Link>
 
                   <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl border border-hairline/60 bg-black/[0.015] p-2.5">
                     <div>
-                      <p className="text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.mindMaps.nodes}
                       </p>
-                      <p className="text-[13px] font-semibold text-ink" dir="ltr">
+                      <p className="text-[13px] font-semibold text-ink" dir="auto">
                         {nodes.length}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.mindMaps.edges}
                       </p>
-                      <p className="text-[13px] font-semibold text-brand-ink" dir="ltr">
+                      <p className="text-[13px] font-semibold text-brand-ink" dir="auto">
                         {edges.length}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between gap-2 border-t border-hairline/60 pt-2.5">
-                    <span className="text-[10.5px] text-ink-muted">
+                  <div className="mt-auto flex items-center justify-between gap-2 border-t border-hairline/60 pt-2.5">
+                    <span className="text-[12px] text-ink-muted">
                       {formatDate(map.created_at, lang)}
                     </span>
                     <Link
                       href={`/dashboard/mind-maps/${map.id}`}
-                      className="inline-flex items-center gap-1 text-[11.5px] font-medium text-brand-ink hover:opacity-80"
+                      className="inline-flex items-center gap-1 text-[12px] font-medium text-brand-ink hover:opacity-80"
                     >
                       {dict.mindMaps.open}
                       <ArrowRight className="size-3 rtl:hidden" aria-hidden="true" />
@@ -159,7 +162,7 @@ export default async function MindMapsPage({
       )}
 
       {maps.length === 0 ? null : (
-        <p className="flex items-center justify-center gap-1.5 pb-2 text-[10.5px] text-ink-muted">
+        <p className="flex items-center justify-center gap-1.5 pb-2 text-[12px] text-ink-muted">
           <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
           {dict.progress.dataNote}
         </p>

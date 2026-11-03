@@ -129,7 +129,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
                   className="flex items-center justify-between rounded-xl px-3 py-3 text-[15px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04] hover:text-ink"
                 >
                   {link.label}
-                  <span className="text-[10px] tracking-[0.2em] text-ink-muted" aria-hidden="true">
+                  <span className="text-[12px] tracking-[0.2em] text-ink-muted" aria-hidden="true">
                     ↗
                   </span>
                 </a>

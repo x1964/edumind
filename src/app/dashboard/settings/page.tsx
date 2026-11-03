@@ -24,7 +24,7 @@ export default async function SettingsPage() {
     learning_interests: [],
     learning_goals: [],
     learning_language: lang,
-    theme: "dark",
+    theme: "light",
     notifications: {},
     onboarding_completed: true,
     created_at: user.created_at ?? new Date().toISOString(),
@@ -34,7 +34,7 @@ export default async function SettingsPage() {
   const profile = { ...fallback, ...(data ?? {}) } as Profile;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader title={dict.settings.title} description={dict.settings.subtitle} />
       <SettingsClient
         dict={dict}

@@ -160,13 +160,20 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 7);
 
+  const continueLearningMaterials = ((continueMaterials.data ?? []) as MaterialSummaryRow[]).filter(
+    (row) => row.status === "ready"
+  );
+
   return {
     materialCount: materialCount.count ?? 0,
     attemptCount: attemptCount.count ?? 0,
     sessionCount: sessionCount.count ?? 0,
     averageScore,
     weeklySeconds,
-    continueMaterials: (continueMaterials.data ?? []) as MaterialSummaryRow[],
+    continueMaterials:
+      continueLearningMaterials.length > 0
+        ? continueLearningMaterials
+        : ((recentMaterials.data ?? []) as MaterialSummaryRow[]),
     recentMaterials: (recentMaterials.data ?? []) as MaterialSummaryRow[],
     upcomingTasks: (upcomingTasks.data ?? []) as StudyTask[],
     recentAttempts: (recentAttempts.data ?? []) as QuizAttempt[],

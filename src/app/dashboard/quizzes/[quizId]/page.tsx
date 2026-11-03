@@ -98,11 +98,11 @@ export default async function QuizDetailPage({
           <h1 className="mt-2.5 break-words text-[24px] font-semibold leading-snug tracking-[-0.03em] text-ink">
             {quiz.title}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-ink-muted">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-ink-muted">
             {quiz.materials?.file_name ? (
               <span className="inline-flex min-w-0 items-center gap-1.5">
                 <FileText className="size-3 shrink-0" aria-hidden="true" />
-                <span className="truncate" dir="ltr">
+                <span className="truncate" dir="auto">
                   {quiz.materials.file_name}
                 </span>
               </span>
@@ -126,7 +126,7 @@ export default async function QuizDetailPage({
         />
       </header>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0">
           {activeAttempt ? (
             <QuizResults
@@ -140,7 +140,7 @@ export default async function QuizDetailPage({
           )}
         </div>
 
-        <aside className="space-y-5">
+        <aside className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -150,18 +150,18 @@ export default async function QuizDetailPage({
             </CardHeader>
             <CardContent className="space-y-2.5 pt-4">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-ink-muted">{dict.quizzes.attempts}</span>
-                <span className="text-[12.5px] font-semibold text-ink" dir="ltr">
+                <span className="text-[12px] text-ink-muted">{dict.quizzes.attempts}</span>
+                <span className="text-[13px] font-semibold text-ink" dir="auto">
                   {attempts.length}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-ink-muted">{dict.quizzes.bestScore}</span>
-                <span className="text-[12.5px] font-semibold text-brand-ink" dir="ltr">
+                <span className="text-[12px] text-ink-muted">{dict.quizzes.bestScore}</span>
+                <span className="text-[13px] font-semibold text-brand-ink" dir="auto">
                   {bestScore === null ? "—" : `${bestScore}%`}
                 </span>
               </div>
-              <p className="border-t border-hairline/60 pt-2.5 text-[10.5px] leading-relaxed text-ink-muted">
+              <p className="border-t border-hairline/60 pt-2.5 text-[12px] leading-relaxed text-ink-muted">
                 {dict.quizzes.reviewNote}
               </p>
             </CardContent>
@@ -176,7 +176,7 @@ export default async function QuizDetailPage({
             </CardHeader>
             <CardContent className="pt-4">
               {attempts.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-hairline px-3 py-4 text-center text-[11px] text-ink-muted">
+                <p className="rounded-lg border border-dashed border-hairline px-3 py-4 text-center text-[12px] text-ink-muted">
                   {dict.quizzes.noHistory}
                 </p>
               ) : (
@@ -188,14 +188,14 @@ export default async function QuizDetailPage({
                         className="flex items-center justify-between gap-2 rounded-lg border border-hairline/60 bg-black/[0.015] px-2.5 py-2 transition-colors hover:border-brand/30 hover:bg-brand/[0.04]"
                       >
                         <span className="min-w-0">
-                          <span className="block text-[10px] text-ink-muted">
+                          <span className="block text-[12px] text-ink-muted">
                             {formatDateTime(attempt.completed_at, lang)}
                           </span>
-                          <span className="block text-[10px] text-ink-muted">
+                          <span className="block text-[12px] text-ink-muted">
                             {attempt.correct_count}/{attempt.total_count}
                           </span>
                         </span>
-                        <span className="shrink-0 text-[12.5px] font-semibold text-ink" dir="ltr">
+                        <span className="shrink-0 text-[13px] font-semibold text-ink" dir="auto">
                           {attempt.score}%
                         </span>
                       </Link>

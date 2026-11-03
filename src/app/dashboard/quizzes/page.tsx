@@ -78,7 +78,7 @@ export default async function QuizzesPage({
       : null;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title={dict.quizzes.title}
         description={dict.quizzes.subtitle}
@@ -104,7 +104,7 @@ export default async function QuizzesPage({
             ) : (
               <Link
                 href="/dashboard/materials?upload=1"
-                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
+                className="inline-flex h-9 items-center rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
               >
                 {dict.nav.materials}
               </Link>
@@ -112,11 +112,14 @@ export default async function QuizzesPage({
           }
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {quizzes.map((quiz) => {
             const stats = statsByQuiz.get(quiz.id);
             return (
-              <Card key={quiz.id} className="group flex flex-col">
+              <Card
+                key={quiz.id}
+                className="group flex flex-col border-hairline/60 bg-surface-raised/80"
+              >
                 <CardContent className="flex flex-1 flex-col p-4">
                   <div className="flex items-start justify-between gap-2">
                     <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
@@ -140,27 +143,27 @@ export default async function QuizzesPage({
                     <h2 className="line-clamp-2 text-[14px] font-semibold leading-snug text-ink transition-colors group-hover:text-brand-ink">
                       {quiz.title}
                     </h2>
-                    <p className="mt-1 truncate text-[11px] text-ink-muted" dir="ltr">
+                    <p className="mt-1 truncate text-[12px] text-ink-muted" dir="auto">
                       {quiz.materials?.file_name ?? "—"}
                     </p>
                   </Link>
 
                   <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl border border-hairline/60 bg-black/[0.015] p-2.5">
                     <div>
-                      <p className="text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.quizzes.attempts}
                       </p>
-                      <p className="text-[13px] font-semibold text-ink" dir="ltr">
+                      <p className="text-[13px] font-semibold text-ink" dir="auto">
                         {stats?.count ?? 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <p className="text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.quizzes.bestScore}
                       </p>
                       <p
                         className="flex items-center gap-1 text-[13px] font-semibold text-brand-ink"
-                        dir="ltr"
+                        dir="auto"
                       >
                         <Target className="size-3" aria-hidden="true" />
                         {stats ? `${stats.best}%` : "—"}
@@ -168,13 +171,13 @@ export default async function QuizzesPage({
                     </div>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between gap-2 border-t border-hairline/60 pt-2.5">
-                    <span className="text-[10.5px] text-ink-muted">
+                  <div className="mt-auto flex items-center justify-between gap-2 border-t border-hairline/60 pt-2.5">
+                    <span className="text-[12px] text-ink-muted">
                       {stats ? formatDate(stats.last, lang) : formatDate(quiz.created_at, lang)}
                     </span>
                     <Link
                       href={`/dashboard/quizzes/${quiz.id}`}
-                      className="inline-flex items-center gap-1 text-[11.5px] font-medium text-brand-ink hover:opacity-80"
+                      className="inline-flex items-center gap-1 text-[12px] font-medium text-brand-ink hover:opacity-80"
                     >
                       {stats ? dict.common.open : dict.quizzes.start}
                       <ArrowRight className="size-3 rtl:hidden" aria-hidden="true" />
@@ -189,7 +192,7 @@ export default async function QuizzesPage({
       )}
 
       {quizzes.length === 0 ? null : (
-        <p className="flex items-center justify-center gap-1.5 pb-2 text-[10.5px] text-ink-muted">
+        <p className="flex items-center justify-center gap-1.5 pb-2 text-[12px] text-ink-muted">
           <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
           {dict.quizzes.reviewNote}
         </p>

@@ -134,24 +134,24 @@ export default async function ProgressPage() {
   const hasData = sessions.length > 0 || attempts.length > 0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader title={dict.progress.title} description={dict.progress.subtitle} />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map(({ label, value, note, icon: Icon }) => (
-          <Card key={label}>
+          <Card key={label} className="h-full border-hairline/60 bg-surface-raised/80">
             <CardContent className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-[11px] font-medium text-ink-muted">{label}</p>
+                  <p className="truncate text-[12px] font-medium text-ink-muted">{label}</p>
                   <p
                     className="em-num mt-2 text-[26px] font-semibold leading-none tracking-[-0.045em] text-ink"
-                    dir="ltr"
+                    dir="auto"
                   >
                     {value}
                   </p>
                   {note ? (
-                    <p className="mt-2.5 truncate border-t border-hairline/60 pt-2 text-[10.5px] text-ink-muted">
+                    <p className="mt-2.5 truncate border-t border-hairline/60 pt-2 text-[12px] text-ink-muted">
                       {note}
                     </p>
                   ) : null}
@@ -165,17 +165,17 @@ export default async function ProgressPage() {
         ))}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex items-center gap-2 rounded-2xl border border-hairline bg-surface-raised/70 px-4 py-3">
           <TrendingUp className="size-4 text-brand-ink" aria-hidden="true" />
-          <span className="text-[11.5px] text-ink-muted">{dict.progress.weeklyStudyTime}</span>
+          <span className="text-[12px] text-ink-muted">{dict.progress.weeklyStudyTime}</span>
           <span className="ms-auto text-[14px] font-semibold text-ink">
             {formatDuration(weeklySeconds, lang)}
           </span>
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-hairline bg-surface-raised/70 px-4 py-3">
           <Activity className="size-4 text-brand-ink" aria-hidden="true" />
-          <span className="text-[11.5px] text-ink-muted">{dict.progress.last7Days}</span>
+          <span className="text-[12px] text-ink-muted">{dict.progress.last7Days}</span>
           <span className="ms-auto text-[14px] font-semibold text-ink">
             {formatNumber(sessions.length, lang)}
           </span>
@@ -191,19 +191,19 @@ export default async function ProgressPage() {
       ) : (
         <>
           <div className="grid gap-5 xl:grid-cols-2">
-            <Card>
+            <Card className="border-hairline/60 bg-surface-raised/80">
               <CardHeader>
                 <div>
                   <CardTitle>{dict.progress.weeklyStudyTime}</CardTitle>
-                  <p className="mt-0.5 text-[11px] text-ink-muted">{dict.progress.last7Days}</p>
+                  <p className="mt-0.5 text-[12px] text-ink-muted">{dict.progress.last7Days}</p>
                 </div>
-                <span className="text-[11px] text-ink-muted">
+                <span className="text-[12px] text-ink-muted">
                   {formatNumber(Math.round(weeklySeconds / 60), lang)} {dict.progress.minutesShort}
                 </span>
               </CardHeader>
               <CardContent className="pt-4">
                 {weeklySeconds > 0 ? (
-                  <WeeklyStudyChart data={weeklyData} dict={dict} />
+                  <WeeklyStudyChart data={weeklyData} dict={dict} rtl={lang === "ar"} />
                 ) : (
                   <p className="rounded-xl border border-dashed border-hairline px-4 py-10 text-center text-[12px] text-ink-muted">
                     {dict.progress.emptyChart}
@@ -212,21 +212,21 @@ export default async function ProgressPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-hairline/60 bg-surface-raised/80">
               <CardHeader>
                 <div>
                   <CardTitle>{dict.progress.quizPerformance}</CardTitle>
-                  <p className="mt-0.5 text-[11px] text-ink-muted">{dict.progress.quizTrend}</p>
+                  <p className="mt-0.5 text-[12px] text-ink-muted">{dict.progress.quizTrend}</p>
                 </div>
                 {averageScore !== null ? (
-                  <span className="text-[11px] text-ink-muted" dir="ltr">
+                  <span className="text-[12px] text-ink-muted" dir="auto">
                     {averageScore}%
                   </span>
                 ) : null}
               </CardHeader>
               <CardContent className="pt-4">
                 {scoreData.length > 0 ? (
-                  <QuizScoreChart data={scoreData} dict={dict} />
+                  <QuizScoreChart data={scoreData} dict={dict} rtl={lang === "ar"} />
                 ) : (
                   <p className="rounded-xl border border-dashed border-hairline px-4 py-10 text-center text-[12px] text-ink-muted">
                     {dict.progress.noAttempts}
@@ -236,23 +236,23 @@ export default async function ProgressPage() {
             </Card>
           </div>
 
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <Card>
+          <div className="grid gap-5 xl:grid-cols-2">
+            <Card className="border-hairline/60 bg-surface-raised/80">
               <CardHeader>
                 <CardTitle>{dict.progress.materialsByType}</CardTitle>
-                <span className="text-[11px] text-ink-muted">
+                <span className="text-[12px] text-ink-muted">
                   {formatNumber(materials.length, lang)} {dict.common.files}
                 </span>
               </CardHeader>
               <CardContent className="pt-4">
-                <MaterialsTypeChart data={typeData} />
+                <MaterialsTypeChart data={typeData} rtl={lang === "ar"} />
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-hairline/60 bg-surface-raised/80">
               <CardHeader>
                 <CardTitle>{dict.quizzes.history}</CardTitle>
-                <span className="text-[11px] text-ink-muted">
+                <span className="text-[12px] text-ink-muted">
                   {formatNumber(attempts.length, lang)} {dict.quizzes.attempts}
                 </span>
               </CardHeader>
@@ -271,7 +271,7 @@ export default async function ProgressPage() {
                           key={`${attempt.completed_at}-${attempt.score}`}
                           className="flex items-center justify-between gap-2 rounded-lg border border-hairline/60 bg-black/[0.015] px-3 py-2"
                         >
-                          <span className="text-[11px] text-ink-muted">
+                          <span className="text-[12px] text-ink-muted">
                             {formatDate(attempt.completed_at, lang)}
                           </span>
                           <span
@@ -282,7 +282,7 @@ export default async function ProgressPage() {
                                   ? "text-amber-700"
                                   : "text-danger"
                             }`}
-                            dir="ltr"
+                            dir="auto"
                           >
                             {attempt.score}%
                           </span>
@@ -296,7 +296,7 @@ export default async function ProgressPage() {
         </>
       )}
 
-      <p className="flex items-center justify-center gap-1.5 pb-2 text-[10.5px] text-ink-muted">
+      <p className="flex items-center justify-center gap-1.5 pb-2 text-[12px] text-ink-muted">
         <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
         {dict.progress.dataNote}
       </p>

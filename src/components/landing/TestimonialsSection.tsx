@@ -32,7 +32,7 @@ function TestimonialCard({ testimonial, index }: { testimonial: TestimonialItem;
 
         <figcaption className="mt-5 flex items-center gap-3 border-t border-hairline/60 pt-4">
           <span
-            className="grid size-9 shrink-0 place-items-center rounded-full border border-brand/20 bg-brand/[0.08] text-[11px] font-semibold text-brand-ink"
+            className="grid size-9 shrink-0 place-items-center rounded-full border border-brand/20 bg-brand/[0.08] text-[12px] font-semibold text-brand-ink"
             aria-hidden="true"
           >
             {testimonial.avatar}
@@ -41,7 +41,7 @@ function TestimonialCard({ testimonial, index }: { testimonial: TestimonialItem;
             <span className="block truncate text-[13px] font-semibold text-ink">
               {testimonial.name}
             </span>
-            <span className="block truncate text-[11px] text-ink-muted">{testimonial.role}</span>
+            <span className="block truncate text-[12px] text-ink-muted">{testimonial.role}</span>
           </span>
         </figcaption>
       </figure>
@@ -84,7 +84,7 @@ export function TestimonialsSection({ dict }: { dict: Dictionary }) {
             </div>
             <span className="hidden h-8 w-px bg-hairline sm:block" aria-hidden="true" />
             <p className="text-[13px] text-ink-soft">
-              <span className="em-num me-2 text-[17px] font-semibold text-ink" dir="ltr">
+              <span className="em-num me-2 text-[17px] font-semibold text-ink" dir="auto">
                 {copy.ratingValue}
               </span>
               {copy.ratingNote}

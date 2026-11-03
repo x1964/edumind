@@ -16,13 +16,13 @@ export function Footer({ dict }: { dict: Dictionary }) {
               <Logo />
             </a>
             <p className="mt-4 text-[12px] leading-[1.9] text-ink-muted">{footer.description}</p>
-            <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3 py-1.5 text-[10px] text-ink-muted">
+            <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3 py-1.5 text-[12px] text-ink-muted">
               <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
               {footer.status}
             </span>
 
             <div className="mt-6">
-              <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted/70">
+              <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-muted/70">
                 {footer.socialTitle}
               </p>
               <div className="mt-2.5 flex items-center gap-2">
@@ -31,13 +31,13 @@ export function Footer({ dict }: { dict: Dictionary }) {
                     key={social}
                     title={`${social} — ${footer.soon}`}
                     aria-disabled="true"
-                    className="inline-flex h-8 items-center gap-1.5 rounded-full border border-hairline bg-black/[0.015] px-3 text-[10px] text-ink-muted/70"
+                    className="inline-flex h-8 items-center gap-1.5 rounded-full border border-hairline bg-black/[0.015] px-3 text-[12px] text-ink-muted/70"
                   >
                     <span aria-hidden="true" className="font-semibold">
                       {social === "X" ? "𝕏" : social === "LinkedIn" ? "in" : "▶"}
                     </span>
                     {social}
-                    <span className="rounded bg-black/[0.04] px-1 py-px text-[8px] text-ink-muted/60">
+                    <span className="rounded bg-black/[0.04] px-1 py-px text-[12px] text-ink-muted/60">
                       {footer.soon}
                     </span>
                   </span>
@@ -108,7 +108,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10.5px] text-ink-muted/80">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[12px] text-ink-muted/80">
             <span>{footer.rights}</span>
             <span
               className="hidden size-0.5 rounded-full bg-hairline-strong sm:block"
@@ -117,7 +117,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
             <span>{footer.madeFor}</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 text-[10px] text-ink-muted/70">
+            <span className="inline-flex items-center gap-1.5 text-[12px] text-ink-muted/70">
               <Sparkles className="size-2.5 text-brand-ink/60" aria-hidden="true" />
               Learn smarter. Understand deeper.
             </span>
@@ -138,7 +138,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
 function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h3 className="text-[10px] font-medium uppercase tracking-[0.18em] text-ink-muted/70">
+      <h3 className="text-[12px] font-medium uppercase tracking-[0.18em] text-ink-muted/70">
         {title}
       </h3>
       <ul className="mt-3.5 space-y-2.5">{children}</ul>

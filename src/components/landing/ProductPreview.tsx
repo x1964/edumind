@@ -29,11 +29,11 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                 <span className="size-2 rounded-full bg-black/10" />
               </div>
               <span className="h-3 w-px bg-hairline" aria-hidden="true" />
-              <span className="font-mono text-[10px] tracking-[0.12em] text-ink-muted uppercase">
+              <span className="font-mono text-[12px] tracking-[0.12em] text-ink-muted uppercase">
                 edumind / workspace
               </span>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-black/[0.03] px-2 py-1 text-[9.5px] font-medium text-ink-soft">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-black/[0.03] px-2 py-1 text-[12px] font-medium text-ink-soft">
               <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
               {p.demoNote}
             </span>
@@ -49,18 +49,18 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-[13px] font-medium text-ink" dir="ltr">
+                      <p className="truncate text-[13px] font-medium text-ink" dir="auto">
                         {p.fileName}
                       </p>
-                      <p className="mt-0.5 truncate text-[10.5px] text-ink-muted">{p.fileMeta}</p>
+                      <p className="mt-0.5 truncate text-[12px] text-ink-muted">{p.fileMeta}</p>
                     </div>
-                    <span className="shrink-0 font-mono text-[10px] text-ink-muted" dir="ltr">
+                    <span className="shrink-0 font-mono text-[12px] text-ink-muted" dir="auto">
                       {p.fileSize}
                     </span>
                   </div>
 
                   <div className="mt-3">
-                    <div className="mb-1.5 flex items-center justify-between gap-2 text-[10.5px]">
+                    <div className="mb-1.5 flex items-center justify-between gap-2 text-[12px]">
                       <span className="inline-flex items-center gap-1.5 text-ink-soft">
                         <Sparkles className="size-3 text-brand-ink" aria-hidden="true" />
                         {p.status}
@@ -78,12 +78,12 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                       <div className="absolute inset-y-0 start-0 w-[68%] rounded-full bg-[linear-gradient(90deg,#16a875,#059669)]" />
                       <div className="absolute inset-y-0 start-[66%] w-3 rounded-full bg-[#b8ffe4] blur-[3px]" />
                     </div>
-                    <p className="mt-2 truncate text-[10px] text-ink-muted">{p.statusNote}</p>
+                    <p className="mt-2 truncate text-[12px] text-ink-muted">{p.statusNote}</p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                       {p.steps.map((step, index) => (
                         <span
                           key={step}
-                          className="inline-flex items-center gap-1 rounded-full border border-hairline/80 bg-black/[0.02] px-2 py-0.5 text-[9.5px] text-ink-muted"
+                          className="inline-flex items-center gap-1 rounded-full border border-hairline/80 bg-black/[0.02] px-2 py-0.5 text-[12px] text-ink-muted"
                         >
                           {index < 2 ? (
                             <Check className="size-2.5 text-brand-ink" aria-hidden="true" />
@@ -109,17 +109,15 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                   <span className="grid size-6 place-items-center rounded-lg bg-brand/12 text-brand-ink">
                     <MessageSquareText className="size-3.5" aria-hidden="true" />
                   </span>
-                  <span className="text-[11px] font-medium text-ink">{p.tutorLabel}</span>
-                  <span className="ms-auto inline-flex items-center gap-1 text-[9px] text-brand-ink/90">
+                  <span className="text-[12px] font-medium text-ink">{p.tutorLabel}</span>
+                  <span className="ms-auto inline-flex items-center gap-1 text-[12px] text-brand-ink/90">
                     <span className="size-1 rounded-full bg-brand" aria-hidden="true" />
                     AI
                   </span>
                 </div>
-                <p className="mt-2.5 text-[11.5px] leading-[1.85] text-ink-soft">
-                  {p.tutorMessage}
-                </p>
+                <p className="mt-2.5 text-[12px] leading-[1.85] text-ink-soft">{p.tutorMessage}</p>
                 <div className="mt-auto flex items-center gap-2 rounded-xl border border-hairline/70 bg-surface-deep px-2.5 py-2">
-                  <span className="min-w-0 flex-1 truncate text-[10px] text-ink-muted">
+                  <span className="min-w-0 flex-1 truncate text-[12px] text-ink-muted">
                     {p.tutorPrompt}
                   </span>
                   <span className="grid size-5 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand-ink">
@@ -135,16 +133,16 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                     <span className="grid size-6 place-items-center rounded-lg bg-black/[0.05] text-ink-soft">
                       <ListChecks className="size-3.5" aria-hidden="true" />
                     </span>
-                    <span className="text-[11px] font-medium text-ink">{p.summaryLabel}</span>
+                    <span className="text-[12px] font-medium text-ink">{p.summaryLabel}</span>
                   </div>
-                  <p className="mt-2 text-[9.5px] font-medium uppercase tracking-[0.12em] text-ink-muted">
+                  <p className="mt-2 text-[12px] font-medium uppercase tracking-[0.12em] text-ink-muted">
                     {p.summaryTitle}
                   </p>
                   <ul className="mt-1.5 space-y-1.5">
                     {p.summaryPoints.map((point) => (
                       <li
                         key={point}
-                        className="flex gap-1.5 text-[10px] leading-[1.65] text-ink-soft"
+                        className="flex gap-1.5 text-[12px] leading-[1.65] text-ink-soft"
                       >
                         <span
                           className="mt-[5px] size-1 shrink-0 rounded-full bg-brand/70"
@@ -159,20 +157,18 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                 {/* Quiz */}
                 <div className="rounded-2xl border border-brand/20 bg-[linear-gradient(145deg,rgba(5,150,105,0.07),rgba(5,150,105,0.06))] p-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-medium text-ink">{p.quizLabel}</span>
-                    <span className="font-mono text-[9px] text-ink-muted">{p.quizFooter}</span>
+                    <span className="text-[12px] font-medium text-ink">{p.quizLabel}</span>
+                    <span className="font-mono text-[12px] text-ink-muted">{p.quizFooter}</span>
                   </div>
-                  <p className="mt-1.5 text-[10.5px] leading-[1.6] text-ink-soft">
-                    {p.quizQuestion}
-                  </p>
+                  <p className="mt-1.5 text-[12px] leading-[1.6] text-ink-soft">{p.quizQuestion}</p>
                   <div className="mt-2 space-y-1">
                     {p.quizOptions.map((option, index) => (
                       <div
                         key={option}
                         className={
                           index === p.quizCorrectIndex
-                            ? "flex items-center gap-1.5 rounded-lg border border-brand/30 bg-brand/[0.08] px-2 py-1 text-[9.5px] text-brand-ink"
-                            : "flex items-center gap-1.5 rounded-lg border border-hairline/60 bg-black/[0.015] px-2 py-1 text-[9.5px] text-ink-muted"
+                            ? "flex items-center gap-1.5 rounded-lg border border-brand/30 bg-brand/[0.08] px-2 py-1 text-[12px] text-brand-ink"
+                            : "flex items-center gap-1.5 rounded-lg border border-hairline/60 bg-black/[0.015] px-2 py-1 text-[12px] text-ink-muted"
                         }
                       >
                         <span
@@ -218,14 +214,14 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
               </svg>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[10.5px] font-medium text-ink-soft">
+                  <span className="text-[12px] font-medium text-ink-soft">
                     {p.understandingLabel}
                   </span>
-                  <span className="font-mono text-[11px] text-brand-ink">
+                  <span className="font-mono text-[12px] text-brand-ink">
                     {p.understandingValue}
                   </span>
                 </div>
-                <p className="mt-0.5 truncate text-[9.5px] text-ink-muted">{p.demoNote}</p>
+                <p className="mt-0.5 truncate text-[12px] text-ink-muted">{p.demoNote}</p>
               </div>
               <div className="hidden items-center gap-1 sm:flex" aria-hidden="true">
                 {[34, 52, 44, 68, 58, 76, 88].map((height, index) => (
@@ -246,9 +242,9 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
             <span className="grid size-6 place-items-center rounded-lg bg-brand/12 text-brand-ink">
               <Route className="size-3.5" aria-hidden="true" />
             </span>
-            <span className="text-[10px] font-medium text-ink">{p.floatPlan}</span>
+            <span className="text-[12px] font-medium text-ink">{p.floatPlan}</span>
           </div>
-          <p className="mt-1.5 text-[9px] text-ink-muted">{p.floatPlanMeta}</p>
+          <p className="mt-1.5 text-[12px] text-ink-muted">{p.floatPlanMeta}</p>
           <div className="mt-2 flex gap-1" aria-hidden="true">
             <span className="h-1 flex-1 rounded-full bg-brand/70" />
             <span className="h-1 flex-1 rounded-full bg-brand/40" />
@@ -261,13 +257,13 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
             <Sparkles className="size-3" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-[10px] font-medium text-ink">{p.floatContext}</p>
-            <p className="text-[9px] text-ink-muted">{p.floatContextMeta}</p>
+            <p className="text-[12px] font-medium text-ink">{p.floatContext}</p>
+            <p className="text-[12px] text-ink-muted">{p.floatContextMeta}</p>
           </div>
         </div>
       </div>
 
-      <figcaption className="mt-4 flex items-center justify-center gap-2 text-[11px] text-ink-muted">
+      <figcaption className="mt-4 flex items-center justify-center gap-2 text-[12px] text-ink-muted">
         <span className="size-1 rounded-full bg-brand/60" aria-hidden="true" />
         {p.demoNote}
       </figcaption>

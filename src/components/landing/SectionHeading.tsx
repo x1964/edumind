@@ -30,7 +30,7 @@ export function SectionHeading({
         className
       )}
     >
-      <span className="inline-flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
+      <span className="inline-flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.22em] text-brand-ink/90">
         <span className="h-px w-6 bg-brand/60" aria-hidden="true" />
         {eyebrow}
       </span>

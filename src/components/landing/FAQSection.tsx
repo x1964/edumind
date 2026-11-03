@@ -28,7 +28,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
             </Reveal>
             <Reveal delay={0.08} className="mt-8">
               <div className="rounded-2xl border border-hairline bg-surface-raised/40 p-5">
-                <div className="flex items-center gap-2 text-[11px] font-medium text-ink-soft">
+                <div className="flex items-center gap-2 text-[12px] font-medium text-ink-soft">
                   <span className="grid size-6 place-items-center rounded-lg bg-brand/10 text-brand-ink">
                     <Sparkles className="size-3" aria-hidden="true" />
                   </span>
@@ -37,7 +37,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
                 <CtaLink
                   href="#start"
                   variant="secondary"
-                  className="mt-3 h-9 w-full text-[12.5px]"
+                  className="mt-3 h-9 w-full text-[13px]"
                   withArrow
                 >
                   {dict.nav.getStarted}
@@ -71,7 +71,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
                       >
                         <span
                           className={cn(
-                            "mt-0.5 font-mono text-[10px] tracking-[0.12em] transition-colors",
+                            "mt-0.5 font-mono text-[12px] tracking-[0.12em] transition-colors",
                             isOpen ? "text-brand-ink" : "text-ink-muted/60"
                           )}
                         >
@@ -112,7 +112,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
                           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                           className="overflow-hidden"
                         >
-                          <p className="max-w-2xl px-1 pb-5 ps-8 text-[12.5px] leading-[1.95] text-ink-soft sm:ps-9 sm:text-[13px]">
+                          <p className="max-w-2xl px-1 pb-5 ps-8 text-[13px] leading-[1.95] text-ink-soft sm:ps-9 sm:text-[13px]">
                             {item.answer}
                           </p>
                         </motion.div>

@@ -54,7 +54,7 @@ export function QuizRunner({
 
   if (!question) {
     return (
-      <p className="rounded-2xl border border-dashed border-hairline px-5 py-10 text-center text-[12.5px] text-ink-muted">
+      <p className="rounded-2xl border border-dashed border-hairline px-5 py-10 text-center text-[13px] text-ink-muted">
         {dict.quizzes.notFound}
       </p>
     );
@@ -66,7 +66,7 @@ export function QuizRunner({
   return (
     <div className="rounded-2xl border border-hairline bg-surface-raised/80">
       <div className="border-b border-hairline px-5 py-3.5">
-        <div className="flex items-center justify-between gap-3 text-[11.5px] text-ink-muted">
+        <div className="flex items-center justify-between gap-3 text-[12px] text-ink-muted">
           <span>
             {dict.quizzes.questionOf
               .replace("{current}", String(current + 1))
@@ -83,7 +83,7 @@ export function QuizRunner({
       </div>
 
       <div className="p-5">
-        <p className="text-[10.5px] font-medium uppercase tracking-[0.12em] text-brand-ink">
+        <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-brand-ink">
           {question.type === "multiple_choice"
             ? "MCQ"
             : question.type === "true_false"
@@ -145,7 +145,7 @@ export function QuizRunner({
         </div>
 
         {error ? (
-          <p className="mt-3 rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[11.5px] text-danger">
+          <p className="mt-3 rounded-lg border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3 py-2 text-[12px] text-danger">
             {error}
           </p>
         ) : null}
@@ -167,7 +167,7 @@ export function QuizRunner({
               type="button"
               onClick={() => setCurrent((value) => Math.min(value + 1, questions.length - 1))}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
             >
               {dict.quizzes.next}
               <ArrowRight className="size-3.5 rtl:hidden" aria-hidden="true" />
@@ -178,7 +178,7 @@ export function QuizRunner({
               type="button"
               onClick={submit}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />

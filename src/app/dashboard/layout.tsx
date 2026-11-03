@@ -54,14 +54,14 @@ export default async function DashboardLayout({ children }: { children: ReactNod
               <p className="text-[13.5px] font-semibold text-ink">
                 {dict.onboarding.incompleteBannerTitle}
               </p>
-              <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-soft">
+              <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">
                 {dict.onboarding.incompleteBannerBody}
               </p>
             </div>
           </div>
           <Link
             href="/onboarding?revisit=1"
-            className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
+            className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
           >
             {dict.onboarding.incompleteBannerCta}
             <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />

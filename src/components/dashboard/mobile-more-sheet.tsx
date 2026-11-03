@@ -89,7 +89,7 @@ export function MobileMoreSheet({
         </div>
 
         <div className="overflow-y-auto px-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
-          <p className="px-1 pb-2 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+          <p className="px-1 pb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
             {dict.nav.tools}
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -113,34 +113,34 @@ export function MobileMoreSheet({
             })}
           </div>
 
-          <p className="mt-5 px-1 pb-2 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+          <p className="mt-5 px-1 pb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
             {dict.nav.account}
           </p>
           <div className="overflow-hidden rounded-2xl border border-hairline/80 bg-black/[0.015]">
             <Link
               href="/dashboard/settings"
               onClick={onClose}
-              className="flex items-center gap-2.5 border-b border-hairline/70 px-3.5 py-3 text-[12.5px] text-ink-soft transition-colors hover:bg-black/[0.04] hover:text-ink"
+              className="flex items-center gap-2.5 border-b border-hairline/70 px-3.5 py-3 text-[13px] text-ink-soft transition-colors hover:bg-black/[0.04] hover:text-ink"
             >
               <Settings className="size-4 shrink-0" aria-hidden="true" />
               {dict.nav.settings}
             </Link>
 
             <div className="flex items-center justify-between border-b border-hairline/70 px-3.5 py-2.5">
-              <span className="text-[12.5px] text-ink-soft">{dict.common.language}</span>
+              <span className="text-[13px] text-ink-soft">{dict.common.language}</span>
               <AppLanguageSwitcher lang={lang} label={dict.common.language} compact />
             </div>
 
             <InstallAppMenuItem
               dict={dict}
-              className="gap-2.5 rounded-none border-b border-hairline/70 px-3.5 py-3 text-[12.5px]"
+              className="gap-2.5 rounded-none border-b border-hairline/70 px-3.5 py-3 text-[13px]"
               iconClassName="size-4 shrink-0"
             />
 
             <form action={signOutAction}>
               <button
                 type="submit"
-                className="flex w-full items-center gap-2.5 px-3.5 py-3 text-start text-[12.5px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-danger"
+                className="flex w-full items-center gap-2.5 px-3.5 py-3 text-start text-[13px] text-ink-soft transition-colors hover:bg-[#ef4444]/10 hover:text-danger"
               >
                 <LogOut className="size-4 shrink-0" aria-hidden="true" />
                 {dict.common.signOut}

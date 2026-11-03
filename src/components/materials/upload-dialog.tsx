@@ -213,7 +213,7 @@ export function UploadDialog({
               <UploadCloud className="size-5" aria-hidden="true" />
             </div>
             <p className="mt-3 text-[13.5px] font-medium text-ink">{dict.materials.dropTitle}</p>
-            <p className="mt-1 text-[11.5px] text-ink-muted">{dict.materials.dropBody}</p>
+            <p className="mt-1 text-[12px] text-ink-muted">{dict.materials.dropBody}</p>
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
@@ -239,10 +239,10 @@ export function UploadDialog({
                   <FileUp className="size-4" aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[12.5px] font-medium text-ink" dir="ltr">
+                  <p className="truncate text-[13px] font-medium text-ink" dir="auto">
                     {file.name}
                   </p>
-                  <p className="text-[10.5px] text-ink-muted">
+                  <p className="text-[12px] text-ink-muted">
                     {formatBytes(file.size, lang)}
                     {stage === "ready"
                       ? ` · ${wordCount.toLocaleString()} ${dict.common.words}`
@@ -259,7 +259,7 @@ export function UploadDialog({
               </div>
 
               {stage === "extracting" ? (
-                <p className="mt-2 text-[11px] text-ink-muted">{dict.materials.processing}</p>
+                <p className="mt-2 text-[12px] text-ink-muted">{dict.materials.processing}</p>
               ) : null}
 
               {stage === "uploading" ? (
@@ -270,14 +270,14 @@ export function UploadDialog({
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-[10px] text-ink-muted" dir="ltr">
+                  <p className="mt-1 text-[12px] text-ink-muted" dir="auto">
                     {progress}% · {dict.materials.uploading}
                   </p>
                 </div>
               ) : null}
 
               {stage === "processing" ? (
-                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-muted">
+                <p className="mt-2 flex items-center gap-1.5 text-[12px] text-ink-muted">
                   <LoaderCircle className="size-3 animate-spin text-brand-ink" aria-hidden="true" />
                   {dict.materials.processing}
                 </p>

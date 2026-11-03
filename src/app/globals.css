@@ -87,7 +87,8 @@
   --em-accent-soft: #d1fae5;
   --em-text: #0f172a;
   --em-text-2: #334155;
-  --em-muted: #64748b;
+  /* Slightly darker than slate-500: keeps 5:1+ contrast on tinted surfaces. */
+  --em-muted: #52606f;
   --em-border: #e2e8f0;
   --em-border-strong: #cbd5e1;
 
@@ -184,16 +185,16 @@ html[lang="ar"] {
     width: 100%;
     max-width: 1240px;
     margin-inline: auto;
-    padding-inline: 1.25rem;
+    padding-inline: 1.5rem;
   }
   @media (min-width: 640px) {
     .em-container {
-      padding-inline: 2rem;
+      padding-inline: 2.25rem;
     }
   }
   @media (min-width: 1024px) {
     .em-container {
-      padding-inline: 2.5rem;
+      padding-inline: 3rem;
     }
   }
 
@@ -294,6 +295,19 @@ html[lang="ar"] {
     touch-action: manipulation;
     -webkit-touch-callout: none;
   }
+
+  /* Long file names and pasted URLs: wrap instead of overflowing. */
+  .em-break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Bilingual fallback blocks (error / 404 pages). The active language is
+     resolved by the bootstrap script in the root layout before paint. */
+  html[lang="ar"] .em-lang-en,
+  html[lang="en"] .em-lang-ar {
+    display: none;
+  }
 }
 
 @keyframes em-pulse-soft {
@@ -321,70 +335,31 @@ html[lang="ar"] {
   }
 }
 
-/* Enhanced smooth scrolling */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/* Custom scrollbar */
+/* Custom scrollbar (decorative only; native behaviour is preserved). */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--em-bg-2);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--em-border-strong);
-  border-radius: 4px;
+  border: 3px solid var(--em-bg);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--em-accent);
+  background: var(--em-muted);
 }
 
-/* Focus visible enhancement */
-:focus-visible {
-  outline: 2px solid var(--em-accent);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
-}
-
-/* Button press effect */
-button:active {
-  transform: scale(0.98);
-}
-
-/* Link hover effect */
-a {
-  transition:
-    color 0.2s ease,
-    text-decoration-color 0.2s ease;
-}
-
-/* Enhanced interactive elements */
+/* Interactive elements that look interactive should be interactive. */
 a,
-button {
+button,
+[role="button"] {
   cursor: pointer;
-}
-
-/* Input focus animation */
-input:focus,
-textarea:focus,
-select:focus {
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-/* Text selection enhancement */
-::selection {
-  background: color-mix(in oklab, var(--em-accent) 28%, transparent);
-  color: var(--em-text);
 }
 
 /* Safe area for mobile devices with notches.

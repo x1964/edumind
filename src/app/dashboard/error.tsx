@@ -20,16 +20,25 @@ export default function DashboardError({
         <div className="mx-auto grid size-11 place-items-center rounded-2xl border border-[#ef4444]/25 bg-[#ef4444]/10 text-danger">
           <AlertTriangle className="size-5" aria-hidden="true" />
         </div>
-        <h2 className="mt-3 text-[15px] font-semibold text-ink">تعذّر تحميل هذا القسم</h2>
-        <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">
-          حدث خطأ غير متوقع. بياناتك لم تتأثر. جرّب إعادة التحميل.
+        <h2 className="mt-3 text-[15px] font-semibold text-ink">
+          <span className="em-lang-ar">حدث خطأ غير متوقع. حاول مرة أخرى.</span>
+          <span className="em-lang-en">Something went wrong. Please try again.</span>
+        </h2>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+          <span className="em-lang-ar">
+            عذرًا، تعذر تحميل صفحة لوحة التحكم. حاول مرة أخرى لاحقًا.
+          </span>
+          <span className="em-lang-en">
+            We couldn&apos;t load your dashboard. Please try again later.
+          </span>
         </p>
         <button
           type="button"
           onClick={reset}
           className="mt-4 h-9 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
         >
-          إعادة المحاولة
+          <span className="em-lang-ar">إعادة المحاولة</span>
+          <span className="em-lang-en">Try again</span>
         </button>
       </div>
     </div>

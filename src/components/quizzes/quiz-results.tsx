@@ -27,35 +27,35 @@ export function QuizResults({
     <div className="space-y-5">
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-brand/25 bg-brand/[0.07] p-4 sm:col-span-1">
-          <p className="text-[10.5px] uppercase tracking-[0.12em] text-brand-ink">
+          <p className="text-[12px] uppercase tracking-[0.12em] text-brand-ink">
             {dict.quizzes.score}
           </p>
           <p
             className="mt-1.5 text-[40px] font-semibold leading-none tracking-[-0.05em] text-ink"
-            dir="ltr"
+            dir="auto"
           >
             {attempt.score}%
           </p>
-          <p className="mt-2 text-[11px] text-ink-muted">
+          <p className="mt-2 text-[12px] text-ink-muted">
             {dict.quizzes.correct}: {attempt.correct_count} / {attempt.total_count}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-3">
           <div className="rounded-2xl border border-hairline bg-surface-raised/80 p-4">
-            <p className="text-[10.5px] text-ink-muted">{dict.quizzes.totalQuestions}</p>
-            <p className="mt-1 text-[22px] font-semibold text-ink" dir="ltr">
+            <p className="text-[12px] text-ink-muted">{dict.quizzes.totalQuestions}</p>
+            <p className="mt-1 text-[22px] font-semibold text-ink" dir="auto">
               {attempt.total_count}
             </p>
           </div>
           <div className="rounded-2xl border border-hairline bg-surface-raised/80 p-4">
-            <p className="text-[10.5px] text-ink-muted">{dict.quizzes.correct}</p>
-            <p className="mt-1 text-[22px] font-semibold text-brand-ink" dir="ltr">
+            <p className="text-[12px] text-ink-muted">{dict.quizzes.correct}</p>
+            <p className="mt-1 text-[22px] font-semibold text-brand-ink" dir="auto">
               {attempt.correct_count}
             </p>
           </div>
           <div className="rounded-2xl border border-hairline bg-surface-raised/80 p-4">
-            <p className="text-[10.5px] text-ink-muted">{dict.quizzes.incorrect}</p>
-            <p className="mt-1 text-[22px] font-semibold text-danger" dir="ltr">
+            <p className="text-[12px] text-ink-muted">{dict.quizzes.incorrect}</p>
+            <p className="mt-1 text-[22px] font-semibold text-danger" dir="auto">
               {attempt.total_count - attempt.correct_count}
             </p>
           </div>
@@ -66,7 +66,7 @@ export function QuizResults({
         <h2 className="text-[15px] font-semibold text-ink">{dict.quizzes.review}</h2>
         <Link
           href={`/dashboard/quizzes/${quizId}`}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[11.5px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
         >
           <RefreshCw className="size-3.5" aria-hidden="true" />
           {dict.quizzes.retake}
@@ -101,16 +101,16 @@ export function QuizResults({
                   )}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+                  <p className="text-[12px] font-medium uppercase tracking-wide text-ink-muted">
                     {dict.common.questions} {index + 1}
                   </p>
                   <p className="mt-1 break-words whitespace-pre-wrap text-[13px] font-medium leading-relaxed text-ink [overflow-wrap:anywhere]">
                     {question.prompt}
                   </p>
 
-                  <div className="mt-2.5 grid gap-1.5 text-[11.5px] sm:grid-cols-2">
+                  <div className="mt-2.5 grid gap-1.5 text-[12px] sm:grid-cols-2">
                     <div className="rounded-lg border border-hairline/70 bg-black/[0.02] px-2.5 py-1.5">
-                      <span className="block text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <span className="block text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.quizzes.yourAnswer}
                       </span>
                       <span className="block break-words text-ink-soft">
@@ -118,7 +118,7 @@ export function QuizResults({
                       </span>
                     </div>
                     <div className="rounded-lg border border-hairline/70 bg-black/[0.02] px-2.5 py-1.5">
-                      <span className="block text-[9.5px] uppercase tracking-wide text-ink-muted">
+                      <span className="block text-[12px] uppercase tracking-wide text-ink-muted">
                         {dict.quizzes.correctAnswer}
                       </span>
                       <span className="block break-words text-brand-ink">
@@ -128,7 +128,7 @@ export function QuizResults({
                   </div>
 
                   {result?.explanation ? (
-                    <p className="mt-2 text-[11.5px] leading-relaxed text-ink-muted">
+                    <p className="mt-2 text-[12px] leading-relaxed text-ink-muted">
                       <span className="font-medium text-ink-soft">
                         {dict.quizzes.explanation}:{" "}
                       </span>

@@ -170,11 +170,11 @@ export function OnboardingFlow({
     <div className="mx-auto flex w-full max-w-2xl flex-col">
       <div className="mb-8">
         <div className="flex items-center justify-between gap-4">
-          <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-ink-muted">
+          <span className="inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-ink-muted">
             <Sparkles className="size-3.5 text-brand-ink" aria-hidden="true" />
             EduMind
           </span>
-          <span className="text-[11.5px] text-ink-muted">
+          <span className="text-[12px] text-ink-muted">
             {dict.onboarding.stepOf
               .replace("{current}", String(step + 1))
               .replace("{total}", String(totalSteps))}
@@ -191,7 +191,7 @@ export function OnboardingFlow({
       {error ? (
         <div
           role="alert"
-          className="mb-5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-4 py-3 text-[12.5px] text-danger"
+          className="mb-5 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.07] px-4 py-3 text-[13px] text-danger"
         >
           {error}
         </div>
@@ -290,7 +290,7 @@ export function OnboardingFlow({
                       )}
                       aria-hidden="true"
                     />
-                    <span className="truncate text-[12.5px] font-medium">
+                    <span className="truncate text-[13px] font-medium">
                       {
                         dict.onboarding[
                           `subject_${id}` as keyof AppMessages["onboarding"]
@@ -386,7 +386,7 @@ export function OnboardingFlow({
                       <span className="block text-[15px] font-semibold text-ink">
                         {code === "ar" ? dict.common.arabic : dict.common.english}
                       </span>
-                      <span className="mt-0.5 block text-[11.5px] text-ink-muted">
+                      <span className="mt-0.5 block text-[12px] text-ink-muted">
                         {code === "ar" ? "RTL" : "LTR"}
                       </span>
                     </span>
@@ -493,7 +493,7 @@ function StepHeading({ title, body }: { title: string; body: string }) {
 
 function ReviewRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5 border-b border-hairline/70 pb-3 text-[12.5px] last:border-b-0 last:pb-0 sm:flex-row sm:items-start sm:gap-3">
+    <div className="flex flex-col gap-1.5 border-b border-hairline/70 pb-3 text-[13px] last:border-b-0 last:pb-0 sm:flex-row sm:items-start sm:gap-3">
       <span className="flex items-center gap-2 font-medium text-ink-muted sm:w-40 sm:shrink-0">
         <Check className="size-3.5 text-brand-ink" aria-hidden="true" />
         {label}
@@ -509,7 +509,7 @@ function ChipList({ items }: { items: string[] }) {
       {items.map((item) => (
         <span
           key={item}
-          className="rounded-full border border-brand/20 bg-brand/[0.07] px-2.5 py-0.5 text-[11.5px] font-medium text-brand-ink"
+          className="rounded-full border border-brand/20 bg-brand/[0.07] px-2.5 py-0.5 text-[12px] font-medium text-brand-ink"
         >
           {item}
         </span>

@@ -50,9 +50,9 @@ export default async function MindMapDetailPage({
         </Link>
         <div className="flex items-center gap-2">
           {map.materials?.file_name ? (
-            <span className="inline-flex min-w-0 items-center gap-1.5 text-[11px] text-ink-muted">
+            <span className="inline-flex min-w-0 items-center gap-1.5 text-[12px] text-ink-muted">
               <FileText className="size-3 shrink-0" aria-hidden="true" />
-              <span className="max-w-[220px] truncate" dir="ltr">
+              <span className="max-w-[220px] truncate" dir="auto">
                 {map.materials.file_name}
               </span>
             </span>
@@ -76,7 +76,7 @@ export default async function MindMapDetailPage({
         </span>
         <div>
           <h1 className="text-[15px] font-semibold text-ink">{dict.mindMaps.title}</h1>
-          <p className="text-[10.5px] text-ink-muted">{dict.mindMaps.source}</p>
+          <p className="text-[12px] text-ink-muted">{dict.mindMaps.source}</p>
         </div>
       </header>
 

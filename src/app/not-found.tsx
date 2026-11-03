@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { Compass } from "lucide-react";
 import { Logo } from "@/components/landing/Logo";
+import { getAppMessages } from "@/lib/i18n/app-server";
 
-export default function NotFound() {
+export const metadata = {
+  title: "Page not found",
+};
+
+export default async function NotFound() {
+  const { dict } = await getAppMessages();
+
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
       <div className="border-b border-hairline/60">
@@ -18,22 +25,22 @@ export default function NotFound() {
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-muted">
             404
           </p>
-          <h1 className="mt-1 text-lg font-semibold text-ink">الصفحة غير موجودة</h1>
+          <h1 className="mt-1 text-lg font-semibold text-ink">{dict.errors.notFound}</h1>
           <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
-            الرابط الذي فتحته غير صحيح أو تم نقل الصفحة. Page not found.
+            {dict.errors.notFoundBody}
           </p>
           <div className="mt-5 flex justify-center gap-2">
             <Link
               href="/"
-              className="inline-flex h-9 items-center rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
             >
-              الصفحة الرئيسية
+              {dict.errors.goHome}
             </Link>
             <Link
               href="/dashboard"
-              className="inline-flex h-9 items-center rounded-xl border border-hairline px-4 text-[13px] font-medium text-ink-soft hover:bg-black/[0.04]"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-hairline px-4 text-[13px] font-medium text-ink-soft hover:bg-black/[0.04]"
             >
-              لوحة التحكم
+              {dict.common.backToDashboard}
             </Link>
           </div>
         </div>

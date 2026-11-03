@@ -31,9 +31,11 @@ const ACCENT = "#059669";
 export function WeeklyStudyChart({
   data,
   dict,
+  rtl = false,
 }: {
   data: Array<{ label: string; minutes: number }>;
   dict: AppMessages;
+  rtl?: boolean;
 }) {
   return (
     <div className="h-56 w-full" dir="ltr">
@@ -48,11 +50,12 @@ export function WeeklyStudyChart({
           <CartesianGrid stroke={GRID} strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="label"
-            tick={{ fill: TICK, fontSize: 10 }}
+            tick={{ fill: TICK, fontSize: 11 }}
             axisLine={{ stroke: "#e5e7eb" }}
             tickLine={false}
+            reversed={rtl}
           />
-          <YAxis tick={{ fill: TICK, fontSize: 10 }} axisLine={false} tickLine={false} width={36} />
+          <YAxis tick={{ fill: TICK, fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
           <Tooltip
             contentStyle={TOOLTIP_STYLE}
             labelStyle={{ color: LABEL }}
@@ -79,9 +82,11 @@ export function WeeklyStudyChart({
 export function QuizScoreChart({
   data,
   dict,
+  rtl = false,
 }: {
   data: Array<{ label: string; score: number }>;
   dict: AppMessages;
+  rtl?: boolean;
 }) {
   return (
     <div className="h-56 w-full" dir="ltr">
@@ -90,13 +95,14 @@ export function QuizScoreChart({
           <CartesianGrid stroke={GRID} strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="label"
-            tick={{ fill: TICK, fontSize: 10 }}
+            tick={{ fill: TICK, fontSize: 11 }}
             axisLine={{ stroke: "#e5e7eb" }}
             tickLine={false}
+            reversed={rtl}
           />
           <YAxis
             domain={[0, 100]}
-            tick={{ fill: TICK, fontSize: 10 }}
+            tick={{ fill: TICK, fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             width={36}
@@ -120,7 +126,13 @@ export function QuizScoreChart({
   );
 }
 
-export function MaterialsTypeChart({ data }: { data: Array<{ label: string; count: number }> }) {
+export function MaterialsTypeChart({
+  data,
+  rtl = false,
+}: {
+  data: Array<{ label: string; count: number }>;
+  rtl?: boolean;
+}) {
   const COLORS = ["#059669", "#0d9488", "#10b981"];
   return (
     <div className="h-48 w-full" dir="ltr">
@@ -130,9 +142,10 @@ export function MaterialsTypeChart({ data }: { data: Array<{ label: string; coun
           <XAxis
             type="number"
             allowDecimals={false}
-            tick={{ fill: TICK, fontSize: 10 }}
+            tick={{ fill: TICK, fontSize: 11 }}
             axisLine={false}
             tickLine={false}
+            reversed={rtl}
           />
           <YAxis
             type="category"
@@ -141,6 +154,7 @@ export function MaterialsTypeChart({ data }: { data: Array<{ label: string; coun
             axisLine={false}
             tickLine={false}
             width={44}
+            reversed={rtl}
           />
           <Bar dataKey="count" radius={[0, 6, 6, 0]} maxBarSize={20}>
             {data.map((entry, index) => (

@@ -40,7 +40,7 @@ export function FlashcardsPanel({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-[15px] font-semibold text-ink">{dict.materials.flashcardsTitle}</h2>
-          <p className="mt-0.5 text-[11.5px] text-ink-muted">{dict.materials.previewNote}</p>
+          <p className="mt-0.5 text-[12px] text-ink-muted">{dict.materials.previewNote}</p>
         </div>
         <button
           type="button"
@@ -74,10 +74,10 @@ export function FlashcardsPanel({
                 aria-label={dict.materials.flip}
                 className="min-h-24 rounded-xl border border-hairline bg-surface-deep/60 p-3.5 text-start transition-colors hover:border-brand/30"
               >
-                <p className="text-[12.5px] leading-relaxed text-ink">
+                <p className="text-[13px] leading-relaxed text-ink">
                   {isFlipped ? card.back : card.front}
                 </p>
-                <span className="mt-2 flex items-center gap-1 text-[10px] text-ink-muted">
+                <span className="mt-2 flex items-center gap-1 text-[12px] text-ink-muted">
                   <RotateCcw className="size-3" aria-hidden="true" />
                   {dict.materials.flip}
                 </span>

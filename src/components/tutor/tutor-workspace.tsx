@@ -166,18 +166,18 @@ export function TutorWorkspace({
         <div className="rounded-2xl border border-hairline bg-surface-raised/70 p-2.5">
           <Link
             href="/dashboard/tutor"
-            className="flex h-9 items-center justify-center gap-2 rounded-xl bg-brand/[0.1] text-[12.5px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
+            className="flex h-9 items-center justify-center gap-2 rounded-xl bg-brand/[0.1] text-[13px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
           >
             <Plus className="size-3.5" aria-hidden="true" />
             {dict.tutor.newChat}
           </Link>
 
-          <p className="px-2 pb-1.5 pt-3 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-muted">
+          <p className="px-2 pb-1.5 pt-3 text-[12px] font-medium uppercase tracking-[0.14em] text-ink-muted">
             {dict.tutor.conversations}
           </p>
 
           {threads.length === 0 ? (
-            <p className="px-2 py-4 text-[11.5px] text-ink-muted">{dict.tutor.noConversations}</p>
+            <p className="px-2 py-4 text-[12px] text-ink-muted">{dict.tutor.noConversations}</p>
           ) : (
             <ul className="max-h-[42dvh] space-y-0.5 overflow-y-auto xl:max-h-[calc(100dvh-22rem)]">
               {threads.map((thread) => {
@@ -199,7 +199,7 @@ export function TutorWorkspace({
                       >
                         {thread.title || dict.tutor.untitled}
                       </span>
-                      <span className="mt-0.5 block truncate text-[10px] text-ink-muted">
+                      <span className="mt-0.5 block truncate text-[12px] text-ink-muted">
                         {thread.materials?.file_name ?? dict.tutor.generalKnowledge}
                       </span>
                     </Link>
@@ -241,7 +241,7 @@ export function TutorWorkspace({
                   href={`/dashboard/tutor?thread=${thread.id}`}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "block max-w-[150px] shrink-0 truncate rounded-xl border px-2.5 py-2 text-[11.5px] transition-colors",
+                    "block max-w-[150px] shrink-0 truncate rounded-xl border px-2.5 py-2 text-[12px] transition-colors",
                     active
                       ? "border-brand/30 bg-brand/[0.08] font-medium text-brand-ink"
                       : "border-hairline text-ink-muted hover:bg-black/[0.04]"
@@ -263,7 +263,7 @@ export function TutorWorkspace({
             </span>
             <div className="min-w-0">
               <h1 className="truncate text-[13.5px] font-semibold text-ink">{heading}</h1>
-              <p className="truncate text-[10.5px] text-ink-muted">
+              <p className="truncate text-[12px] text-ink-muted">
                 {sourceLabel
                   ? `${dict.tutor.selectMaterial}: ${sourceLabel}`
                   : dict.tutor.noMaterial}
@@ -272,12 +272,12 @@ export function TutorWorkspace({
           </div>
 
           {!activeThread ? (
-            <label className="flex min-w-0 items-center gap-2 text-[11px] text-ink-muted">
+            <label className="flex min-w-0 items-center gap-2 text-[12px] text-ink-muted">
               <span className="shrink-0">{dict.tutor.selectMaterial}</span>
               <select
                 value={selectedMaterial ?? ""}
                 onChange={(event) => setSelectedMaterial(event.target.value || null)}
-                className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[11.5px] text-ink-soft focus:border-brand/50 focus:outline-none"
+                className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
               >
                 <option value="">{dict.tutor.noMaterial}</option>
                 {materials.map((material) => (
@@ -291,7 +291,7 @@ export function TutorWorkspace({
         </header>
 
         {missingThread ? (
-          <div className="border-b border-hairline bg-[#ef4444]/[0.06] px-4 py-2 text-[11.5px] text-danger">
+          <div className="border-b border-hairline bg-[#ef4444]/[0.06] px-4 py-2 text-[12px] text-danger">
             {dict.tutor.loadError}
           </div>
         ) : null}
@@ -305,7 +305,7 @@ export function TutorWorkspace({
                 <BrainCircuit className="size-5" aria-hidden="true" />
               </div>
               <h2 className="mt-4 text-[16px] font-semibold text-ink">{dict.tutor.emptyTitle}</h2>
-              <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
                 {dict.tutor.emptyBody}
               </p>
               <div className="mt-5 grid w-full gap-2">
@@ -316,7 +316,7 @@ export function TutorWorkspace({
                       type="button"
                       onClick={() => void submitText(suggestion)}
                       disabled={!canSend || creating}
-                      className="rounded-xl border border-hairline bg-black/[0.02] px-3.5 py-2.5 text-start text-[11.5px] text-ink-soft transition-colors hover:border-brand/30 hover:bg-brand/[0.05] disabled:opacity-50"
+                      className="rounded-xl border border-hairline bg-black/[0.02] px-3.5 py-2.5 text-start text-[12px] text-ink-soft transition-colors hover:border-brand/30 hover:bg-brand/[0.05] disabled:opacity-50"
                     >
                       {suggestion}
                     </button>
@@ -337,7 +337,7 @@ export function TutorWorkspace({
                   <div key={message.id} className={cn("flex gap-3", isUser && "flex-row-reverse")}>
                     <span
                       className={cn(
-                        "mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border text-[10px] font-semibold",
+                        "mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border text-[12px] font-semibold",
                         isUser
                           ? "border-hairline bg-black/[0.04] text-ink-soft"
                           : "border-brand/20 bg-brand/[0.08] text-brand-ink"
@@ -385,7 +385,7 @@ export function TutorWorkspace({
               })}
 
               {busy ? (
-                <div className="flex items-center gap-2 text-[11.5px] text-ink-muted">
+                <div className="flex items-center gap-2 text-[12px] text-ink-muted">
                   <LoaderCircle
                     className="size-3.5 animate-spin text-brand-ink"
                     aria-hidden="true"
@@ -395,13 +395,13 @@ export function TutorWorkspace({
               ) : null}
 
               {error || localError ? (
-                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3.5 py-2.5 text-[11.5px] text-danger">
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#ef4444]/25 bg-[#ef4444]/[0.06] px-3.5 py-2.5 text-[12px] text-danger">
                   <span>{localError ?? dict.tutor.error}</span>
                   <button
                     type="button"
                     onClick={retry}
                     disabled={!threadId || busy}
-                    className="inline-flex items-center gap-1 rounded-md border border-[#ef4444]/30 px-2 py-1 text-[10.5px] font-medium disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-md border border-[#ef4444]/30 px-2 py-1 text-[12px] font-medium disabled:opacity-50"
                   >
                     <RefreshCw className="size-3" aria-hidden="true" />
                     {dict.tutor.retry}
@@ -450,7 +450,7 @@ export function TutorWorkspace({
               <button
                 type="submit"
                 disabled={!canSend || !input.trim() || creating}
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {creating ? (
                   <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -461,14 +461,14 @@ export function TutorWorkspace({
               </button>
             )}
           </form>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-[10px] text-ink-muted">
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-[12px] text-ink-muted">
             <CornerDownLeft className="size-3" aria-hidden="true" />
             {dict.quizzes.reviewNote}
           </p>
         </div>
       </section>
 
-      <div className="flex items-center justify-between gap-2 text-[10.5px] text-ink-muted xl:hidden">
+      <div className="flex items-center justify-between gap-2 text-[12px] text-ink-muted xl:hidden">
         <Link href="/dashboard/materials" className="inline-flex items-center gap-1">
           <ArrowLeft className="size-3 rtl:hidden" aria-hidden="true" />
           <ArrowRight className="size-3 ltr:hidden" aria-hidden="true" />

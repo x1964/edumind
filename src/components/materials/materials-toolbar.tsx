@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { AppMessages } from "@/lib/i18n/app";
 
@@ -10,6 +10,7 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(searchParams.get("q") ?? "");
+  const hasFilters = Boolean(searchParams.get("q") || searchParams.get("type"));
 
   function update(next: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,7 +40,7 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={dict.materials.searchPlaceholder}
-          className="h-11 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-base text-ink transition-colors placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-surface-raised focus:outline-none sm:h-9 sm:text-[12.5px]"
+          className="h-11 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-base text-ink transition-colors placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-surface-raised focus:outline-none sm:h-9 sm:text-[13px]"
         />
       </div>
       <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
@@ -57,13 +58,23 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
         <select
           value={searchParams.get("sort") ?? "newest"}
           onChange={(event) => update({ sort: event.target.value })}
-          aria-label={dict.common.filter}
+          aria-label={dict.materials.sortNewest}
           className="h-10 min-w-0 rounded-xl border border-hairline bg-black/[0.025] px-3 text-base text-ink-soft focus:border-brand/50 focus:outline-none sm:h-9 sm:text-[12px]"
         >
           <option value="newest">{dict.materials.sortNewest}</option>
           <option value="oldest">{dict.materials.sortOldest}</option>
           <option value="name">{dict.materials.sortName}</option>
         </select>
+        {hasFilters ? (
+          <button
+            type="button"
+            onClick={() => update({ q: null, type: null })}
+            className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-hairline px-3 text-[12.5px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+            {dict.common.clearFilters}
+          </button>
+        ) : null}
       </div>
     </div>
   );

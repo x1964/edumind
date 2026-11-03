@@ -53,7 +53,7 @@ export default async function MaterialsPage({
   const hasFilters = Boolean(search || params.type);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title={dict.materials.title}
         description={dict.materials.subtitle}
@@ -69,9 +69,9 @@ export default async function MaterialsPage({
           description={hasFilters ? dict.materials.searchPlaceholder : dict.materials.emptyBody}
         />
       ) : (
-        <Card>
+        <Card className="border-hairline/60 bg-surface-raised/80">
           <CardContent className="p-0">
-            <div className="hidden border-b border-hairline px-4 py-2.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-muted sm:grid sm:grid-cols-[minmax(0,1fr)_90px_120px_110px_92px] sm:items-center sm:gap-3">
+            <div className="hidden border-b border-hairline px-4 py-2.5 text-[12px] font-medium uppercase tracking-wide text-ink-muted sm:grid sm:grid-cols-[minmax(0,1fr)_90px_120px_110px_92px] sm:items-center sm:gap-3">
               <span>{dict.common.file}</span>
               <span>{dict.common.size}</span>
               <span>{dict.common.status}</span>
@@ -92,22 +92,22 @@ export default async function MaterialsPage({
                       <FileKindIcon kind={material.file_type} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-ink" dir="ltr">
+                      <span className="block truncate text-[13px] font-medium text-ink" dir="auto">
                         {material.file_name}
                       </span>
-                      <span className="text-[10.5px] uppercase text-ink-muted">
+                      <span className="text-[12px] uppercase text-ink-muted">
                         {material.file_type}
                       </span>
                     </span>
                   </Link>
                   <div className="col-span-2 flex flex-wrap items-center gap-x-3 gap-y-1 sm:contents">
-                    <span className="text-[11.5px] text-ink-muted" dir="ltr">
+                    <span className="text-[12px] text-ink-muted" dir="auto">
                       {formatBytes(material.file_size, lang)}
                     </span>
                     <span>
                       <StatusBadge status={material.status} dict={dict} />
                     </span>
-                    <span className="text-[11.5px] text-ink-muted">
+                    <span className="text-[12px] text-ink-muted">
                       {formatDate(material.created_at, lang)}
                     </span>
                     <span className="ms-auto flex items-center justify-end gap-1 sm:ms-0">

@@ -88,21 +88,17 @@ export function DashboardSkeleton() {
   return (
     <div className="space-y-6">
       {/* Stats cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 xl:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
           <CardSkeleton key={i} />
         ))}
       </div>
       {/* Main content */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-1/3" />
-          <Skeleton className="h-64 w-full" />
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-1/3" />
-          <ListSkeleton count={4} />
-        </div>
+      <div className="grid gap-5 xl:grid-cols-12">
+        <Skeleton className="h-64 xl:col-span-8" />
+        <Skeleton className="h-64 xl:col-span-4" />
+        <Skeleton className="h-64 xl:col-span-8" />
+        <Skeleton className="h-64 xl:col-span-4" />
       </div>
     </div>
   );
