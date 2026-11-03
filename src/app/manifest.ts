@@ -3,6 +3,11 @@ import type { MetadataRoute } from "next";
 /**
  * Web App Manifest — makes EduMind installable as a standalone app.
  * Served by Next.js at /manifest.webmanifest and linked automatically.
+ *
+ * Keep `start_url` on an authenticated product route: the proxy sends signed
+ * out visitors to login while signed-in users land directly in their study
+ * workspace. `id` stays stable so browsers do not create a second app when the
+ * start URL or query parameters change in a future release.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -17,9 +22,14 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "any",
-    background_color: "#00C950",
-    theme_color: "#00C950",
+    background_color: "#ffffff",
+    theme_color: "#10b981",
     categories: ["education", "productivity"],
+    display_override: ["standalone", "minimal-ui"],
+    launch_handler: {
+      client_mode: ["navigate-existing", "focus-existing"],
+    },
+    prefer_related_applications: false,
     icons: [
       {
         src: "/favicon/icon-192.png",

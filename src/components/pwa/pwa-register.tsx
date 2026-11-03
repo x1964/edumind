@@ -44,7 +44,7 @@ export function PwaRegister() {
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
     navigator.serviceWorker
-      .register(`/sw.js?env=${env}`, { scope: "/" })
+      .register(`/sw.js?env=${env}`, { scope: "/", updateViaCache: "none" })
       .then((registration) => {
         if (cancelled) return;
         if (registration.waiting && navigator.serviceWorker.controller) {
