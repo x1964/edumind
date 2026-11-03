@@ -17,10 +17,7 @@ export function Footer({ dict }: { dict: Dictionary }) {
             </a>
             <p className="mt-4 text-[12px] leading-[1.9] text-ink-muted">{footer.description}</p>
             <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-hairline bg-black/[0.02] px-3 py-1.5 text-[10px] text-ink-muted">
-              <span
-                className="size-1.5 rounded-full bg-brand em-animate-pulse-soft"
-                aria-hidden="true"
-              />
+              <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
               {footer.status}
             </span>
 

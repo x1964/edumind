@@ -269,24 +269,8 @@ html[lang="ar"] {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
   }
 
-  .em-animate-float {
-    animation: em-float 7s ease-in-out infinite;
-  }
-  .em-animate-float-slow {
-    animation: em-float 11s ease-in-out infinite;
-  }
   .em-animate-pulse-soft {
     animation: em-pulse-soft 3.2s ease-in-out infinite;
-  }
-  .em-animate-shimmer {
-    background-size: 220% 100%;
-    animation: em-shimmer 6s linear infinite;
-  }
-  .em-animate-scan {
-    animation: em-scan 4.6s ease-in-out infinite;
-  }
-  .em-animate-wave {
-    animation: em-wave 1.5s ease-in-out infinite;
   }
 
   .em-scrollbar-none {
@@ -312,16 +296,6 @@ html[lang="ar"] {
   }
 }
 
-@keyframes em-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -10px, 0);
-  }
-}
-
 @keyframes em-pulse-soft {
   0%,
   100% {
@@ -331,51 +305,6 @@ html[lang="ar"] {
   50% {
     opacity: 0.9;
     transform: scale(1.04);
-  }
-}
-
-@keyframes em-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -60% 0;
-  }
-}
-
-@keyframes em-scan {
-  0%,
-  100% {
-    transform: translateY(-8%);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.6;
-  }
-  55% {
-    opacity: 0.35;
-  }
-  85% {
-    opacity: 0;
-  }
-}
-
-@keyframes em-wave {
-  0%,
-  100% {
-    transform: scaleY(0.35);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes em-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
   }
 }
 
@@ -393,8 +322,10 @@ html[lang="ar"] {
 }
 
 /* Enhanced smooth scrolling */
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /* Custom scrollbar */
@@ -435,18 +366,6 @@ a {
     text-decoration-color 0.2s ease;
 }
 
-/* Card hover lift */
-.card-hover {
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
 /* Enhanced interactive elements */
 a,
 button {
@@ -460,102 +379,6 @@ select:focus {
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
-}
-
-/* Loading shimmer */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--em-elevated) 0%,
-    var(--em-card) 50%,
-    var(--em-elevated) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Fade in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Slide up animation */
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.slide-up {
-  animation: slideUp 0.3s ease-out;
-}
-
-/* Scale in animation */
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.scale-in {
-  animation: scaleIn 0.2s ease-out;
-}
-
-/* Ripple effect */
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-.ripple {
-  position: relative;
-  overflow: hidden;
-}
-
-.ripple::after {
-  content: "";
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 1;
-  pointer-events: none;
-}
-
-.ripple:active::after {
-  animation: ripple 0.6s ease-out;
 }
 
 /* Text selection enhancement */

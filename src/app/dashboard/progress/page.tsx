@@ -143,17 +143,21 @@ export default async function ProgressPage() {
             <CardContent className="p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-[11px] text-ink-muted">{label}</p>
+                  <p className="truncate text-[11px] font-medium text-ink-muted">{label}</p>
                   <p
-                    className="mt-1.5 text-[24px] font-semibold tracking-[-0.04em] text-ink"
+                    className="em-num mt-2 text-[26px] font-semibold leading-none tracking-[-0.045em] text-ink"
                     dir="ltr"
                   >
                     {value}
                   </p>
-                  {note ? <p className="mt-1 truncate text-[10px] text-ink-muted">{note}</p> : null}
+                  {note ? (
+                    <p className="mt-2.5 truncate border-t border-hairline/60 pt-2 text-[10.5px] text-ink-muted">
+                      {note}
+                    </p>
+                  ) : null}
                 </div>
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
-                  <Icon className="size-4" aria-hidden="true" />
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/15 bg-brand/[0.06] text-brand-ink">
+                  <Icon className="size-3.5" aria-hidden="true" />
                 </span>
               </div>
             </CardContent>

@@ -15,10 +15,10 @@ import {
 import type { AppMessages } from "@/lib/i18n/app";
 
 const TOOLTIP_STYLE = {
-  background: "#ffffff",
-  border: "1px solid #e5e7eb",
+  background: "var(--em-card)",
+  border: "1px solid var(--em-border)",
   borderRadius: 10,
-  color: "#1a1a1a",
+  color: "var(--em-text)",
   fontSize: 12,
   boxShadow: "0 10px 30px -12px rgba(15,23,42,0.2)",
 } as const;

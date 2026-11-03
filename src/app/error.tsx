@@ -30,7 +30,7 @@ export default function GlobalError({
           <button
             type="button"
             onClick={reset}
-            className="h-9 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] hover:bg-brand-deep"
+            className="h-9 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
           >
             إعادة المحاولة
           </button>

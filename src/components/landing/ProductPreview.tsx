@@ -34,10 +34,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
               </span>
             </div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-black/[0.03] px-2 py-1 text-[9.5px] font-medium text-ink-soft">
-              <span
-                className="size-1.5 rounded-full bg-brand em-animate-pulse-soft"
-                aria-hidden="true"
-              />
+              <span className="size-1.5 rounded-full bg-brand" aria-hidden="true" />
               {p.demoNote}
             </span>
           </div>
@@ -79,7 +76,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                       aria-label={p.status}
                     >
                       <div className="absolute inset-y-0 start-0 w-[68%] rounded-full bg-[linear-gradient(90deg,#16a875,#059669)]" />
-                      <div className="em-animate-pulse-soft absolute inset-y-0 start-[66%] w-3 rounded-full bg-[#b8ffe4] blur-[3px]" />
+                      <div className="absolute inset-y-0 start-[66%] w-3 rounded-full bg-[#b8ffe4] blur-[3px]" />
                     </div>
                     <p className="mt-2 truncate text-[10px] text-ink-muted">{p.statusNote}</p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
@@ -244,7 +241,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
         </div>
 
         {/* Floating cards */}
-        <div className="em-animate-float absolute -top-[86px] start-6 hidden w-[164px] rounded-xl border border-hairline-strong/80 bg-white/95 p-3 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:block">
+        <div className="absolute -top-[86px] start-6 hidden w-[164px] rounded-xl border border-hairline-strong/80 bg-surface-raised/95 p-3 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:block">
           <div className="flex items-center gap-2">
             <span className="grid size-6 place-items-center rounded-lg bg-brand/12 text-brand-ink">
               <Route className="size-3.5" aria-hidden="true" />
@@ -259,7 +256,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
           </div>
         </div>
 
-        <div className="em-animate-float-slow absolute -end-3 bottom-[20%] hidden items-center gap-2 rounded-xl border border-hairline-strong/80 bg-white/95 px-3 py-2.5 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:flex">
+        <div className="absolute -end-3 bottom-[20%] hidden items-center gap-2 rounded-xl border border-hairline-strong/80 bg-surface-raised/95 px-3 py-2.5 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:flex">
           <span className="grid size-6 place-items-center rounded-lg bg-black/[0.05] text-ink-soft">
             <Sparkles className="size-3" aria-hidden="true" />
           </span>

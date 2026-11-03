@@ -180,7 +180,7 @@ export function PlannerBoard({
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
+          className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
         >
           <Plus className="size-4" aria-hidden="true" />
           {dict.planner.addTask}
@@ -195,7 +195,7 @@ export function PlannerBoard({
           <button
             type="button"
             onClick={openCreate}
-            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-brand-deep"
+            className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
           >
             <Plus className="size-3.5" aria-hidden="true" />
             {dict.planner.addTask}
@@ -263,7 +263,7 @@ export function PlannerBoard({
               type="button"
               onClick={save}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -458,7 +458,7 @@ function TaskSection({
                 className={cn(
                   "mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border transition-colors",
                   task.completed
-                    ? "border-brand bg-brand text-[#04130c]"
+                    ? "border-brand bg-brand text-primary-foreground"
                     : "border-hairline-strong text-transparent hover:border-brand/60"
                 )}
               >

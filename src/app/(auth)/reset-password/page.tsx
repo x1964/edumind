@@ -32,7 +32,7 @@ export default async function ResetPasswordPage() {
         <FormAlert tone="error">{dict.auth.resetSessionMissing}</FormAlert>
         <Link
           href="/forgot-password"
-          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-[#04130c]"
+          className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-brand text-[13.5px] font-semibold text-primary-foreground"
         >
           {dict.auth.forgot}
         </Link>

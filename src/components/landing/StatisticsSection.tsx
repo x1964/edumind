@@ -18,7 +18,7 @@ function StatCard({ icon: Icon, value, suffix = "", label, delay }: StatCardProp
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const spring = useSpring(0, { duration: 2000, bounce: 0 });
+  const spring = useSpring(0, { duration: 1600, bounce: 0 });
   const display = useTransform(spring, (latest) => Math.floor(latest).toLocaleString());
 
   useEffect(() => {
@@ -27,76 +27,26 @@ function StatCard({ icon: Icon, value, suffix = "", label, delay }: StatCardProp
 
   return (
     <Reveal delay={delay}>
-      <motion.div
+      <div
         ref={ref}
-        className="group relative overflow-hidden rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-all duration-300 hover:border-brand/30 hover:bg-surface-raised/80 hover:shadow-xl hover:shadow-brand/10"
-        whileHover={{ y: -4, scale: 1.02 }}
+        className="group relative h-full overflow-hidden rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-colors duration-200 hover:border-brand/25"
       >
-        {/* Background gradient on hover */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-brand/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          initial={false}
-        />
+        <span
+          className="grid size-10 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink"
+          aria-hidden="true"
+        >
+          <Icon className="size-[18px]" />
+        </span>
 
-        <div className="relative">
-          <motion.div
-            className="mb-4 inline-flex size-12 items-center justify-center rounded-xl border border-brand/20 bg-brand/[0.08] text-brand-ink transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6, type: "spring" }}
-          >
-            <Icon className="size-6" aria-hidden="true" />
-          </motion.div>
-
-          <motion.div className="mb-2 flex items-baseline gap-1">
-            <motion.span
-              className="text-4xl font-bold tracking-tight text-ink sm:text-5xl"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: delay + 0.2 }}
-            >
-              {display}
-            </motion.span>
-            {suffix && (
-              <motion.span
-                className="text-xl font-semibold text-brand-ink"
-                initial={{ opacity: 0 }}
-                animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.6, delay: delay + 0.4 }}
-              >
-                {suffix}
-              </motion.span>
-            )}
-          </motion.div>
-
-          <motion.p
-            className="text-sm font-medium text-ink-soft sm:text-base"
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.6, delay: delay + 0.3 }}
-          >
-            {label}
-          </motion.p>
+        <div className="mt-5 flex items-baseline gap-1" dir="ltr">
+          <motion.span className="em-num text-[32px] font-semibold leading-none tracking-[-0.04em] text-ink sm:text-[36px]">
+            {display}
+          </motion.span>
+          {suffix ? <span className="text-lg font-semibold text-brand-ink">{suffix}</span> : null}
         </div>
 
-        {/* Decorative dots */}
-        <div className="pointer-events-none absolute right-2 top-2 flex gap-1" aria-hidden="true">
-          {[...Array(3)].map((_, i) => (
-            <motion.span
-              key={i}
-              className="size-1 rounded-full bg-brand/30"
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 2,
-                delay: i * 0.2,
-                repeat: Infinity,
-              }}
-            />
-          ))}
-        </div>
-      </motion.div>
+        <p className="mt-2.5 text-[13px] font-medium text-ink-muted">{label}</p>
+      </div>
     </Reveal>
   );
 }
@@ -112,7 +62,6 @@ export function StatisticsSection({ dict }: { dict: Dictionary }) {
 
   return (
     <section className="em-section relative overflow-hidden">
-      {/* Background pattern */}
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="absolute inset-x-0 top-1/2 h-[400px] -translate-y-1/2 bg-[radial-gradient(ellipse_50%_40%_at_50%_50%,rgba(5,150,105,0.06),transparent_70%)]" />
         <div className="em-grid-lines absolute inset-0 opacity-40" />
@@ -139,25 +88,18 @@ export function StatisticsSection({ dict }: { dict: Dictionary }) {
               value={stat.value}
               suffix={stat.suffix}
               label={stat.label}
-              delay={index * 0.1}
+              delay={index * 0.08}
             />
           ))}
         </div>
 
-        {/* Trust indicators */}
-        <Reveal delay={0.4} className="mt-12">
-          <div className="flex flex-wrap items-center justify-center gap-8 border-t border-hairline/60 pt-8">
-            {copy.trust.map((item, i) => (
-              <motion.div
-                key={item}
-                className="flex items-center gap-2 text-sm font-medium text-ink-muted"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-              >
-                <div className="size-2 rounded-full bg-brand" />
+        <Reveal delay={0.3} className="mt-12">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-hairline/60 pt-8">
+            {copy.trust.map((item) => (
+              <div key={item} className="flex items-center gap-2 text-[12.5px] text-ink-muted">
+                <span className="size-1.5 rounded-full bg-brand/60" aria-hidden="true" />
                 {item}
-              </motion.div>
+              </div>
             ))}
           </div>
         </Reveal>

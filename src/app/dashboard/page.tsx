@@ -79,7 +79,7 @@ export default async function DashboardOverviewPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
         title={dict.dashboard.welcome.replace(
           "{name}",
@@ -89,7 +89,7 @@ export default async function DashboardOverviewPage() {
         action={
           <Link
             href="/dashboard/materials?upload=1"
-            className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
+            className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
           >
             <Plus className="size-4" aria-hidden="true" />
             {dict.dashboard.upload}
@@ -110,19 +110,21 @@ export default async function DashboardOverviewPage() {
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-[11.5px] font-medium text-ink-muted">{label}</p>
+                    <p className="truncate text-[11px] font-medium text-ink-muted">{label}</p>
                     <p
-                      className="em-num mt-1.5 text-[24px] font-semibold leading-tight tracking-[-0.04em] text-ink sm:text-[26px]"
+                      className="em-num mt-2 text-[26px] font-semibold leading-none tracking-[-0.045em] text-ink"
                       dir="ltr"
                     >
                       {value}
                     </p>
                   </div>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/15 bg-gradient-to-br from-brand/[0.14] to-brand/[0.04] text-brand-ink">
-                    <Icon className="size-4" aria-hidden="true" />
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/15 bg-brand/[0.06] text-brand-ink">
+                    <Icon className="size-3.5" aria-hidden="true" />
                   </span>
                 </div>
-                <p className="mt-2 truncate text-[10.5px] text-ink-muted">{note}</p>
+                <p className="mt-2.5 truncate border-t border-hairline/60 pt-2 text-[10.5px] text-ink-muted">
+                  {note}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -157,7 +159,7 @@ export default async function DashboardOverviewPage() {
                   action={
                     <Link
                       href="/dashboard/materials?upload=1"
-                      className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] hover:bg-brand-deep"
+                      className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground hover:bg-brand-deep"
                     >
                       <Upload className="size-3.5" aria-hidden="true" />
                       {dict.dashboard.uploadFirst}

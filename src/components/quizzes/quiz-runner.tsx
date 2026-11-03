@@ -101,7 +101,7 @@ export function QuizRunner({
               onChange={(event) => setAnswer(event.target.value)}
               placeholder={dict.quizzes.shortAnswerPlaceholder}
               maxLength={500}
-              className="h-11 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-base text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-white focus:outline-none sm:h-10 sm:text-[13px]"
+              className="h-11 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-base text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-surface-raised focus:outline-none sm:h-10 sm:text-[13px]"
             />
           ) : (
             options.map((option) => {
@@ -128,7 +128,9 @@ export function QuizRunner({
                   <span
                     className={cn(
                       "grid size-5 shrink-0 place-items-center rounded-full border",
-                      selected ? "border-brand bg-brand text-[#04130c]" : "border-hairline-strong"
+                      selected
+                        ? "border-brand bg-brand text-primary-foreground"
+                        : "border-hairline-strong"
                     )}
                   >
                     {selected ? <Check className="size-3" aria-hidden="true" /> : null}
@@ -165,7 +167,7 @@ export function QuizRunner({
               type="button"
               onClick={() => setCurrent((value) => Math.min(value + 1, questions.length - 1))}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep"
             >
               {dict.quizzes.next}
               <ArrowRight className="size-3.5 rtl:hidden" aria-hidden="true" />
@@ -176,7 +178,7 @@ export function QuizRunner({
               type="button"
               onClick={submit}
               disabled={isPending}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-4 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
             >
               {isPending ? (
                 <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />

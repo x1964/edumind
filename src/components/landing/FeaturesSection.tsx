@@ -14,7 +14,6 @@ import {
   Route,
   Sparkles,
 } from "lucide-react";
-import { motion } from "motion/react";
 import type { Dictionary, FeatureId } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
@@ -168,10 +167,9 @@ function AudioVisual({ dict }: { dict: Dictionary }) {
         {heights.map((height, index) => (
           <span
             key={index}
-            className="em-animate-wave w-[3px] shrink-0 rounded-full bg-brand/45"
+            className="w-[3px] shrink-0 rounded-full bg-brand/45"
             style={{
               height: `${height / 2.4}px`,
-              animationDelay: `${index * 90}ms`,
               backgroundColor: index > 8 ? "rgba(5,150,105,0.25)" : undefined,
             }}
           />
@@ -293,51 +291,29 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                 delay={Math.min(index * 0.05, 0.3)}
                 className={cn(isTutor && "sm:col-span-2 lg:row-span-2", isAudio && "sm:col-span-2")}
               >
-                <motion.article
+                <article
                   className={cn(
-                    "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/45 p-5 transition-all duration-300 hover:border-brand/25 hover:bg-surface-raised/70",
+                    "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/45 p-5 transition-colors duration-200 hover:border-brand/25 hover:bg-surface-raised/70",
                     isTutor && "em-surface-gradient p-5 sm:p-6 lg:p-7"
                   )}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 24 }}
                 >
-                  <motion.div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -top-20 end-0 size-44 rounded-full bg-brand/[0.05] blur-2xl transition-opacity duration-500"
-                    animate={{
-                      opacity: [0.05, 0.09, 0.05],
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-
                   <div className="relative flex items-center justify-between gap-3">
-                    <motion.span
-                      className="grid size-9 place-items-center rounded-xl border border-hairline bg-black/[0.03] text-brand-ink"
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.6, type: "spring" }}
-                    >
+                    <span className="grid size-9 place-items-center rounded-xl border border-hairline bg-black/[0.03] text-brand-ink">
                       <Icon className="size-4" aria-hidden="true" />
-                    </motion.span>
+                    </span>
                     <span className="text-[9.5px] font-medium uppercase tracking-[0.16em] text-ink-muted">
                       {feature.tag}
                     </span>
                   </div>
 
-                  <motion.h3
+                  <h3
                     className={cn(
                       "relative mt-4 font-semibold leading-snug tracking-tight text-ink",
                       isTutor ? "text-[19px] sm:text-[22px]" : "text-[14.5px]"
                     )}
-                    whileHover={{ x: 4 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   >
                     {feature.title}
-                  </motion.h3>
+                  </h3>
                   <p
                     className={cn(
                       "relative mt-1.5 leading-[1.8] text-ink-soft",
@@ -349,45 +325,25 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
 
                   {isTutor ? (
                     <div className="relative mt-5 flex flex-1 flex-col gap-2.5">
-                      <motion.div
-                        className="flex items-start gap-2.5"
-                        whileHover={{ x: 4 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <motion.span
-                          className="grid size-7 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.08] text-brand-ink"
-                          whileHover={{ rotate: 15, scale: 1.1 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
+                      <div className="flex items-start gap-2.5">
+                        <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.08] text-brand-ink">
                           <Sparkles className="size-3.5" aria-hidden="true" />
-                        </motion.span>
+                        </span>
                         <div className="rounded-xl rounded-ss-sm border border-hairline bg-black/[0.02] p-3">
                           <p className="text-[11.5px] leading-[1.85] text-ink-soft">
                             {dict.productPreview.tutorMessage}
                           </p>
                         </div>
-                      </motion.div>
-                      <motion.div
-                        className="ms-auto max-w-[85%] rounded-xl rounded-se-sm border border-brand/15 bg-brand/[0.05] px-3 py-2"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
+                      </div>
+                      <div className="ms-auto max-w-[85%] rounded-xl rounded-se-sm border border-brand/15 bg-brand/[0.05] px-3 py-2">
                         <p className="text-[11px] text-ink-soft">
                           {dict.learning.explanation.chips[2]}
                         </p>
-                      </motion.div>
-                      <motion.div
-                        className="flex items-start gap-2.5"
-                        whileHover={{ x: 4 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <motion.span
-                          className="grid size-7 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.08] text-brand-ink"
-                          whileHover={{ rotate: -15, scale: 1.1 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.08] text-brand-ink">
                           <Sparkles className="size-3.5" aria-hidden="true" />
-                        </motion.span>
+                        </span>
                         <div className="rounded-xl rounded-ss-sm border border-hairline bg-black/[0.02] p-3">
                           <p className="text-[11.5px] leading-[1.85] text-ink-soft">
                             {dict.learning.explanation.example}
@@ -403,50 +359,32 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
                             </span>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                       <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
                         {dict.learning.explanation.chips.map((chip) => (
-                          <motion.span
+                          <span
                             key={chip}
-                            className="rounded-full border border-hairline bg-black/[0.02] px-2.5 py-1 text-[10px] text-ink-muted transition-colors"
-                            whileHover={{
-                              borderColor: "rgba(5,150,105,0.3)",
-                              backgroundColor: "rgba(5,150,105,0.06)",
-                              y: -2,
-                            }}
-                            whileTap={{ scale: 0.95 }}
+                            className="rounded-full border border-hairline bg-black/[0.02] px-2.5 py-1 text-[10px] text-ink-muted"
                           >
                             {chip}
-                          </motion.span>
+                          </span>
                         ))}
                       </div>
-                      <motion.div
-                        className="mt-1 flex items-center gap-2 rounded-xl border border-hairline bg-surface-deep px-3 py-2.5"
-                        whileHover={{ scale: 1.02, borderColor: "rgba(5,150,105,0.3)" }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
+                      <div className="mt-1 flex items-center gap-2 rounded-xl border border-hairline bg-surface-deep px-3 py-2.5">
                         <span className="flex-1 truncate text-[10.5px] text-ink-muted">
                           {dict.productPreview.tutorPrompt}
                         </span>
-                        <motion.span
-                          className="grid size-5 place-items-center rounded-lg bg-brand text-primary-foreground"
-                          whileHover={{ rotate: 90, scale: 1.1 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
+                        <span className="grid size-5 place-items-center rounded-lg bg-brand text-primary-foreground">
                           <Sparkles className="size-2.5" aria-hidden="true" />
-                        </motion.span>
-                      </motion.div>
+                        </span>
+                      </div>
                     </div>
                   ) : (
-                    <motion.div
-                      className="relative flex flex-1 flex-col"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
+                    <div className="relative flex flex-1 flex-col">
                       <FeatureVisual id={feature.id} dict={dict} />
-                    </motion.div>
+                    </div>
                   )}
-                </motion.article>
+                </article>
               </Reveal>
             );
           })}

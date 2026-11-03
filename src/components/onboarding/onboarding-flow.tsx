@@ -346,7 +346,9 @@ export function OnboardingFlow({
                     <span
                       className={cn(
                         "ms-auto grid size-5 shrink-0 place-items-center rounded-full border",
-                        active ? "border-brand bg-brand text-[#04130c]" : "border-hairline-strong"
+                        active
+                          ? "border-brand bg-brand text-primary-foreground"
+                          : "border-hairline-strong"
                       )}
                     >
                       {active ? <Check className="size-3" aria-hidden="true" /> : null}
@@ -391,7 +393,9 @@ export function OnboardingFlow({
                     <span
                       className={cn(
                         "grid size-6 place-items-center rounded-full border",
-                        active ? "border-brand bg-brand text-[#04130c]" : "border-hairline-strong"
+                        active
+                          ? "border-brand bg-brand text-primary-foreground"
+                          : "border-hairline-strong"
                       )}
                     >
                       {active ? <Check className="size-3.5" aria-hidden="true" /> : null}
@@ -460,7 +464,7 @@ export function OnboardingFlow({
           type="button"
           onClick={next}
           disabled={isPending}
-          className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand px-5 text-[13.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-60"
+          className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand px-5 text-[13.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-60"
         >
           {isPending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
           {isPending

@@ -39,7 +39,7 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder={dict.materials.searchPlaceholder}
-          className="h-11 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-base text-ink transition-colors placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-white focus:outline-none sm:h-9 sm:text-[12.5px]"
+          className="h-11 w-full rounded-xl border border-hairline bg-black/[0.025] ps-9 pe-3 text-base text-ink transition-colors placeholder:text-ink-muted/70 focus:border-brand/50 focus:bg-surface-raised focus:outline-none sm:h-9 sm:text-[12.5px]"
         />
       </div>
       <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">

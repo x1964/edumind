@@ -233,7 +233,7 @@ export function MindMapCanvas({
             type="button"
             onClick={save}
             disabled={isPending}
-            className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-[#04130c] transition-colors hover:bg-brand-deep disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[12.5px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-50"
           >
             {isPending ? (
               <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />

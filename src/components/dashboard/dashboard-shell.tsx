@@ -34,21 +34,41 @@ interface ShellProfile {
   avatarUrl: string | null;
 }
 
-const NAV_ITEMS: Array<{
+interface NavItem {
   href: string;
   labelKey: keyof AppMessages["nav"];
   icon: typeof LayoutDashboard;
   exact?: boolean;
-}> = [
-  { href: "/dashboard", labelKey: "overview", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/materials", labelKey: "materials", icon: FileText },
-  { href: "/dashboard/tutor", labelKey: "tutor", icon: BrainCircuit },
-  { href: "/dashboard/summaries", labelKey: "summaries", icon: NotebookPen },
-  { href: "/dashboard/quizzes", labelKey: "quizzes", icon: ListChecks },
-  { href: "/dashboard/mind-maps", labelKey: "mindMaps", icon: Network },
-  { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
-  { href: "/dashboard/progress", labelKey: "progress", icon: LineChart },
-  { href: "/dashboard/settings", labelKey: "settings", icon: Settings },
+}
+
+const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }> = [
+  {
+    labelKey: "workspace",
+    items: [
+      { href: "/dashboard", labelKey: "overview", icon: LayoutDashboard, exact: true },
+      { href: "/dashboard/materials", labelKey: "materials", icon: FileText },
+      { href: "/dashboard/tutor", labelKey: "tutor", icon: BrainCircuit },
+    ],
+  },
+  {
+    labelKey: "create",
+    items: [
+      { href: "/dashboard/summaries", labelKey: "summaries", icon: NotebookPen },
+      { href: "/dashboard/quizzes", labelKey: "quizzes", icon: ListChecks },
+      { href: "/dashboard/mind-maps", labelKey: "mindMaps", icon: Network },
+    ],
+  },
+  {
+    labelKey: "plan",
+    items: [
+      { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
+      { href: "/dashboard/progress", labelKey: "progress", icon: LineChart },
+    ],
+  },
+  {
+    labelKey: "account",
+    items: [{ href: "/dashboard/settings", labelKey: "settings", icon: Settings }],
+  },
 ];
 
 function initials(name: string) {
@@ -102,41 +122,60 @@ export function DashboardShell({
     window.dispatchEvent(new Event(SIDEBAR_EVENT));
   }
 
-  function isActive(item: (typeof NAV_ITEMS)[number]) {
+  function isActive(item: NavItem) {
     if (item.exact) return pathname === item.href;
     return pathname === item.href || pathname.startsWith(`${item.href}/`);
   }
 
+  const currentItem = NAV_GROUPS.flatMap((group) => group.items).find(isActive);
+
   const navigation = (
-    <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label={dict.nav.main}>
-      {NAV_ITEMS.map((item) => {
-        const active = isActive(item);
-        const Icon = item.icon;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={active ? "page" : undefined}
-            title={collapsed ? dict.nav[item.labelKey] : undefined}
-            className={cn(
-              "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-medium transition-colors",
-              active
-                ? "bg-brand/[0.09] text-brand-ink"
-                : "text-ink-muted hover:bg-black/[0.035] hover:text-ink",
-              collapsed && "justify-center px-2"
+    <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={dict.nav.main}>
+      <div className="space-y-5">
+        {NAV_GROUPS.map((group, groupIndex) => (
+          <div key={group.labelKey}>
+            {collapsed ? (
+              groupIndex > 0 ? (
+                <div className="mx-3 mb-2 h-px bg-hairline/70" aria-hidden="true" />
+              ) : null
+            ) : (
+              <p className="px-3 pb-1.5 text-[9.5px] font-semibold uppercase tracking-[0.14em] text-ink-muted/75">
+                {dict.nav[group.labelKey]}
+              </p>
             )}
-          >
-            {active ? (
-              <span
-                aria-hidden="true"
-                className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-brand"
-              />
-            ) : null}
-            <Icon className="size-4 shrink-0" aria-hidden="true" />
-            {collapsed ? null : <span className="truncate">{dict.nav[item.labelKey]}</span>}
-          </Link>
-        );
-      })}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active = isActive(item);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    title={collapsed ? dict.nav[item.labelKey] : undefined}
+                    className={cn(
+                      "group relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-[12.5px] font-medium transition-colors",
+                      active
+                        ? "bg-brand/[0.08] text-brand-ink"
+                        : "text-ink-muted hover:bg-black/[0.03] hover:text-ink",
+                      collapsed && "justify-center px-2"
+                    )}
+                  >
+                    {active ? (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-y-1.5 start-0 w-0.5 rounded-full bg-brand"
+                      />
+                    ) : null}
+                    <Icon className="size-4 shrink-0" aria-hidden="true" />
+                    {collapsed ? null : <span className="truncate">{dict.nav[item.labelKey]}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </nav>
   );
 
@@ -220,6 +259,16 @@ export function DashboardShell({
             <Link href="/dashboard" aria-label={dict.common.appName} className="shrink-0 lg:hidden">
               <Logo compact />
             </Link>
+
+            <div className="hidden min-w-0 items-center gap-2.5 lg:flex">
+              <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted/80">
+                {dict.common.appName}
+              </span>
+              <span className="size-1 rounded-full bg-hairline-strong" aria-hidden="true" />
+              <span className="truncate text-[13px] font-semibold text-ink">
+                {currentItem ? dict.nav[currentItem.labelKey] : dict.nav.overview}
+              </span>
+            </div>
 
             <GlobalSearch
               dict={dict}

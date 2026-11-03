@@ -74,9 +74,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         position="top-center"
         toastOptions={{
           style: {
-            background: "#ffffff",
-            border: "1px solid #e5e7eb",
-            color: "#1a1a1a",
+            background: "var(--em-card)",
+            border: "1px solid var(--em-border)",
+            color: "var(--em-text)",
           },
         }}
       />

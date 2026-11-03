@@ -70,7 +70,7 @@ export function PwaRegister() {
     <div
       role="status"
       dir={isEnglish ? "ltr" : "rtl"}
-      className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+84px)] z-[80] mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-hairline bg-white p-3 shadow-[0_18px_50px_-20px_rgba(16,38,44,0.35)] sm:inset-x-auto sm:end-5 lg:bottom-5"
+      className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+84px)] z-[80] mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-hairline bg-surface-raised p-3 shadow-[0_18px_50px_-20px_rgba(16,38,44,0.35)] sm:inset-x-auto sm:end-5 lg:bottom-5"
     >
       <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand-ink">
         <RefreshCw className="size-4" aria-hidden="true" />

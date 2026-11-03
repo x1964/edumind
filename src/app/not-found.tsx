@@ -25,7 +25,7 @@ export default function NotFound() {
           <div className="mt-5 flex justify-center gap-2">
             <Link
               href="/"
-              className="inline-flex h-9 items-center rounded-xl bg-brand px-4 text-[13px] font-semibold text-[#04130c] hover:bg-brand-deep"
+              className="inline-flex h-9 items-center rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
             >
               الصفحة الرئيسية
             </Link>
