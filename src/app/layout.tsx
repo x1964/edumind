@@ -101,7 +101,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: languageBootstrap }} />
         <script dangerouslySetInnerHTML={{ __html: installPromptBootstrap }} />
       </head>
-      <body className="min-h-full bg-background text-foreground">
+      <body className="min-h-full overflow-x-clip bg-background text-foreground">
         <div className="flex min-h-dvh flex-col">{children}</div>
         <PwaRegister />
       </body>

@@ -104,7 +104,7 @@ export function QuizResults({
                   <p className="text-[10px] font-medium uppercase tracking-wide text-ink-muted">
                     {dict.common.questions} {index + 1}
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap text-[13px] font-medium leading-relaxed text-ink">
+                  <p className="mt-1 break-words whitespace-pre-wrap text-[13px] font-medium leading-relaxed text-ink [overflow-wrap:anywhere]">
                     {question.prompt}
                   </p>
 

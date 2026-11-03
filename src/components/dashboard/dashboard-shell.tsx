@@ -13,7 +13,6 @@ import {
   LineChart,
   ListChecks,
   LogOut,
-  Menu,
   Network,
   NotebookPen,
   Settings,
@@ -22,6 +21,7 @@ import {
 import { Logo } from "@/components/landing/Logo";
 import { AppLanguageSwitcher } from "@/components/dashboard/app-language-switcher";
 import { GlobalSearch } from "@/components/dashboard/global-search";
+import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav";
 import { InstallAppMenuItem } from "@/components/pwa/install-app";
 import { signOutAction } from "@/lib/actions/auth";
 import type { AppMessages } from "@/lib/i18n/app";
@@ -222,16 +222,14 @@ export function DashboardShell({
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-hairline/70 bg-surface/85 px-4 backdrop-blur-xl sm:px-6">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              aria-label={dict.nav.openMenu}
-              className="grid size-9 shrink-0 place-items-center rounded-xl border border-hairline text-ink-soft transition-colors hover:bg-black/[0.04] lg:hidden"
-            >
-              <Menu className="size-4" aria-hidden="true" />
-            </button>
+            <Link href="/dashboard" aria-label={dict.common.appName} className="shrink-0 lg:hidden">
+              <Logo compact />
+            </Link>
 
-            <GlobalSearch dict={dict} className="w-full max-w-sm" />
+            <GlobalSearch
+              dict={dict}
+              className="ms-auto w-9 shrink-0 justify-center px-0 sm:ms-0 sm:w-full sm:max-w-sm sm:justify-start sm:px-3"
+            />
 
             <div className="ms-auto flex items-center gap-2">
               <AppLanguageSwitcher
@@ -287,11 +285,13 @@ export function DashboardShell({
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-[1420px] flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <main className="mx-auto w-full max-w-[1420px] flex-1 px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+104px)] sm:px-6 lg:px-8 lg:py-8 lg:pb-8">
             {children}
           </main>
         </div>
       </div>
+
+      <MobileBottomNav dict={dict} onMore={() => setMobileOpen(true)} />
 
       {mobileOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -301,7 +301,12 @@ export function DashboardShell({
             onClick={() => setMobileOpen(false)}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
-          <aside className="absolute inset-y-0 start-0 flex w-[280px] max-w-[85vw] flex-col border-e border-hairline bg-surface-deep shadow-2xl">
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={dict.nav.more}
+            className="absolute inset-y-0 start-0 flex w-[280px] max-w-[85vw] flex-col border-e border-hairline bg-surface-deep shadow-2xl"
+          >
             <div className="flex h-16 items-center justify-between border-b border-hairline px-4">
               <Logo />
               <button

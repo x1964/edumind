@@ -90,7 +90,7 @@ export function QuizRunner({
               ? dict.quizzes.true + " / " + dict.quizzes.false
               : dict.quizzes.shortAnswerPlaceholder}
         </p>
-        <h2 className="mt-2 whitespace-pre-wrap text-[15px] font-semibold leading-relaxed text-ink">
+        <h2 className="mt-2 break-words whitespace-pre-wrap text-[15px] font-semibold leading-relaxed text-ink [overflow-wrap:anywhere]">
           {question.prompt}
         </h2>
 
@@ -133,7 +133,9 @@ export function QuizRunner({
                   >
                     {selected ? <Check className="size-3" aria-hidden="true" /> : null}
                   </span>
-                  <span className="min-w-0">{label}</span>
+                  <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">
+                    {label}
+                  </span>
                 </button>
               );
             })

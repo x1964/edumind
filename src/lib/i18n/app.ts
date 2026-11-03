@@ -104,6 +104,7 @@ const ar = {
     closeMenu: "إغلاق القائمة",
     searchPlaceholder: "ابحث في موادك وملخصاتك…",
     notifications: "الإشعارات",
+    more: "المزيد",
   },
   auth: {
     loginTitle: "أهلاً بعودتك",
@@ -740,6 +741,7 @@ const en: AppMessages = {
     closeMenu: "Close menu",
     searchPlaceholder: "Search your materials and summaries…",
     notifications: "Notifications",
+    more: "More",
   },
   auth: {
     loginTitle: "Welcome back",

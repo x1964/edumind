@@ -324,7 +324,9 @@ export function TutorWorkspace({
                         )}
                       >
                         {isUser ? (
-                          <p className="whitespace-pre-wrap">{text}</p>
+                          <p className="break-words whitespace-pre-wrap [overflow-wrap:anywhere]">
+                            {text}
+                          </p>
                         ) : (
                           <MarkdownMessage content={text} />
                         )}
