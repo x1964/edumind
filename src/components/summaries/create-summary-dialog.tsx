@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import { AiSetupNotice } from "@/components/shared/setup-notice";
 import { generateSummaryAction } from "@/lib/actions/ai";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { SummaryStyle } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -34,9 +35,11 @@ export function CreateSummaryDialog({
 
   function generate() {
     if (!materialId) return;
+    trackEvent("summary_generation_started");
     startTransition(async () => {
       const result = await generateSummaryAction(materialId, style);
       if (result.ok && result.id) {
+        trackEvent("summary_generation_completed");
         toast.success(result.message ?? dict.summaries.generated);
         setOpen(false);
         router.push(`/dashboard/summaries/${result.id}`);

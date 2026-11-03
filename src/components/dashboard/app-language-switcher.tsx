@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { setLanguageAction } from "@/lib/actions/preferences";
 import { applyLanguagePreference } from "@/lib/language-client";
+import { trackEvent } from "@/lib/analytics";
 import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,10 @@ export function AppLanguageSwitcher({
     if (next === lang || isPending) return;
     applyLanguagePreference(next);
     startTransition(async () => {
-      await setLanguageAction(next);
+      const result = await setLanguageAction(next);
+      if (result.ok) {
+        trackEvent("language_changed");
+      }
       router.refresh();
     });
   }

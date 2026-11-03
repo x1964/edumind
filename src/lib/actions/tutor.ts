@@ -5,7 +5,18 @@ import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
+import { isAnalyticsEventName, type AnalyticsEventName } from "@/lib/analytics";
 import type { ActionResult } from "@/lib/actions/types";
+
+async function trackServerEvent(name: AnalyticsEventName): Promise<void> {
+  if (!isAnalyticsEventName(name)) return;
+  try {
+    const { track } = await import("@vercel/analytics/server");
+    await track(name);
+  } catch {
+    // Analytics must never break tutor session flows.
+  }
+}
 
 export async function createTutorThreadAction(materialId: string | null): Promise<ActionResult> {
   const { dict } = await getAppMessages();
@@ -37,6 +48,9 @@ export async function createTutorThreadAction(materialId: string | null): Promis
     .single();
 
   if (error || !data) return { ok: false, error: dict.errors.saveFailed };
+
+  // A tutor session thread was created successfully — emit a privacy-safe event.
+  await trackServerEvent("tutor_session_started");
 
   revalidatePath("/dashboard/tutor");
   return { ok: true, id: data.id as string };

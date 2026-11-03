@@ -5,8 +5,19 @@ import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
+import { isAnalyticsEventName, type AnalyticsEventName } from "@/lib/analytics";
 import { studyTaskSchema } from "@/lib/validation";
 import type { ActionResult } from "@/lib/actions/types";
+
+async function trackServerEvent(name: AnalyticsEventName): Promise<void> {
+  if (!isAnalyticsEventName(name)) return;
+  try {
+    const { track } = await import("@vercel/analytics/server");
+    await track(name);
+  } catch {
+    // Analytics must never break planner flows.
+  }
+}
 
 interface TaskInput {
   title: string;
@@ -80,6 +91,8 @@ export async function createTaskAction(input: TaskInput): Promise<ActionResult> 
 
   if (error || !row) return { ok: false, error: dict.planner.failed };
 
+  await trackServerEvent("study_task_created");
+
   revalidatePlanner();
   return { ok: true, id: row.id as string, message: dict.planner.success };
 }
@@ -134,6 +147,10 @@ export async function toggleTaskAction(taskId: string, completed: boolean): Prom
     .eq("user_id", user.id);
 
   if (error) return { ok: false, error: dict.planner.failed };
+
+  if (completed) {
+    await trackServerEvent("study_task_completed");
+  }
 
   revalidatePlanner();
   return { ok: true, message: dict.planner.completedSuccess };

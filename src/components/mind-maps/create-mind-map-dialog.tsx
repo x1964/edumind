@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import { AiSetupNotice } from "@/components/shared/setup-notice";
 import { generateMindMapAction } from "@/lib/actions/ai";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 
 export function CreateMindMapDialog({
@@ -29,9 +30,11 @@ export function CreateMindMapDialog({
 
   function generate() {
     if (!materialId) return;
+    trackEvent("mind_map_generation_started");
     startTransition(async () => {
       const result = await generateMindMapAction(materialId);
       if (result.ok && result.id) {
+        trackEvent("mind_map_generation_completed");
         toast.success(result.message ?? dict.mindMaps.generated);
         setOpen(false);
         router.push(`/dashboard/mind-maps/${result.id}`);

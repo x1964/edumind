@@ -13,6 +13,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +77,10 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
         });
         if (!response.ok) throw new Error("search failed");
         const data = (await response.json()) as { items: SearchItem[] };
-        if (id === requestId.current) setResults(data.items);
+        if (id === requestId.current) {
+          setResults(data.items);
+          trackEvent("global_search_used");
+        }
       } catch {
         if (id === requestId.current) {
           setResults([]);

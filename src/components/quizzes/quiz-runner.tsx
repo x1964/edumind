@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { ArrowLeft, ArrowRight, Check, LoaderCircle, Send } from "lucide-react";
 import { toast } from "sonner";
 import { submitQuizAction } from "@/lib/actions/library";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { QuizQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -43,6 +44,7 @@ export function QuizRunner({
     startTransition(async () => {
       const result = await submitQuizAction(quizId, answers);
       if (result.ok) {
+        trackEvent("quiz_completed");
         toast.success(result.message ?? dict.quizzes.submitted);
         router.push(`/dashboard/quizzes/${quizId}?attempt=${result.id ?? ""}`);
         router.refresh();

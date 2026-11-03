@@ -138,6 +138,9 @@ export function PlannerBoard({
         ? await updateTaskAction(editing.id, payload)
         : await createTaskAction(payload);
       if (result.ok) {
+        if (!editing) {
+          trackEvent("study_plan_created");
+        }
         toast.success(result.message ?? dict.planner.success);
         setOpen(false);
         router.refresh();

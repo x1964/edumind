@@ -8,6 +8,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getSiteUrl } from "@/lib/site-url";
 import { LANG_COOKIE } from "@/lib/i18n";
+import { isAnalyticsEventName, type AnalyticsEventName } from "@/lib/analytics";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -15,6 +16,16 @@ import {
   safeRedirectPath,
   signupSchema,
 } from "@/lib/validation";
+
+async function trackServerEvent(name: AnalyticsEventName): Promise<void> {
+  if (!isAnalyticsEventName(name)) return;
+  try {
+    const { track } = await import("@vercel/analytics/server");
+    await track(name);
+  } catch {
+    // Analytics must never break authentication flows.
+  }
+}
 
 export type AuthFormState = {
   error?: string;
@@ -58,6 +69,7 @@ export async function loginAction(
 
   const { data } = await supabase.auth.getUser();
   if (data.user) {
+    await trackServerEvent("login_completed");
     const rich = await supabase
       .from("profiles")
       .select(
@@ -133,6 +145,9 @@ export async function signupAction(
     if (error.status === 429) return { error: dict.errors.rateLimited };
     return { error: dict.auth.genericError };
   }
+
+  // The account was created successfully — emit a privacy-safe completion event.
+  await trackServerEvent("signup_completed");
 
   if (data.session) redirect("/onboarding");
 

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import { AiSetupNotice } from "@/components/shared/setup-notice";
 import { generateQuizAction } from "@/lib/actions/ai";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { QuizDifficulty } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -36,9 +37,11 @@ export function CreateQuizDialog({
 
   function generate() {
     if (!materialId) return;
+    trackEvent("quiz_generation_started");
     startTransition(async () => {
       const result = await generateQuizAction(materialId, difficulty, count);
       if (result.ok && result.id) {
+        trackEvent("quiz_generation_completed");
         toast.success(result.message ?? dict.quizzes.generated);
         setOpen(false);
         router.push(`/dashboard/quizzes/${result.id}`);

@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/modal";
 import { extractDocument } from "@/lib/documents/client-extract";
 import { MAX_FILE_BYTES, kindFromName } from "@/lib/documents/file-validation";
 import { formatBytes } from "@/lib/format";
+import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -90,6 +91,7 @@ export function UploadDialog({
     setError(null);
     setStage("uploading");
     setProgress(0);
+    trackEvent("material_upload_started");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -123,6 +125,7 @@ export function UploadDialog({
         if (response.status === "failed") {
           toast.info(dict.materials.noText);
         } else {
+          trackEvent("material_upload_completed");
           toast.success(dict.materials.uploadSuccess);
         }
         setOpen(false);
