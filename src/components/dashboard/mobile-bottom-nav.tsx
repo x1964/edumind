@@ -25,7 +25,7 @@ const PRIMARY_ITEMS: Array<{
   { href: "/dashboard/quizzes", labelKey: "quizzes", icon: ListChecks },
 ];
 
-const DRAWER_ROUTES = [
+const SHEET_ROUTES = [
   "/dashboard/summaries",
   "/dashboard/mind-maps",
   "/dashboard/study-plan",
@@ -38,19 +38,23 @@ function isRouteActive(pathname: string, href: string, exact?: boolean) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function MobileBottomNav({ dict, onMore }: { dict: AppMessages; onMore: () => void }) {
+export function MobileBottomNav({
+  dict,
+  onMore,
+  moreOpen = false,
+}: {
+  dict: AppMessages;
+  onMore: () => void;
+  moreOpen?: boolean;
+}) {
   const pathname = usePathname();
-  const moreActive = DRAWER_ROUTES.some((href) => isRouteActive(pathname, href));
+  const moreActive = moreOpen || SHEET_ROUTES.some((href) => isRouteActive(pathname, href));
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 lg:hidden">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface via-surface/90 to-transparent"
-      />
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline/80 bg-surface/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-22px_rgba(16,38,44,0.35)] backdrop-blur-xl lg:hidden">
       <nav
         aria-label={dict.nav.main}
-        className="pointer-events-auto relative mx-auto mb-[calc(env(safe-area-inset-bottom)+10px)] flex w-[calc(100%-1.25rem)] max-w-md items-stretch gap-0.5 rounded-[26px] border border-hairline/70 bg-surface-raised/90 p-1.5 shadow-[0_18px_45px_-18px_rgba(16,38,44,0.45),0_2px_10px_-4px_rgba(16,38,44,0.12)] backdrop-blur-xl"
+        className="mx-auto flex h-[62px] w-full max-w-lg items-stretch gap-1 px-2"
       >
         {PRIMARY_ITEMS.map((item) => {
           const active = isRouteActive(pathname, item.href, item.exact);
@@ -60,22 +64,32 @@ export function MobileBottomNav({ dict, onMore }: { dict: AppMessages; onMore: (
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className="group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[20px] px-0.5 py-1.5 transition-colors"
+              className={cn(
+                "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors",
+                active ? "text-brand-ink" : "text-ink-muted"
+              )}
             >
               <span
+                aria-hidden="true"
                 className={cn(
-                  "grid size-9 place-items-center rounded-[13px] transition-all duration-200",
+                  "absolute top-0 h-[2.5px] w-7 rounded-full bg-brand transition-opacity duration-200",
+                  active ? "opacity-100" : "opacity-0"
+                )}
+              />
+              <span
+                className={cn(
+                  "grid size-7 place-items-center rounded-lg transition-colors",
                   active
-                    ? "bg-brand text-[#04130c] shadow-[0_8px_18px_-8px_rgba(0,201,80,0.95)]"
-                    : "text-ink-muted group-hover:bg-black/[0.05] group-hover:text-ink-soft"
+                    ? "bg-brand/[0.12]"
+                    : "group-hover:bg-black/[0.04] group-hover:text-ink-soft"
                 )}
               >
-                <Icon className="size-[18px]" strokeWidth={active ? 2.4 : 1.9} aria-hidden="true" />
+                <Icon className="size-[18px]" strokeWidth={active ? 2.3 : 1.9} aria-hidden="true" />
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[9.5px] leading-none transition-colors",
-                  active ? "font-semibold text-brand-ink" : "font-medium text-ink-muted"
+                  "max-w-full truncate text-[9.5px] leading-none",
+                  active ? "font-semibold" : "font-medium"
                 )}
               >
                 {dict.nav[item.labelKey]}
@@ -88,27 +102,38 @@ export function MobileBottomNav({ dict, onMore }: { dict: AppMessages; onMore: (
           type="button"
           onClick={onMore}
           aria-label={dict.nav.more}
+          aria-expanded={moreOpen}
           aria-haspopup="dialog"
-          className="group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[20px] px-0.5 py-1.5 transition-colors"
+          className={cn(
+            "group relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl transition-colors",
+            moreActive ? "text-brand-ink" : "text-ink-muted"
+          )}
         >
           <span
+            aria-hidden="true"
             className={cn(
-              "grid size-9 place-items-center rounded-[13px] transition-all duration-200",
+              "absolute top-0 h-[2.5px] w-7 rounded-full bg-brand transition-opacity duration-200",
+              moreActive ? "opacity-100" : "opacity-0"
+            )}
+          />
+          <span
+            className={cn(
+              "grid size-7 place-items-center rounded-lg transition-colors",
               moreActive
-                ? "bg-brand text-[#04130c] shadow-[0_8px_18px_-8px_rgba(0,201,80,0.95)]"
-                : "text-ink-muted group-hover:bg-black/[0.05] group-hover:text-ink-soft"
+                ? "bg-brand/[0.12]"
+                : "group-hover:bg-black/[0.04] group-hover:text-ink-soft"
             )}
           >
             <LayoutGrid
               className="size-[18px]"
-              strokeWidth={moreActive ? 2.4 : 1.9}
+              strokeWidth={moreActive ? 2.3 : 1.9}
               aria-hidden="true"
             />
           </span>
           <span
             className={cn(
-              "max-w-full truncate text-[9.5px] leading-none transition-colors",
-              moreActive ? "font-semibold text-brand-ink" : "font-medium text-ink-muted"
+              "max-w-full truncate text-[9.5px] leading-none",
+              moreActive ? "font-semibold" : "font-medium"
             )}
           >
             {dict.nav.more}

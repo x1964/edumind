@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,12 +16,12 @@ import {
   Network,
   NotebookPen,
   Settings,
-  X,
 } from "lucide-react";
 import { Logo } from "@/components/landing/Logo";
 import { AppLanguageSwitcher } from "@/components/dashboard/app-language-switcher";
 import { GlobalSearch } from "@/components/dashboard/global-search";
 import { MobileBottomNav } from "@/components/dashboard/mobile-bottom-nav";
+import { MobileMoreSheet } from "@/components/dashboard/mobile-more-sheet";
 import { InstallAppMenuItem } from "@/components/pwa/install-app";
 import { signOutAction } from "@/lib/actions/auth";
 import type { AppMessages } from "@/lib/i18n/app";
@@ -94,16 +94,12 @@ export function DashboardShell({
     getSidebarSnapshot,
     getSidebarServerSnapshot
   );
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   function toggleCollapsed() {
     const next = !collapsed;
     window.localStorage.setItem("edumind_sidebar", next ? "collapsed" : "expanded");
     window.dispatchEvent(new Event(SIDEBAR_EVENT));
-  }
-
-  function closeMobile() {
-    setMobileOpen(false);
   }
 
   function isActive(item: (typeof NAV_ITEMS)[number]) {
@@ -120,7 +116,6 @@ export function DashboardShell({
           <Link
             key={item.href}
             href={item.href}
-            onClick={closeMobile}
             aria-current={active ? "page" : undefined}
             title={collapsed ? dict.nav[item.labelKey] : undefined}
             className={cn(
@@ -285,58 +280,16 @@ export function DashboardShell({
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-[1420px] flex-1 px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+104px)] sm:px-6 lg:px-8 lg:py-8 lg:pb-8">
+          <main className="mx-auto w-full max-w-[1420px] flex-1 px-4 py-6 pb-[calc(env(safe-area-inset-bottom)+84px)] sm:px-6 lg:px-8 lg:py-8 lg:pb-8">
             {children}
           </main>
         </div>
       </div>
 
-      <MobileBottomNav dict={dict} onMore={() => setMobileOpen(true)} />
+      <MobileBottomNav dict={dict} moreOpen={moreOpen} onMore={() => setMoreOpen(true)} />
 
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            type="button"
-            aria-label={dict.nav.closeMenu}
-            onClick={() => setMobileOpen(false)}
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-          />
-          <aside
-            role="dialog"
-            aria-modal="true"
-            aria-label={dict.nav.more}
-            className="absolute inset-y-0 start-0 flex w-[280px] max-w-[85vw] flex-col border-e border-hairline bg-surface-deep shadow-2xl"
-          >
-            <div className="flex h-16 items-center justify-between border-b border-hairline px-4">
-              <Logo />
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                aria-label={dict.nav.closeMenu}
-                className="grid size-8 place-items-center rounded-lg text-ink-muted hover:bg-black/[0.05] hover:text-ink"
-              >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            </div>
-            {navigation}
-            <div className="border-t border-hairline p-3">
-              <div className="mb-2 flex items-center gap-2.5 px-1.5">
-                <span className="grid size-8 place-items-center rounded-full border border-brand/25 bg-brand/10 text-[11px] font-semibold text-brand-ink">
-                  {initials(profile.fullName)}
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-[12.5px] font-medium text-ink">
-                    {profile.fullName}
-                  </span>
-                  <span className="block truncate text-[10.5px] text-ink-muted">
-                    {profile.email}
-                  </span>
-                </span>
-              </div>
-              <AppLanguageSwitcher lang={lang} label={dict.common.language} />
-            </div>
-          </aside>
-        </div>
+      {moreOpen ? (
+        <MobileMoreSheet dict={dict} lang={lang} onClose={() => setMoreOpen(false)} />
       ) : null}
     </div>
   );
