@@ -1,10 +1,16 @@
 # EduMind
 
-EduMind is a bilingual (Arabic / English) AI-assisted learning platform built with Next.js 16, Supabase and any OpenAI-compatible Chat Completions provider.
+[![CI/CD Pipeline](https://github.com/x1964/edumind/actions/workflows/ci.yml/badge.svg)](https://github.com/x1964/edumind/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/Live%20demo-edumindapp.vercel.app-black?logo=vercel)](https://edumindapp.vercel.app)
+
+EduMind is a bilingual Arabic/English AI-assisted learning platform built with Next.js 16, Supabase, and any OpenAI-compatible Chat Completions provider.
 
 It ships with a public marketing landing page and a fully authenticated product: onboarding, a materials library, an AI tutor, summaries, quizzes, mind maps, a study planner, real progress analytics and account settings.
 
 > Arabic is the default language. The UI switches between Arabic (RTL) and English (LTR), and the preference is persisted in the user profile.
+
+**Live demo:** [edumindapp.vercel.app](https://edumindapp.vercel.app) · **License:** [MIT](LICENSE) · **Security:** [SECURITY.md](SECURITY.md)
 
 ---
 
@@ -44,6 +50,7 @@ It ships with a public marketing landing page and a fully authenticated product:
 | Mind maps      | Generated nodes/edges rendered with React Flow, editable positions and connections, saved back to the database.                         |
 | Study planner  | Create/edit/complete/delete tasks with priorities, due dates and estimated minutes.                                                     |
 | Progress       | Recharts analytics computed exclusively from the user's rows (study sessions, quiz attempts, materials).                                |
+| Web Analytics  | Vercel Web Analytics tracks aggregate page views, visitors, routes and traffic sources after it is enabled for the Vercel project.      |
 | Settings       | Profile, avatar URL, education, interests, goals, language, theme preference, notifications, password reset and bulk material deletion. |
 | PWA            | Installable on Android/desktop/iOS, standalone launch, shortcuts, offline fallback page and an in-app update prompt.                    |
 | UX states      | Route-level `loading.tsx`, `error.tsx`, `not-found.tsx`, empty states and explicit setup/configuration notices.                         |
@@ -71,7 +78,7 @@ No provider SDK is bundled. No service-role key is used in the browser.
 ```text
 src/
   app/
-    (landing)                 Public marketing page at /
+    page.tsx                   Public marketing page at /
     login, signup, ...        Auth pages
     onboarding/               Post-signup onboarding
     dashboard/                Authenticated app shell
@@ -325,11 +332,12 @@ To verify: Chrome DevTools → Application → Manifest / Service Workers, and u
 ## Scripts and quality checks
 
 ```bash
-npm run dev       # Start the development server
-npm run build     # Production build (Turbopack + TypeScript)
-npm run start     # Serve the production build
-npm run lint      # ESLint with the project configuration
-npx tsc --noEmit  # Type-only check
+npm run dev            # Start the development server
+npm run build          # Production build (Turbopack + TypeScript)
+npm run start          # Serve the production build
+npm run lint           # ESLint with the project configuration
+npm run type-check     # Next.js route type generation + TypeScript
+npm run format:check   # Prettier validation
 ```
 
 The repository currently has no automated test suite. Use the checks above plus the manual test plan below.
@@ -343,8 +351,9 @@ The repository currently has no automated test suite. Use the checks above plus 
 Run all three before shipping:
 
 ```bash
-npx tsc --noEmit
-npx eslint .
+npm run type-check
+npm run lint
+npx prettier --check .
 npm run build
 ```
 
@@ -390,6 +399,8 @@ Use a real Supabase project and, if available, a real AI key.
 3. Set `NEXT_PUBLIC_SITE_URL` to the production origin.
 4. Add the production `/auth/callback**` URL in Supabase Auth settings.
 5. Deploy. The default build command is `npm run build`.
+
+Web Analytics is already included in the root layout through `@vercel/analytics/next`. Enable **Analytics** in the Vercel project dashboard to collect aggregate visitors, page views, routes, referrers, devices and browsers. Analytics does not identify users by name or expose account data.
 
 ### Other platforms
 
