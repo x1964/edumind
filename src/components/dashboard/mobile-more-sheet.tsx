@@ -8,7 +8,6 @@ import {
   LineChart,
   LogOut,
   Network,
-  Newspaper,
   NotebookPen,
   Settings,
   X,
@@ -26,12 +25,6 @@ const TOOLS: Array<{
   icon: LucideIcon;
   label?: { ar: string; en: string };
 }> = [
-  {
-    href: "/dashboard/feed",
-    labelKey: "overview",
-    icon: Newspaper,
-    label: { ar: "الملتقى الدراسي", en: "Student Feed" },
-  },
   { href: "/dashboard/summaries", labelKey: "summaries", icon: NotebookPen },
   { href: "/dashboard/mind-maps", labelKey: "mindMaps", icon: Network },
   { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
