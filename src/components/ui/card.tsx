@@ -5,7 +5,7 @@ export function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-hairline bg-surface-raised transition-colors",
+        "rounded-2xl border border-hairline-strong/80 bg-surface-raised transition-colors hover:border-brand/40",
         className
       )}
       {...props}
