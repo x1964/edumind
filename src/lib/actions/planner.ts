@@ -8,6 +8,7 @@ import { getAppMessages } from "@/lib/i18n/app-server";
 import { isAnalyticsEventName, type AnalyticsEventName } from "@/lib/analytics";
 import { studyTaskSchema } from "@/lib/validation";
 import type { ActionResult } from "@/lib/actions/types";
+import { sendPushToUser } from "@/lib/push/server";
 
 async function trackServerEvent(name: AnalyticsEventName): Promise<void> {
   if (!isAnalyticsEventName(name)) return;
@@ -52,7 +53,7 @@ function revalidatePlanner() {
 }
 
 export async function createTaskAction(input: TaskInput): Promise<ActionResult> {
-  const { dict } = await getAppMessages();
+  const { lang, dict } = await getAppMessages();
   if (!isSupabaseConfigured()) return { ok: false, error: dict.setup.body };
 
   const user = await getCurrentUser();
@@ -90,6 +91,13 @@ export async function createTaskAction(input: TaskInput): Promise<ActionResult> 
     .single();
 
   if (error || !row) return { ok: false, error: dict.planner.failed };
+
+  await sendPushToUser(supabase, user.id, {
+    title: "EduMind",
+    body: lang === "en" ? `New study task: ${data.title}` : `مهمة مذاكرة جديدة: ${data.title}`,
+    url: "/dashboard/study-plan",
+    tag: `study-task-${row.id}`,
+  });
 
   await trackServerEvent("study_task_created");
 

@@ -1,4 +1,18 @@
 import type { Lang } from "@/lib/i18n";
+import type { FileKind } from "@/lib/types";
+
+/** Keep real names intact while making old generated names readable. */
+export function formatFileName(name: string, kind: FileKind, lang: Lang): string {
+  const extension = name.split(".").pop()?.toLowerCase();
+  const baseName = extension ? name.slice(0, -(extension.length + 1)) : name;
+  const looksGenerated = /^[a-z0-9_-]{20,}$/i.test(baseName);
+
+  if (looksGenerated && extension === kind) {
+    return lang === "ar" ? `ملف ${kind.toUpperCase()}` : `${kind.toUpperCase()} file`;
+  }
+
+  return name;
+}
 
 export function formatDate(value: string | null | undefined, lang: Lang): string {
   if (!value) return "—";

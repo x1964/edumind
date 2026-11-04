@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmAction } from "@/components/ui/confirm-action";
 import { InstallAppCard } from "@/components/pwa/install-app";
+import { PushNotificationsCard } from "@/components/pwa/push-notifications-card";
 import { requestPasswordChangeAction, updateProfileAction } from "@/lib/actions/settings";
 import { signOutAction } from "@/lib/actions/auth";
 import { deleteAllMaterialsAction } from "@/lib/actions/materials";
@@ -416,6 +417,8 @@ export function SettingsClient({
           </Card>
 
           <InstallAppCard dict={dict} />
+
+          <PushNotificationsCard />
 
           <Card>
             <CardHeader>

@@ -392,6 +392,10 @@ Use a real Supabase project and, if available, a real AI key.
 
 ## Deployment
 
+### Push notifications
+
+EduMind supports browser Push notifications for new study tasks. Generate VAPID keys, add them to Vercel as `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT`, then apply the Supabase migration. See [docs/PUSH_NOTIFICATIONS.md](docs/PUSH_NOTIFICATIONS.md) for the complete setup.
+
 ### Vercel (recommended)
 
 1. Push the repository to your Git provider and import it into Vercel.

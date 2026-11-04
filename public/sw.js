@@ -63,6 +63,44 @@ self.addEventListener("message", (event) => {
   }
 });
 
+self.addEventListener("push", (event) => {
+  let payload = {};
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch {
+    payload = { body: event.data ? event.data.text() : "" };
+  }
+
+  const title = payload.title || "EduMind";
+  const options = {
+    body: payload.body || "لديك تحديث جديد في EduMind.",
+    icon: "/favicon/icon-192.png",
+    badge: "/favicon/icon-192.png",
+    tag: payload.tag || "edumind-update",
+    data: { url: payload.url || "/dashboard" },
+    dir: "auto",
+    renotify: true,
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = new URL(event.notification.data?.url || "/dashboard", self.location.origin).href;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      const existing = clients.find((client) => "focus" in client);
+      if (existing) {
+        existing.navigate(targetUrl);
+        return existing.focus();
+      }
+      return self.clients.openWindow(targetUrl);
+    })
+  );
+});
+
 function isStaticAsset(pathname) {
   return STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix)) || STATIC_FILE.test(pathname);
 }

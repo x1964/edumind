@@ -12,7 +12,7 @@ import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { deleteMaterialAction } from "@/lib/actions/materials";
-import { formatBytes, formatDate } from "@/lib/format";
+import { formatBytes, formatDate, formatFileName } from "@/lib/format";
 import type { MaterialSummaryRow } from "@/lib/types";
 import type { AppMessages } from "@/lib/i18n/app";
 
@@ -92,8 +92,12 @@ export default async function MaterialsPage({
                       <FileKindIcon kind={material.file_type} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-ink" dir="auto">
-                        {material.file_name}
+                      <span
+                        className="block truncate text-[13px] font-medium text-ink"
+                        title={material.file_name}
+                        dir="auto"
+                      >
+                        {formatFileName(material.file_name, material.file_type, lang)}
                       </span>
                       <span className="text-[12px] uppercase text-ink-muted">
                         {material.file_type}

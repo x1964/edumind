@@ -24,7 +24,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentProfile } from "@/lib/supabase/auth";
 import { getDashboardData } from "@/lib/data/dashboard";
-import { formatDate, formatDuration, formatNumber } from "@/lib/format";
+import { formatDate, formatDuration, formatFileName, formatNumber } from "@/lib/format";
 import type { AppMessages } from "@/lib/i18n/app";
 
 export const instant = false;
@@ -106,7 +106,9 @@ export default async function DashboardOverviewPage() {
               <CardContent className="flex flex-1 flex-col p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-[12px] font-medium text-ink-muted">{label}</p>
+                    <p className="min-h-10 line-clamp-2 text-[12px] font-medium leading-5 text-ink-muted">
+                      {label}
+                    </p>
                     <p
                       className="em-num mt-2 text-[26px] font-semibold leading-none tracking-[-0.045em] text-ink"
                       dir="auto"
@@ -118,7 +120,7 @@ export default async function DashboardOverviewPage() {
                     <Icon className="size-3.5" aria-hidden="true" />
                   </span>
                 </div>
-                <p className="mt-auto truncate border-t border-hairline/60 pt-2.5 text-[12px] text-ink-muted">
+                <p className="mt-auto line-clamp-2 min-h-10 border-t border-hairline/60 pt-2.5 text-[12px] leading-5 text-ink-muted">
                   {note}
                 </p>
               </CardContent>
@@ -175,9 +177,10 @@ export default async function DashboardOverviewPage() {
                       <span className="min-w-0 flex-1">
                         <span
                           className="block truncate text-[13px] font-medium text-ink"
+                          title={material.file_name}
                           dir="auto"
                         >
-                          {material.file_name}
+                          {formatFileName(material.file_name, material.file_type, lang)}
                         </span>
                         <span className="block text-[12px] text-ink-muted">
                           {dict.materials.uploadedAt} · {formatDate(material.created_at, lang)}
@@ -232,8 +235,12 @@ export default async function DashboardOverviewPage() {
                       </span>
                       <MaterialStatus status={material.status} dict={dict} />
                     </div>
-                    <p className="mt-2 truncate text-[13px] font-medium text-ink" dir="auto">
-                      {material.file_name}
+                    <p
+                      className="mt-2 truncate text-[13px] font-medium text-ink"
+                      title={material.file_name}
+                      dir="auto"
+                    >
+                      {formatFileName(material.file_name, material.file_type, lang)}
                     </p>
                     <p className="mt-0.5 text-[12px] text-ink-muted">
                       {formatDate(material.created_at, lang)}
