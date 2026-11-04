@@ -1,13 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ChangeEvent } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ChangeEvent,
+} from "react";
 import {
   ImagePlus,
   LoaderCircle,
   MessageCircle,
   MoreHorizontal,
-  Newspaper,
   Send,
+  SlidersHorizontal,
   ThumbsUp,
   Trash2,
   X,
@@ -130,8 +139,8 @@ export function StudentFeed({
   const ar = lang === "ar";
   const t = ar
     ? {
-        title: "Student Feed",
-        description: "شارك أفكارك، واسأل، وتعلّم معًا.",
+        title: "الملتقى الدراسي",
+        description: "شارك أفكارك، اسأل زملاءك، وتعلّم معًا.",
         placeholder: "بماذا تود أن تشارك اليوم؟",
         publish: "نشر",
         publishing: "جارٍ النشر…",
@@ -181,8 +190,8 @@ export function StudentFeed({
         rateLimited: "محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.",
       }
     : {
-        title: "Student Feed",
-        description: "Share your thoughts, ask questions, and learn together.",
+        title: "Student community",
+        description: "Share ideas, ask better questions, and learn together.",
         placeholder: "What would you like to share today?",
         publish: "Publish",
         publishing: "Publishing…",
@@ -257,6 +266,8 @@ export function StudentFeed({
   const [reportPost, setReportPost] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+  const [filter, setFilter] = useState<"latest" | "popular">("latest");
+  const reducedMotion = useReducedMotion();
 
   const fetchPage = useCallback(async (next: FeedPage["nextCursor"] = null) => {
     const query = next
@@ -560,374 +571,424 @@ export function StudentFeed({
     }
   }
 
+  const visiblePosts = useMemo(
+    () =>
+      filter === "popular"
+        ? [...posts].sort(
+            (a, b) => b.likesCount + b.commentsCount - (a.likesCount + a.commentsCount)
+          )
+        : posts,
+    [filter, posts]
+  );
   return (
     <main
       dir={ar ? "rtl" : "ltr"}
-      className="mx-auto w-full max-w-[740px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
+      className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8"
     >
-      <header className="mb-6">
-        <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-2xl border border-brand/15 bg-brand/[0.07] text-brand-ink">
-            <Newspaper className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">{t.title}</h1>
-            <p className="mt-1 text-sm text-ink-muted">{t.description}</p>
-          </div>
-        </div>
-      </header>
-
-      <section
-        aria-label={ar ? "إنشاء منشور" : "Create a post"}
-        className="mb-5 rounded-2xl border border-hairline bg-surface-raised p-4 shadow-card sm:p-5"
-      >
-        <form onSubmit={publish}>
-          <div className="flex items-start gap-3">
-            <Avatar name={fullName} src={avatarUrl} />
-            <div className="min-w-0 flex-1">
-              <div className="mb-3 text-sm font-semibold text-ink">{fullName}</div>
-              <textarea
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                maxLength={3000}
-                rows={3}
-                placeholder={t.placeholder}
-                className="min-h-24 w-full resize-y rounded-xl border border-hairline bg-surface px-3.5 py-3 text-sm leading-6 text-ink placeholder:text-ink-muted focus:border-brand/50 focus:outline-none focus:ring-2 focus:ring-brand/10"
-              />
-              {preview ? (
-                <div
-                  className="relative mt-3 max-h-72 w-full overflow-hidden rounded-xl border border-hairline"
-                  style={{ aspectRatio: previewRatio }}
-                >
-                  <Image
-                    src={preview}
-                    alt={ar ? "معاينة الصورة" : "Image preview"}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 600px"
-                    unoptimized
-                    onLoad={(event) => {
-                      const { naturalWidth, naturalHeight } = event.currentTarget;
-                      if (naturalWidth && naturalHeight)
-                        setPreviewRatio(naturalWidth / naturalHeight);
-                    }}
-                    className="object-contain"
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_292px]">
+        <div className="min-w-0">
+          <section
+            aria-label={ar ? "إنشاء منشور" : "Create a post"}
+            className="mb-5 overflow-hidden rounded-[1.35rem] border border-brand/20 bg-[radial-gradient(circle_at_100%_0%,rgba(16,185,129,0.13),transparent_36%),linear-gradient(145deg,rgba(232,253,243,0.75),rgba(255,255,255,0.92)_65%)] p-4 shadow-card sm:p-5"
+          >
+            <form onSubmit={publish}>
+              <div className="flex items-start gap-3">
+                <Avatar name={fullName} src={avatarUrl} />
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-[13px] font-semibold text-ink">{fullName}</p>
+                      <p className="mt-0.5 text-[11px] text-ink-muted">
+                        {ar
+                          ? "شارك معرفة مفيدة مع زملائك"
+                          : "Share something useful with your classmates"}
+                      </p>
+                    </div>
+                    <SlidersHorizontal className="size-4 text-brand-ink/70" />
+                  </div>
+                  <textarea
+                    value={content}
+                    onChange={(event) => setContent(event.target.value)}
+                    maxLength={3000}
+                    rows={2}
+                    placeholder={t.placeholder}
+                    className="min-h-20 w-full resize-y rounded-xl border border-hairline/80 bg-white/70 px-3.5 py-3 text-sm leading-6 text-ink placeholder:text-ink-muted transition focus:border-brand/45 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/[0.08]"
+                  />
+                  {preview ? (
+                    <div
+                      className="relative mt-3 max-h-72 w-full overflow-hidden rounded-xl border border-hairline"
+                      style={{ aspectRatio: previewRatio }}
+                    >
+                      <Image
+                        src={preview}
+                        alt={ar ? "معاينة الصورة" : "Image preview"}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 600px"
+                        unoptimized
+                        onLoad={(event) => {
+                          const { naturalWidth, naturalHeight } = event.currentTarget;
+                          if (naturalWidth && naturalHeight)
+                            setPreviewRatio(naturalWidth / naturalHeight);
+                        }}
+                        className="object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImage(null);
+                          if (inputRef.current) inputRef.current.value = "";
+                        }}
+                        aria-label={t.removeImage}
+                        className="absolute end-2 top-2 z-10 grid size-8 place-items-center rounded-full bg-surface/95 text-ink shadow-card"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-3">
+                <div className="flex items-center gap-3">
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={onImageChange}
+                    className="sr-only"
+                    aria-label={t.addImage}
                   />
                   <button
                     type="button"
-                    onClick={() => {
-                      setImage(null);
-                      if (inputRef.current) inputRef.current.value = "";
-                    }}
-                    aria-label={t.removeImage}
-                    className="absolute end-2 top-2 z-10 grid size-8 place-items-center rounded-full bg-surface/95 text-ink shadow-card"
+                    onClick={() => inputRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-brand/[0.06] hover:text-brand-ink"
                   >
-                    <X className="size-4" />
+                    <ImagePlus className="size-4" aria-hidden="true" />
+                    {t.addImage}
                   </button>
+                  <span className="text-xs text-ink-muted">{content.length}/3000</span>
                 </div>
+                <button
+                  type="submit"
+                  disabled={publishing || !content.trim()}
+                  className="inline-flex min-w-28 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_9px_20px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {publishing ? (
+                    <>
+                      <LoaderCircle className="size-4 animate-spin" />
+                      {t.publishing}
+                    </>
+                  ) : (
+                    t.publish
+                  )}
+                </button>
+              </div>
+              {notice ? (
+                <p
+                  role="status"
+                  className={`mt-3 text-sm ${notice.error ? "text-danger" : "text-brand-ink"}`}
+                >
+                  {notice.text}
+                </p>
               ) : null}
+            </form>
+          </section>
+
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-[15px] font-semibold text-ink">
+                {ar ? "مناقشات الطلاب" : "Student discussions"}
+              </h2>
+              <p className="mt-0.5 text-[12px] text-ink-muted">
+                {posts.length} {ar ? "منشور" : "posts"}
+              </p>
             </div>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-hairline pt-3">
-            <div className="flex items-center gap-3">
-              <input
-                ref={inputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={onImageChange}
-                className="sr-only"
-                aria-label={t.addImage}
-              />
+            <div className="flex items-center gap-1 rounded-xl border border-hairline bg-surface-raised p-1">
               <button
                 type="button"
-                onClick={() => inputRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:bg-brand/[0.06] hover:text-brand-ink"
+                onClick={() => setFilter("latest")}
+                className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${filter === "latest" ? "bg-brand/[0.1] text-brand-ink" : "text-ink-muted hover:text-ink"}`}
               >
-                <ImagePlus className="size-4" aria-hidden="true" />
-                {t.addImage}
+                {ar ? "الأحدث" : "Latest"}
               </button>
-              <span className="text-xs text-ink-muted">{content.length}/3000</span>
+              <button
+                type="button"
+                onClick={() => setFilter("popular")}
+                className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${filter === "popular" ? "bg-brand/[0.1] text-brand-ink" : "text-ink-muted hover:text-ink"}`}
+              >
+                {ar ? "الأكثر تفاعلًا" : "Most discussed"}
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={publishing || !content.trim()}
-              className="inline-flex min-w-28 items-center justify-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {publishing ? (
-                <>
-                  <LoaderCircle className="size-4 animate-spin" />
-                  {t.publishing}
-                </>
-              ) : (
-                t.publish
-              )}
-            </button>
           </div>
-          {notice ? (
-            <p
-              role="status"
-              className={`mt-3 text-sm ${notice.error ? "text-danger" : "text-brand-ink"}`}
-            >
-              {notice.text}
-            </p>
-          ) : null}
-        </form>
-      </section>
-
-      <section aria-label={ar ? "المنشورات" : "Posts"} className="space-y-4">
-        {loading
-          ? Array.from({ length: 3 }, (_, index) => (
-              <div
-                key={index}
-                className="animate-pulse rounded-2xl border border-hairline bg-surface-raised p-5"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-11 rounded-full bg-hairline/70" />
-                  <div className="space-y-2">
-                    <div className="h-3 w-32 rounded bg-hairline/70" />
-                    <div className="h-2.5 w-20 rounded bg-hairline/50" />
-                  </div>
-                </div>
-                <div className="mt-5 h-16 rounded-xl bg-hairline/40" />
-              </div>
-            ))
-          : null}
-        {!loading && loadError ? (
-          <div className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center">
-            <p className="text-sm text-ink-muted">{t.loadError}</p>
-            <button
-              type="button"
-              onClick={() => void loadInitial()}
-              className="mt-4 rounded-xl border border-hairline px-4 py-2 text-sm font-semibold text-ink"
-            >
-              {t.retry}
-            </button>
-          </div>
-        ) : null}
-        {!loading && !loadError && posts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-hairline-strong bg-surface-raised px-6 py-12 text-center">
-            <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-brand/[0.07] text-brand-ink">
-              <MessageCircle className="size-5" />
-            </span>
-            <h2 className="mt-4 text-base font-semibold text-ink">{t.emptyTitle}</h2>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-muted">{t.emptyBody}</p>
-          </div>
-        ) : null}
-        {!loading && !loadError
-          ? posts.map((post) => (
-              <article
-                key={post.id}
-                className="overflow-visible rounded-2xl border border-hairline bg-surface-raised p-4 shadow-card sm:p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <Avatar name={post.authorName} src={post.authorAvatarUrl} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-ink">{post.authorName}</p>
-                    <time dateTime={post.createdAt} className="mt-0.5 block text-xs text-ink-muted">
-                      {relativeTime(post.createdAt, lang)}
-                    </time>
-                  </div>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      aria-label={t.options}
-                      aria-expanded={menuPost === post.id}
-                      onClick={() => setMenuPost(menuPost === post.id ? null : post.id)}
-                      className="grid size-9 place-items-center rounded-xl text-ink-muted hover:bg-black/[0.04] hover:text-ink"
-                    >
-                      <MoreHorizontal className="size-5" />
-                    </button>
-                    {menuPost === post.id ? (
-                      <div className="absolute end-0 top-10 z-20 min-w-44 overflow-hidden rounded-xl border border-hairline bg-surface-raised p-1 shadow-pop">
-                        {post.userId === userId ? (
-                          <button
-                            type="button"
-                            onClick={() => void deletePost(post)}
-                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm text-danger hover:bg-danger/5"
-                          >
-                            <Trash2 className="size-4" />
-                            {t.delete}
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setReportPost(post.id);
-                              setMenuPost(null);
-                            }}
-                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm text-ink-soft hover:bg-black/[0.04]"
-                          >
-                            {t.report}
-                          </button>
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-                <p
-                  dir="auto"
-                  className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-ink"
-                >
-                  {post.content}
-                </p>
-                {post.imageUrl ? (
+          <section aria-label={ar ? "المنشورات" : "Posts"} className="space-y-4">
+            {loading
+              ? Array.from({ length: 3 }, (_, index) => (
                   <div
-                    className="relative mt-4 max-h-[520px] w-full overflow-hidden rounded-xl border border-hairline"
-                    style={{ aspectRatio: imageRatios[post.id] ?? 16 / 9 }}
+                    key={index}
+                    className="animate-pulse rounded-2xl border border-hairline bg-surface-raised p-5"
                   >
-                    <Image
-                      src={post.imageUrl}
-                      alt={ar ? "صورة مرفقة بمنشور" : "Image attached to post"}
-                      fill
-                      sizes="(max-width: 740px) 100vw, 700px"
-                      unoptimized
-                      loading="lazy"
-                      onLoad={(event) => {
-                        const { naturalWidth, naturalHeight } = event.currentTarget;
-                        if (naturalWidth && naturalHeight) {
-                          const ratio = naturalWidth / naturalHeight;
-                          setImageRatios((current) =>
-                            current[post.id] === ratio ? current : { ...current, [post.id]: ratio }
-                          );
-                        }
-                      }}
-                      className="object-contain"
-                    />
+                    <div className="flex items-center gap-3">
+                      <div className="size-11 rounded-full bg-hairline/70" />
+                      <div className="space-y-2">
+                        <div className="h-3 w-32 rounded bg-hairline/70" />
+                        <div className="h-2.5 w-20 rounded bg-hairline/50" />
+                      </div>
+                    </div>
+                    <div className="mt-5 h-16 rounded-xl bg-hairline/40" />
                   </div>
-                ) : null}
-                <div className="mt-4 flex items-center justify-between border-b border-hairline pb-3 text-xs text-ink-muted">
-                  <span>
-                    {post.likesCount} {t.countLike}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => void toggleComments(post.id)}
-                    className="hover:text-brand-ink"
+                ))
+              : null}
+            {!loading && loadError ? (
+              <div className="rounded-2xl border border-hairline bg-surface-raised p-8 text-center">
+                <p className="text-sm text-ink-muted">{t.loadError}</p>
+                <button
+                  type="button"
+                  onClick={() => void loadInitial()}
+                  className="mt-4 rounded-xl border border-hairline px-4 py-2 text-sm font-semibold text-ink"
+                >
+                  {t.retry}
+                </button>
+              </div>
+            ) : null}
+            {!loading && !loadError && posts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-hairline-strong bg-surface-raised px-6 py-12 text-center">
+                <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-brand/[0.07] text-brand-ink">
+                  <MessageCircle className="size-5" />
+                </span>
+                <h2 className="mt-4 text-base font-semibold text-ink">{t.emptyTitle}</h2>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-ink-muted">
+                  {t.emptyBody}
+                </p>
+              </div>
+            ) : null}
+            {!loading && !loadError
+              ? visiblePosts.map((post, index) => (
+                  <motion.article
+                    key={post.id}
+                    initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: reducedMotion ? 0 : Math.min(index * 0.04, 0.2),
+                    }}
+                    className="overflow-visible rounded-2xl border border-hairline bg-surface-raised p-4 shadow-[0_10px_30px_-26px_rgba(15,23,42,0.4)] transition-shadow hover:shadow-card sm:p-5"
                   >
-                    {post.commentsCount} {t.countComments}
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <button
-                    type="button"
-                    disabled={pendingLikes.includes(post.id)}
-                    onClick={() => void toggleLike(post)}
-                    aria-pressed={post.likedByMe}
-                    className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors disabled:opacity-60 ${post.likedByMe ? "bg-brand/[0.08] text-brand-ink" : "text-ink-muted hover:bg-black/[0.035] hover:text-ink"}`}
-                  >
-                    <ThumbsUp className={`size-4 ${post.likedByMe ? "fill-current" : ""}`} />
-                    {post.likedByMe ? t.unlike : t.like}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void toggleComments(post.id)}
-                    aria-expanded={openComments === post.id}
-                    className="flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-ink-muted transition-colors hover:bg-black/[0.035] hover:text-ink"
-                  >
-                    <MessageCircle className="size-4" />
-                    {t.comment}
-                  </button>
-                </div>
-                {openComments === post.id ? (
-                  <div className="mt-2 border-t border-hairline pt-4">
-                    {commentsLoading === post.id ? (
-                      <div className="flex items-center gap-2 py-4 text-sm text-ink-muted">
-                        <LoaderCircle className="size-4 animate-spin" />
-                        {t.loading}
+                    <div className="flex items-start gap-3">
+                      <Avatar name={post.authorName} src={post.authorAvatarUrl} />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-ink">{post.authorName}</p>
+                        <time
+                          dateTime={post.createdAt}
+                          className="mt-0.5 block text-xs text-ink-muted"
+                        >
+                          {relativeTime(post.createdAt, lang)}
+                        </time>
+                      </div>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          aria-label={t.options}
+                          aria-expanded={menuPost === post.id}
+                          onClick={() => setMenuPost(menuPost === post.id ? null : post.id)}
+                          className="grid size-9 place-items-center rounded-xl text-ink-muted hover:bg-black/[0.04] hover:text-ink"
+                        >
+                          <MoreHorizontal className="size-5" />
+                        </button>
+                        {menuPost === post.id ? (
+                          <div className="absolute end-0 top-10 z-20 min-w-44 overflow-hidden rounded-xl border border-hairline bg-surface-raised p-1 shadow-pop">
+                            {post.userId === userId ? (
+                              <button
+                                type="button"
+                                onClick={() => void deletePost(post)}
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm text-danger hover:bg-danger/5"
+                              >
+                                <Trash2 className="size-4" />
+                                {t.delete}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReportPost(post.id);
+                                  setMenuPost(null);
+                                }}
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start text-sm text-ink-soft hover:bg-black/[0.04]"
+                              >
+                                {t.report}
+                              </button>
+                            )}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <p
+                      dir="auto"
+                      className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-ink"
+                    >
+                      {post.content}
+                    </p>
+                    {post.imageUrl ? (
+                      <div
+                        className="relative mt-4 max-h-[520px] w-full overflow-hidden rounded-xl border border-hairline"
+                        style={{ aspectRatio: imageRatios[post.id] ?? 16 / 9 }}
+                      >
+                        <Image
+                          src={post.imageUrl}
+                          alt={ar ? "صورة مرفقة بمنشور" : "Image attached to post"}
+                          fill
+                          sizes="(max-width: 740px) 100vw, 700px"
+                          unoptimized
+                          loading="lazy"
+                          onLoad={(event) => {
+                            const { naturalWidth, naturalHeight } = event.currentTarget;
+                            if (naturalWidth && naturalHeight) {
+                              const ratio = naturalWidth / naturalHeight;
+                              setImageRatios((current) =>
+                                current[post.id] === ratio
+                                  ? current
+                                  : { ...current, [post.id]: ratio }
+                              );
+                            }
+                          }}
+                          className="object-contain"
+                        />
                       </div>
                     ) : null}
-                    {commentsLoading !== post.id && (comments[post.id]?.length ?? 0) === 0 ? (
-                      <p className="py-3 text-sm text-ink-muted">{t.noComments}</p>
-                    ) : null}
-                    <div className="space-y-4">
-                      {(comments[post.id] ?? []).map((comment) => (
-                        <div key={comment.id} className="flex items-start gap-2.5">
-                          <Avatar
-                            name={comment.author_name}
-                            src={comment.author_avatar_url}
-                            size="size-8"
-                          />
-                          <div className="min-w-0 flex-1 rounded-xl bg-surface px-3 py-2.5">
-                            <div className="flex items-baseline justify-between gap-2">
-                              <span className="truncate text-xs font-semibold text-ink">
-                                {comment.author_name}
-                              </span>
-                              <time
-                                className="shrink-0 text-[10px] text-ink-muted"
-                                dateTime={comment.created_at}
-                              >
-                                {relativeTime(comment.created_at, lang)}
-                              </time>
-                            </div>
-                            <p
-                              dir="auto"
-                              className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-ink-soft"
-                            >
-                              {comment.content}
-                            </p>
-                          </div>
-                          {comment.user_id === userId ? (
-                            <button
-                              type="button"
-                              onClick={() => void deleteComment(comment)}
-                              aria-label={t.deleteComment}
-                              className="grid size-8 shrink-0 place-items-center rounded-lg text-ink-muted hover:bg-danger/5 hover:text-danger"
-                            >
-                              <Trash2 className="size-3.5" />
-                            </button>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                    <form
-                      onSubmit={(event) => void sendComment(event, post.id)}
-                      className="mt-4 flex items-center gap-2"
-                    >
-                      <Avatar name={fullName} src={avatarUrl} size="size-8" />
-                      <input
-                        value={commentDraft}
-                        onChange={(event) => setCommentDraft(event.target.value)}
-                        maxLength={1000}
-                        placeholder={t.commentPlaceholder}
-                        className="h-10 min-w-0 flex-1 rounded-xl border border-hairline bg-surface px-3 text-sm text-ink placeholder:text-ink-muted focus:border-brand/50 focus:outline-none"
-                      />
+                    <div className="mt-4 flex items-center justify-between border-b border-hairline pb-3 text-xs text-ink-muted">
+                      <span>
+                        {post.likesCount} {t.countLike}
+                      </span>
                       <button
-                        type="submit"
-                        disabled={sendingComment || !commentDraft.trim()}
-                        aria-label={t.send}
-                        className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand text-white disabled:opacity-50"
+                        type="button"
+                        onClick={() => void toggleComments(post.id)}
+                        className="hover:text-brand-ink"
                       >
-                        {sendingComment ? (
-                          <LoaderCircle className="size-4 animate-spin" />
-                        ) : (
-                          <Send className="size-4" />
-                        )}
+                        {post.commentsCount} {t.countComments}
                       </button>
-                    </form>
-                  </div>
-                ) : null}
-              </article>
-            ))
-          : null}
-        {hasMore && !loading && !loadError ? (
-          <div className="py-2 text-center">
-            <button
-              type="button"
-              disabled={moreLoading}
-              onClick={() => void loadMore()}
-              className="inline-flex items-center gap-2 rounded-xl border border-hairline bg-surface-raised px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-brand/30 disabled:opacity-60"
-            >
-              {moreLoading ? (
-                <>
-                  <LoaderCircle className="size-4 animate-spin" />
-                  {t.loadingMore}
-                </>
-              ) : (
-                t.loadMore
-              )}
-            </button>
-          </div>
-        ) : null}
-      </section>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pt-2">
+                      <button
+                        type="button"
+                        disabled={pendingLikes.includes(post.id)}
+                        onClick={() => void toggleLike(post)}
+                        aria-pressed={post.likedByMe}
+                        className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors disabled:opacity-60 ${post.likedByMe ? "bg-brand/[0.08] text-brand-ink" : "text-ink-muted hover:bg-black/[0.035] hover:text-ink"}`}
+                      >
+                        <ThumbsUp className={`size-4 ${post.likedByMe ? "fill-current" : ""}`} />
+                        {post.likedByMe ? t.unlike : t.like}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void toggleComments(post.id)}
+                        aria-expanded={openComments === post.id}
+                        className="flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-ink-muted transition-colors hover:bg-black/[0.035] hover:text-ink"
+                      >
+                        <MessageCircle className="size-4" />
+                        {t.comment}
+                      </button>
+                    </div>
+                    {openComments === post.id ? (
+                      <div className="mt-2 border-t border-hairline pt-4">
+                        {commentsLoading === post.id ? (
+                          <div className="flex items-center gap-2 py-4 text-sm text-ink-muted">
+                            <LoaderCircle className="size-4 animate-spin" />
+                            {t.loading}
+                          </div>
+                        ) : null}
+                        {commentsLoading !== post.id && (comments[post.id]?.length ?? 0) === 0 ? (
+                          <p className="py-3 text-sm text-ink-muted">{t.noComments}</p>
+                        ) : null}
+                        <div className="space-y-4">
+                          {(comments[post.id] ?? []).map((comment) => (
+                            <div key={comment.id} className="flex items-start gap-2.5">
+                              <Avatar
+                                name={comment.author_name}
+                                src={comment.author_avatar_url}
+                                size="size-8"
+                              />
+                              <div className="min-w-0 flex-1 rounded-xl bg-surface px-3 py-2.5">
+                                <div className="flex items-baseline justify-between gap-2">
+                                  <span className="truncate text-xs font-semibold text-ink">
+                                    {comment.author_name}
+                                  </span>
+                                  <time
+                                    className="shrink-0 text-[10px] text-ink-muted"
+                                    dateTime={comment.created_at}
+                                  >
+                                    {relativeTime(comment.created_at, lang)}
+                                  </time>
+                                </div>
+                                <p
+                                  dir="auto"
+                                  className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-ink-soft"
+                                >
+                                  {comment.content}
+                                </p>
+                              </div>
+                              {comment.user_id === userId ? (
+                                <button
+                                  type="button"
+                                  onClick={() => void deleteComment(comment)}
+                                  aria-label={t.deleteComment}
+                                  className="grid size-8 shrink-0 place-items-center rounded-lg text-ink-muted hover:bg-danger/5 hover:text-danger"
+                                >
+                                  <Trash2 className="size-3.5" />
+                                </button>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                        <form
+                          onSubmit={(event) => void sendComment(event, post.id)}
+                          className="mt-4 flex items-center gap-2"
+                        >
+                          <Avatar name={fullName} src={avatarUrl} size="size-8" />
+                          <input
+                            value={commentDraft}
+                            onChange={(event) => setCommentDraft(event.target.value)}
+                            maxLength={1000}
+                            placeholder={t.commentPlaceholder}
+                            className="h-10 min-w-0 flex-1 rounded-xl border border-hairline bg-surface px-3 text-sm text-ink placeholder:text-ink-muted focus:border-brand/50 focus:outline-none"
+                          />
+                          <button
+                            type="submit"
+                            disabled={sendingComment || !commentDraft.trim()}
+                            aria-label={t.send}
+                            className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand text-white disabled:opacity-50"
+                          >
+                            {sendingComment ? (
+                              <LoaderCircle className="size-4 animate-spin" />
+                            ) : (
+                              <Send className="size-4" />
+                            )}
+                          </button>
+                        </form>
+                      </div>
+                    ) : null}
+                  </motion.article>
+                ))
+              : null}
+            {hasMore && !loading && !loadError ? (
+              <div className="py-2 text-center">
+                <button
+                  type="button"
+                  disabled={moreLoading}
+                  onClick={() => void loadMore()}
+                  className="inline-flex items-center gap-2 rounded-xl border border-hairline bg-surface-raised px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-brand/30 disabled:opacity-60"
+                >
+                  {moreLoading ? (
+                    <>
+                      <LoaderCircle className="size-4 animate-spin" />
+                      {t.loadingMore}
+                    </>
+                  ) : (
+                    t.loadMore
+                  )}
+                </button>
+              </div>
+            ) : null}
+          </section>
+        </div>
+      </div>
 
       <Modal
         open={Boolean(reportPost)}
