@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   const now = new Date();
-  const windowEnd = new Date(now.getTime() + 60 * 60 * 1000);
+  const windowEnd = new Date(now.getTime() + 24 * 60 * 60 * 1000);
   const { data, error } = await supabase
     .from("study_tasks")
     .select("id, user_id, title, due_date")
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
 
     await sendPushToUser(supabase, task.user_id, {
       title: "EduMind",
-      body: `تذكير: تبدأ مهمة المذاكرة «${task.title}» خلال ساعة.`,
+      body: `تذكير: تبدأ مهمة المذاكرة «${task.title}» خلال 24 ساعة.`,
       url: "/dashboard/study-plan",
       tag: `study-task-${task.id}`,
     });
