@@ -5,7 +5,7 @@ export function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-hairline bg-surface-raised shadow-card transition-shadow hover:shadow-raised",
+        "rounded-2xl border border-hairline bg-surface-raised transition-colors",
         className
       )}
       {...props}
