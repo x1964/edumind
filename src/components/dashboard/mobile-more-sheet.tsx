@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import {
   CalendarClock,
   LineChart,
   LogOut,
   Network,
+  Newspaper,
   NotebookPen,
   Settings,
   X,
@@ -22,7 +24,14 @@ const TOOLS: Array<{
   href: string;
   labelKey: keyof AppMessages["nav"];
   icon: LucideIcon;
+  label?: { ar: string; en: string };
 }> = [
+  {
+    href: "/dashboard/feed",
+    labelKey: "overview",
+    icon: Newspaper,
+    label: { ar: "الملتقى الدراسي", en: "Student Feed" },
+  },
   { href: "/dashboard/summaries", labelKey: "summaries", icon: NotebookPen },
   { href: "/dashboard/mind-maps", labelKey: "mindMaps", icon: Network },
   { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
@@ -38,6 +47,8 @@ export function MobileMoreSheet({
   lang: Lang;
   onClose: () => void;
 }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
@@ -95,18 +106,20 @@ export function MobileMoreSheet({
           <div className="grid grid-cols-2 gap-2">
             {TOOLS.map((tool) => {
               const Icon = tool.icon;
+              const active = pathname === tool.href || pathname.startsWith(`${tool.href}/`);
               return (
                 <Link
                   key={tool.href}
                   href={tool.href}
+                  aria-current={active ? "page" : undefined}
                   onClick={onClose}
-                  className="em-tap flex min-w-0 items-center gap-2.5 rounded-2xl border border-hairline/70 bg-surface px-3 py-3 transition-colors active:border-brand/30 active:bg-brand/[0.05]"
+                  className={`em-tap flex min-w-0 items-center gap-2.5 rounded-2xl border px-3 py-3 transition-colors active:border-brand/30 active:bg-brand/[0.05] ${active ? "border-brand/30 bg-brand/[0.07]" : "border-hairline/70 bg-surface"}`}
                 >
                   <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/15 bg-gradient-to-br from-brand/[0.16] to-brand/[0.04] text-brand-ink">
                     <Icon className="size-4" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 truncate text-[12px] font-medium text-ink">
-                    {dict.nav[tool.labelKey]}
+                    {tool.label ? tool.label[lang] : dict.nav[tool.labelKey]}
                   </span>
                 </Link>
               );

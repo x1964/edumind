@@ -4,7 +4,7 @@
  */
 
 const ENV = new URL(self.location.href).searchParams.get("env") === "dev" ? "dev" : "prod";
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `edumind-static-${ENV}-${VERSION}`;
 const PAGE_CACHE = `edumind-pages-${ENV}-${VERSION}`;
 const OFFLINE_URL = "/offline.html";

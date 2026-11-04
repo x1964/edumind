@@ -13,6 +13,7 @@ import {
   LineChart,
   ListChecks,
   Network,
+  Newspaper,
   NotebookPen,
   Settings,
 } from "lucide-react";
@@ -37,6 +38,7 @@ interface NavItem {
   labelKey: keyof AppMessages["nav"];
   icon: typeof LayoutDashboard;
   exact?: boolean;
+  label?: { ar: string; en: string };
 }
 
 const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }> = [
@@ -45,6 +47,12 @@ const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }
     items: [
       { href: "/dashboard", labelKey: "overview", icon: LayoutDashboard, exact: true },
       { href: "/dashboard/materials", labelKey: "materials", icon: FileText },
+      {
+        href: "/dashboard/feed",
+        labelKey: "overview",
+        icon: Newspaper,
+        label: { ar: "الملتقى الدراسي", en: "Student Feed" },
+      },
       { href: "/dashboard/tutor", labelKey: "tutor", icon: BrainCircuit },
     ],
   },
@@ -125,6 +133,10 @@ export function DashboardShell({
     return pathname === item.href || pathname.startsWith(`${item.href}/`);
   }
 
+  function itemLabel(item: NavItem) {
+    return item.label ? item.label[lang] : dict.nav[item.labelKey];
+  }
+
   const currentItem = NAV_GROUPS.flatMap((group) => group.items).find(isActive);
 
   const navigation = (
@@ -150,7 +162,7 @@ export function DashboardShell({
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    title={collapsed ? dict.nav[item.labelKey] : undefined}
+                    title={collapsed ? itemLabel(item) : undefined}
                     className={cn(
                       "group relative flex min-h-9 items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-colors",
                       active
@@ -166,7 +178,7 @@ export function DashboardShell({
                       />
                     ) : null}
                     <Icon className="size-4 shrink-0" aria-hidden="true" />
-                    {collapsed ? null : <span className="truncate">{dict.nav[item.labelKey]}</span>}
+                    {collapsed ? null : <span className="truncate">{itemLabel(item)}</span>}
                   </Link>
                 );
               })}
@@ -273,7 +285,7 @@ export function DashboardShell({
               </span>
               <span className="size-1 rounded-full bg-hairline-strong" aria-hidden="true" />
               <span className="truncate text-[13px] font-semibold text-ink">
-                {currentItem ? dict.nav[currentItem.labelKey] : dict.nav.overview}
+                {currentItem ? itemLabel(currentItem) : dict.nav.overview}
               </span>
             </div>
 

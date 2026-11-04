@@ -1,24 +1,26 @@
 -- ===========================================================================
--- EduMind — complete database schema (single file)
+-- EduMind — core database schema baseline
 --
--- This file is the whole database for the project: every table, index,
--- constraint, Row Level Security policy, trigger, RPC and storage bucket that
--- the application uses. It is idempotent, so it is safe to run on:
+-- Incremental features are maintained in timestamped migrations. The Student
+-- Feed schema and storage policies are in
+-- supabase/migrations/20261104000000_student_feed.sql and must be applied
+-- after this baseline when provisioning a new project.
+-- This file remains idempotent for the core EduMind schema and is safe to run on:
 --
---   • a brand new Supabase project              → creates everything
---   • an existing project made by the migrations → repairs / completes it
+--   • a brand new Supabase project              → creates the core schema
+--   • an existing project made by the migrations → repairs / completes the core schema
 --   • the same project again                     → no-op
 --
 -- How to apply
 --   Supabase CLI :  supabase db push          (uses supabase/migrations/)
---   Dashboard    :  SQL Editor → paste this file → Run
+--   Dashboard    :  SQL Editor → run this file, then apply subsequent migrations
 --   psql         :  psql "$DATABASE_URL" -f supabase/schema.sql
 --
 -- Security model
---   Every table is protected by Row Level Security. A row is only visible or
---   writable by its owner (`auth.uid()`), never by another student. The
---   browser uses the public anon key; the service-role key must never be
---   exposed to the client.
+--   Tables use Row Level Security. Private learning data is owner-scoped;
+--   Student Feed content is readable to authenticated students, while writes
+--   and deletions are owner-scoped. The browser uses only the public anon key;
+--   the service-role key must never be exposed to the client.
 -- ===========================================================================
 
 begin;

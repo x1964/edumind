@@ -1,0 +1,2 @@
+-- This version mirrors the Student Feed migration applied to the linked Supabase project.
+-- The idempotent implementation lives in 20261104000000_student_feed.sql for local provisioning.
