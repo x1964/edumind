@@ -29,7 +29,7 @@ function StatCard({ icon: Icon, value, suffix = "", label, delay }: StatCardProp
     <Reveal delay={delay}>
       <div
         ref={ref}
-        className="group relative h-full overflow-hidden rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-colors duration-200 hover:border-brand/25"
+        className="group relative h-full overflow-hidden rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-all duration-300 hover:border-brand/25 hover:shadow-card"
       >
         <span
           className="grid size-10 place-items-center rounded-xl border border-brand/20 bg-brand/[0.07] text-brand-ink"

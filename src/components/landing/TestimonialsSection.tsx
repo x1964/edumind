@@ -10,7 +10,7 @@ const RATING = 5;
 function TestimonialCard({ testimonial, index }: { testimonial: TestimonialItem; index: number }) {
   return (
     <Reveal delay={Math.min(index * 0.06, 0.3)} className="h-full">
-      <figure className="relative flex h-full flex-col rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-colors duration-200 hover:border-brand/25 hover:bg-surface-raised/80">
+      <figure className="relative flex h-full flex-col rounded-2xl border border-hairline bg-surface-raised/50 p-6 transition-all duration-300 hover:border-brand/25 hover:bg-surface-raised/80 hover:shadow-card">
         <Quote className="absolute end-5 top-5 size-7 text-brand/15" aria-hidden="true" />
 
         <div className="flex gap-0.5" aria-label={`${RATING}/5`}>

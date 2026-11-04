@@ -325,7 +325,7 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
               >
                 <article
                   className={cn(
-                    "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/45 p-5 transition-colors duration-200 hover:border-brand/25 hover:bg-surface-raised/70",
+                    "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/45 p-5 transition-all duration-300 hover:border-brand/25 hover:bg-surface-raised/70 hover:shadow-card",
                     isTutor && "em-surface-gradient p-5 sm:p-6 lg:p-7"
                   )}
                 >

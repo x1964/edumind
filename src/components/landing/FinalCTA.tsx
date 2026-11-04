@@ -10,7 +10,7 @@ export function FinalCTA({ dict }: { dict: Dictionary }) {
     <section id="start" className="relative px-5 pb-20 pt-6 sm:px-8 sm:pb-24 lg:px-10">
       <div className="mx-auto max-w-[1240px]">
         <Reveal>
-          <div className="relative isolate overflow-hidden rounded-[28px] border border-hairline-strong/70 bg-surface-deep px-5 py-16 text-center sm:px-10 sm:py-20 md:rounded-[34px] md:py-24">
+          <div className="relative isolate overflow-hidden rounded-[28px] border border-hairline-strong/70 bg-surface-deep px-5 py-16 text-center transition-all duration-300 hover:shadow-pop sm:px-10 sm:py-20 md:rounded-[34px] md:py-24">
             <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_65%_80%_at_50%_-10%,rgba(5,150,105,0.16),transparent_68%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_45%_45%_at_85%_100%,rgba(22,168,117,0.1),transparent_70%)]" />

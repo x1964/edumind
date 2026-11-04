@@ -54,7 +54,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
         <a
           href="#top"
           aria-label={dict.nav.home}
-          className="rounded-lg transition-opacity hover:opacity-90"
+          className="rounded-lg transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
         >
           <Logo />
         </a>
@@ -64,7 +64,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
             <a
               key={link.href}
               href={link.href}
-              className="group relative rounded-full px-3.5 py-2 text-[13.5px] font-medium text-ink-soft transition-colors duration-200 hover:text-ink"
+              className="group relative rounded-full px-3.5 py-2 text-[13.5px] font-medium text-ink-soft transition-all duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
             >
               {link.label}
               <span
@@ -99,7 +99,7 @@ export function Navbar({ lang, dict }: NavbarProps) {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
-            className="grid size-9 place-items-center rounded-full border border-hairline bg-black/[0.03] text-ink transition-colors hover:bg-black/[0.06] lg:hidden"
+            className="grid size-9 place-items-center rounded-full border border-hairline bg-black/[0.03] text-ink transition-all duration-200 hover:bg-black/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 lg:hidden"
           >
             {open ? <X className="size-4" /> : <Menu className="size-4" />}
           </button>

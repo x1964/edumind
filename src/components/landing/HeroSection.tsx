@@ -63,8 +63,8 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
               <span className="mb-3 block text-[0.44em] font-medium leading-[1.34] tracking-[-0.02em] text-ink-soft sm:mb-4">
                 {hero.headlineTop}
               </span>
-              <span className="block text-balance">{hero.headlineMiddle}</span>
-              <span className="em-text-gradient block pb-1.5 text-balance">
+              <span className="block text-balance sm:mt-2">{hero.headlineMiddle}</span>
+              <span className="em-text-gradient block pb-1.5 text-balance sm:mt-2">
                 {hero.headlineAccent}
               </span>
             </motion.h1>

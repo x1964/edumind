@@ -89,7 +89,7 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
               const Icon = icons[index];
               return (
                 <Reveal key={step.number} delay={index * 0.1} y={26}>
-                  <article className="group relative h-full overflow-hidden rounded-2xl border border-hairline bg-background p-5 transition-colors duration-300 hover:border-brand/25 hover:bg-muted md:pt-0">
+                  <article className="group relative h-full overflow-hidden rounded-2xl border border-hairline bg-background p-5 transition-all duration-300 hover:border-brand/25 hover:bg-muted hover:shadow-card md:pt-0">
                     <span
                       aria-hidden="true"
                       className="pointer-events-none absolute -bottom-4 end-3 font-mono text-[70px] font-semibold leading-none tracking-tighter text-black/[0.025] transition-colors duration-300 group-hover:text-brand-ink/[0.045]"

@@ -27,7 +27,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
               />
             </Reveal>
             <Reveal delay={0.08} className="mt-8">
-              <div className="rounded-2xl border border-hairline bg-surface-raised/40 p-5">
+              <div className="rounded-2xl border border-hairline bg-surface-raised/40 p-5 transition-all duration-300 hover:shadow-card">
                 <div className="flex items-center gap-2 text-[12px] font-medium text-ink-soft">
                   <span className="grid size-6 place-items-center rounded-lg bg-brand/10 text-brand-ink">
                     <Sparkles className="size-3" aria-hidden="true" />

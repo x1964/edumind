@@ -38,7 +38,7 @@ export function WhyEduMind({ dict }: { dict: Dictionary }) {
             </Reveal>
 
             <Reveal delay={0.1} className="mt-10 lg:mt-auto lg:pt-16">
-              <div className="relative max-w-md overflow-hidden rounded-2xl border border-hairline bg-surface-raised/40 p-5">
+              <div className="relative max-w-md overflow-hidden rounded-2xl border border-hairline bg-surface-raised/40 p-5 transition-all duration-300 hover:shadow-card">
                 <Quote className="size-5 text-brand-ink/50" aria-hidden="true" strokeWidth={1.5} />
                 <p className="mt-3 text-[17px] font-medium leading-[1.55] tracking-tight text-ink">
                   {why.closingTop} <span className="text-brand-ink">{why.closingAccent}</span>
