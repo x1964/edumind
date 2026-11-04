@@ -294,7 +294,7 @@ export function DashboardShell({
           <main
             id="main-content"
             tabIndex={-1}
-            className="em-safe-x mx-auto w-full max-w-[1600px] flex-1 px-5 py-5 pb-[calc(env(safe-area-inset-bottom)+92px)] outline-none sm:px-8 sm:py-7 lg:px-10 lg:py-9 lg:pb-10 xl:px-12"
+            className="em-safe-x mx-auto w-full max-w-[1440px] flex-1 px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+92px)] outline-none sm:px-6 sm:py-7 lg:px-8 lg:py-9 lg:pb-10 xl:px-10"
           >
             {children}
           </main>

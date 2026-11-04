@@ -117,11 +117,11 @@ export default async function DashboardOverviewPage() {
       />
 
       <section aria-label={dict.dashboard.quickStats}>
-        <div className="flex flex-nowrap gap-3.5 overflow-x-auto pb-2">
+        <div className="grid grid-cols-2 items-stretch gap-5 sm:grid-cols-3 sm:gap-6 xl:grid-cols-5">
           {stats.map(({ label, value, note, icon: Icon, tone }) => (
             <Card
               key={label}
-              className={`relative flex h-full w-[min(72vw,220px)] shrink-0 flex-col overflow-hidden border bg-gradient-to-br to-surface-raised/80 xl:w-auto xl:flex-1 ${tone.card}`}
+              className={`relative flex h-full min-w-0 flex-col overflow-hidden border bg-gradient-to-br to-surface-raised/80 ${tone.card}`}
             >
               <CardContent className="flex flex-1 flex-col p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-2 sm:gap-3">
@@ -151,7 +151,7 @@ export default async function DashboardOverviewPage() {
         </div>
       </section>
 
-      <div className="grid gap-5 xl:grid-flow-row-dense xl:grid-cols-12">
+      <div className="grid items-stretch gap-5 sm:gap-6 xl:grid-flow-row-dense xl:grid-cols-12">
         <Card className="xl:col-span-8 border-hairline/60 bg-surface-raised/80">
           <CardHeader>
             <div>
@@ -244,7 +244,7 @@ export default async function DashboardOverviewPage() {
                 {dict.dashboard.noMaterialsBody}
               </p>
             ) : (
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                 {data.recentMaterials.map((material) => (
                   <Link
                     key={material.id}
