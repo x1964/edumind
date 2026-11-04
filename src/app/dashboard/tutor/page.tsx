@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import type { UIMessage } from "ai";
 import { PageHeader } from "@/components/ui/page-header";
 import { TutorWorkspace } from "@/components/tutor/tutor-workspace";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isAiConfigured } from "@/lib/ai/provider";
-import type { TutorMessage, TutorThread } from "@/lib/types";
+import {
+  tutorCitationPages,
+  type TutorChatMessage,
+  type TutorMessage,
+  type TutorThread,
+} from "@/lib/types";
 
 export const instant = false;
 
@@ -51,23 +55,29 @@ export default async function TutorPage({
     : null;
   const missingThread = Boolean(params.thread) && !activeThread;
 
-  let initialMessages: UIMessage[] = [];
+  let initialMessages: TutorChatMessage[] = [];
   if (activeThread) {
     const { data: messageRows } = await supabase
       .from("tutor_messages")
-      .select("id, role, content")
+      .select("id, role, content, citations")
       .eq("thread_id", activeThread.id)
       .eq("user_id", user.id)
       .order("created_at", { ascending: true })
       .limit(100);
 
-    initialMessages = ((messageRows ?? []) as Pick<TutorMessage, "id" | "role" | "content">[])
+    initialMessages = (
+      (messageRows ?? []) as Pick<TutorMessage, "id" | "role" | "content" | "citations">[]
+    )
       .filter((row) => row.role === "user" || row.role === "assistant")
-      .map((row) => ({
-        id: row.id,
-        role: row.role as "user" | "assistant",
-        parts: [{ type: "text" as const, text: row.content }],
-      }));
+      .map((row) => {
+        const pages = tutorCitationPages(row.citations);
+        return {
+          id: row.id,
+          role: row.role as "user" | "assistant",
+          parts: [{ type: "text" as const, text: row.content }],
+          ...(pages.length > 0 ? { metadata: { pages } } : {}),
+        };
+      });
   }
 
   const defaultMaterialId =

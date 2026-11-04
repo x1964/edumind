@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, Trash2 } from "lucide-react";
+import { LoaderCircle, Trash2, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -17,6 +17,8 @@ interface ConfirmActionProps {
   iconOnly?: boolean;
   className?: string;
   successMessage?: string;
+  icon?: LucideIcon;
+  onSuccess?: () => void;
 }
 
 export function ConfirmAction({
@@ -29,6 +31,8 @@ export function ConfirmAction({
   iconOnly = false,
   className,
   successMessage,
+  icon: Icon = Trash2,
+  onSuccess,
 }: ConfirmActionProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -40,6 +44,7 @@ export function ConfirmAction({
       if (result.ok) {
         toast.success(result.message ?? successMessage ?? "");
         setOpen(false);
+        onSuccess?.();
         router.refresh();
       } else {
         toast.error(result.error ?? "");
@@ -60,7 +65,7 @@ export function ConfirmAction({
           className
         )}
       >
-        <Trash2 className="size-3.5" aria-hidden="true" />
+        <Icon className="size-3.5" aria-hidden="true" />
         {iconOnly ? null : <span>{triggerLabel ?? confirmLabel}</span>}
       </button>
       <Modal

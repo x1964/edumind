@@ -4,29 +4,36 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { DefaultChatTransport } from "ai";
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   BrainCircuit,
   Check,
   Copy,
   CornerDownLeft,
+  Eraser,
   LoaderCircle,
   Plus,
   RefreshCw,
   Send,
   Square,
   Trash2,
+  User,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmAction } from "@/components/ui/confirm-action";
 import { AiSetupNotice } from "@/components/shared/setup-notice";
 import { MarkdownMessage } from "@/components/tutor/markdown-message";
-import { createTutorThreadAction, deleteTutorThreadAction } from "@/lib/actions/tutor";
+import {
+  clearTutorThreadAction,
+  createTutorThreadAction,
+  deleteTutorThreadAction,
+} from "@/lib/actions/tutor";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
-import type { TutorThread } from "@/lib/types";
+import type { TutorChatMessage, TutorThread } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface ThreadRow extends TutorThread {
@@ -61,7 +68,7 @@ export function TutorWorkspace({
   threads: ThreadRow[];
   materials: MaterialOption[];
   activeThread: ActiveThread | null;
-  initialMessages: UIMessage[];
+  initialMessages: TutorChatMessage[];
   aiConfigured: boolean;
   defaultMaterialId: string | null;
   missingThread: boolean;
@@ -76,21 +83,23 @@ export function TutorWorkspace({
   const [creating, setCreating] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const transport = useMemo(
     () =>
-      new DefaultChatTransport({
+      new DefaultChatTransport<TutorChatMessage>({
         api: "/api/ai/tutor",
       }),
     []
   );
 
-  const { messages, sendMessage, status, stop, error, regenerate } = useChat({
-    id: activeThread?.id,
-    messages: initialMessages,
-    transport,
-    onFinish: () => router.refresh(),
-  });
+  const { messages, sendMessage, setMessages, status, stop, error, regenerate } =
+    useChat<TutorChatMessage>({
+      id: activeThread?.id,
+      messages: initialMessages,
+      transport,
+      onFinish: () => router.refresh(),
+    });
 
   const busy = status === "submitted" || status === "streaming";
   const canSend = aiConfigured && !busy;
@@ -98,6 +107,14 @@ export function TutorWorkspace({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, busy]);
+
+  // Grow the composer with the draft, up to a comfortable maximum height.
+  useEffect(() => {
+    const element = textareaRef.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.min(element.scrollHeight, 160)}px`;
+  }, [input]);
 
   async function ensureThread(): Promise<string | null> {
     if (threadId) return threadId;
@@ -271,23 +288,43 @@ export function TutorWorkspace({
             </div>
           </div>
 
-          {!activeThread ? (
-            <label className="flex min-w-0 items-center gap-2 text-[12px] text-ink-muted">
-              <span className="shrink-0">{dict.tutor.selectMaterial}</span>
-              <select
-                value={selectedMaterial ?? ""}
-                onChange={(event) => setSelectedMaterial(event.target.value || null)}
-                className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
-              >
-                <option value="">{dict.tutor.noMaterial}</option>
-                {materials.map((material) => (
-                  <option key={material.id} value={material.id}>
-                    {material.file_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
+          <div className="flex min-w-0 items-center gap-1.5">
+            {!activeThread ? (
+              <label className="flex min-w-0 items-center gap-2 text-[12px] text-ink-muted">
+                <span className="shrink-0">{dict.tutor.selectMaterial}</span>
+                <select
+                  value={selectedMaterial ?? ""}
+                  onChange={(event) => setSelectedMaterial(event.target.value || null)}
+                  className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
+                >
+                  <option value="">{dict.tutor.noMaterial}</option>
+                  {materials.map((material) => (
+                    <option key={material.id} value={material.id}>
+                      {material.file_name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+
+            {threadId && messages.length > 0 ? (
+              <ConfirmAction
+                action={() => clearTutorThreadAction(threadId)}
+                title={dict.tutor.clear}
+                description={dict.tutor.clearBody}
+                confirmLabel={dict.tutor.clear}
+                cancelLabel={dict.common.cancel}
+                triggerLabel={dict.tutor.clear}
+                successMessage={dict.tutor.cleared}
+                icon={Eraser}
+                onSuccess={() => {
+                  setMessages([]);
+                  setLocalError(null);
+                }}
+                className="h-8 shrink-0 px-2.5"
+              />
+            ) : null}
+          </div>
         </header>
 
         {missingThread ? (
@@ -296,7 +333,7 @@ export function TutorWorkspace({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5" aria-busy={busy}>
           {!aiConfigured ? (
             <AiSetupNotice title={dict.tutor.notConfigured} body={dict.tutor.notConfiguredBody} />
           ) : messages.length === 0 ? (
@@ -333,25 +370,30 @@ export function TutorWorkspace({
                   .join("\n");
                 if (!text) return null;
                 const isUser = message.role === "user";
+                const pages = isUser ? [] : (message.metadata?.pages ?? []);
                 return (
                   <div key={message.id} className={cn("flex gap-3", isUser && "flex-row-reverse")}>
                     <span
                       className={cn(
-                        "mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border text-[12px] font-semibold",
+                        "mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border",
                         isUser
                           ? "border-hairline bg-black/[0.04] text-ink-soft"
                           : "border-brand/20 bg-brand/[0.08] text-brand-ink"
                       )}
                       aria-hidden="true"
                     >
-                      {isUser ? "U" : "AI"}
+                      {isUser ? (
+                        <User className="size-3.5" />
+                      ) : (
+                        <BrainCircuit className="size-3.5" />
+                      )}
                     </span>
                     <div className={cn("min-w-0 max-w-[92%]", isUser && "text-end")}>
                       <div
                         className={cn(
                           "rounded-2xl px-3.5 py-2.5",
                           isUser
-                            ? "border border-hairline bg-black/[0.035] text-start text-[13px] leading-relaxed text-ink"
+                            ? "border border-brand/15 bg-brand/[0.07] text-start text-[13px] leading-relaxed text-ink"
                             : "border border-hairline/60 bg-surface-deep/50"
                         )}
                       >
@@ -364,12 +406,28 @@ export function TutorWorkspace({
                         )}
                       </div>
                       {!isUser ? (
-                        <div className="mt-1 flex items-center gap-1">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                          {pages.length > 0 ? (
+                            <div className="flex flex-wrap items-center gap-1">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-muted">
+                                <BookOpen className="size-3" aria-hidden="true" />
+                                {dict.tutor.sources}:
+                              </span>
+                              {pages.map((page) => (
+                                <span
+                                  key={page}
+                                  className="rounded-md border border-brand/20 bg-brand/[0.06] px-1.5 py-0.5 text-[11px] font-medium text-brand-ink"
+                                >
+                                  {dict.tutor.page} {page}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
                           <button
                             type="button"
                             onClick={() => void copyMessage(message.id, text)}
                             aria-label={dict.tutor.copy}
-                            className="grid size-6 place-items-center rounded-md text-ink-muted transition-colors hover:bg-black/[0.05] hover:text-ink"
+                            className="grid size-6 place-items-center rounded-md text-ink-muted opacity-70 transition-all hover:bg-black/[0.05] hover:text-ink hover:opacity-100"
                           >
                             {copiedId === message.id ? (
                               <Check className="size-3" aria-hidden="true" />
@@ -423,6 +481,7 @@ export function TutorWorkspace({
             className="flex items-end gap-2"
           >
             <textarea
+              ref={textareaRef}
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={(event) => {
@@ -463,7 +522,7 @@ export function TutorWorkspace({
           </form>
           <p className="mt-2 flex items-center justify-center gap-1.5 text-[12px] text-ink-muted">
             <CornerDownLeft className="size-3" aria-hidden="true" />
-            {dict.quizzes.reviewNote}
+            {dict.tutor.composerHint}
           </p>
         </div>
       </section>

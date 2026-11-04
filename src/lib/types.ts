@@ -1,3 +1,4 @@
+import type { UIMessage } from "ai";
 import type { Lang } from "@/lib/i18n";
 
 export type MaterialStatus = "processing" | "ready" | "failed";
@@ -67,6 +68,26 @@ export interface TutorMessage {
   content: string;
   citations: unknown;
   created_at: string;
+}
+
+/** Chat message metadata used by the tutor UI to show source pages. */
+export interface TutorChatMetadata {
+  pages?: number[];
+}
+
+/** A tutor chat message carrying citation metadata. */
+export type TutorChatMessage = UIMessage<TutorChatMetadata>;
+
+/** Reads the `{ pages: number[] }` shape stored in `tutor_messages.citations`. */
+export function tutorCitationPages(citations: unknown): number[] {
+  if (!citations || typeof citations !== "object") return [];
+  const pages = (citations as { pages?: unknown }).pages;
+  if (!Array.isArray(pages)) return [];
+  return Array.from(
+    new Set(
+      pages.filter((page): page is number => typeof page === "number" && Number.isFinite(page))
+    )
+  ).sort((a, b) => a - b);
 }
 
 export interface Summary {

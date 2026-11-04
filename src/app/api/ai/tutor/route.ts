@@ -136,6 +136,14 @@ export async function POST(request: Request) {
     execute: async ({ writer }) => {
       const textId = crypto.randomUUID();
       let full = "";
+
+      if (citationPages.length > 0) {
+        writer.write({
+          type: "message-metadata",
+          messageMetadata: { pages: citationPages },
+        });
+      }
+
       writer.write({ type: "text-start", id: textId });
       try {
         for await (const delta of streamChat({
