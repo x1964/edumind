@@ -42,30 +42,50 @@ export default async function DashboardOverviewPage() {
       value: formatNumber(data.materialCount, lang),
       note: dict.dashboard.materialsNote,
       icon: FileText,
+      tone: {
+        card: "border-sky-500/25 from-sky-500/[0.09]",
+        icon: "border-sky-500/20 bg-sky-500/10 text-sky-700",
+      },
     },
     {
       label: dict.dashboard.quizzesCompleted,
       value: formatNumber(data.attemptCount, lang),
       note: dict.dashboard.quizzesNote,
       icon: ListChecks,
+      tone: {
+        card: "border-violet-500/25 from-violet-500/[0.09]",
+        icon: "border-violet-500/20 bg-violet-500/10 text-violet-700",
+      },
     },
     {
       label: dict.dashboard.studySessions,
       value: formatNumber(data.sessionCount, lang),
       note: dict.dashboard.sessionsNote,
       icon: Clock3,
+      tone: {
+        card: "border-emerald-500/25 from-emerald-500/[0.09]",
+        icon: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700",
+      },
     },
     {
       label: dict.progress.weeklyStudyTime,
       value: formatDuration(data.weeklySeconds, lang),
       note: dict.progress.last7Days,
       icon: Timer,
+      tone: {
+        card: "border-amber-500/25 from-amber-500/[0.1]",
+        icon: "border-amber-500/20 bg-amber-500/10 text-amber-700",
+      },
     },
     {
       label: dict.dashboard.avgScore,
       value: data.averageScore === null ? "—" : `${formatNumber(data.averageScore, lang)}%`,
       note: data.averageScore === null ? dict.dashboard.noScoreYet : dict.dashboard.progressNote,
       icon: Sparkles,
+      tone: {
+        card: "border-rose-500/25 from-rose-500/[0.09]",
+        icon: "border-rose-500/20 bg-rose-500/10 text-rose-700",
+      },
     },
   ];
 
@@ -97,30 +117,32 @@ export default async function DashboardOverviewPage() {
       />
 
       <section aria-label={dict.dashboard.quickStats}>
-        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 xl:grid-cols-5">
-          {stats.map(({ label, value, note, icon: Icon }) => (
+        <div className="flex flex-nowrap gap-3.5 overflow-x-auto pb-2">
+          {stats.map(({ label, value, note, icon: Icon, tone }) => (
             <Card
               key={label}
-              className="relative flex h-full flex-col overflow-hidden border-hairline/60 bg-surface-raised/80"
+              className={`relative flex h-full w-[min(72vw,220px)] shrink-0 flex-col overflow-hidden border bg-gradient-to-br to-surface-raised/80 xl:w-auto xl:flex-1 ${tone.card}`}
             >
-              <CardContent className="flex flex-1 flex-col p-4">
-                <div className="flex items-start justify-between gap-3">
+              <CardContent className="flex flex-1 flex-col p-3 sm:p-4">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
                   <div className="min-w-0">
-                    <p className="min-h-10 line-clamp-2 text-[12px] font-medium leading-5 text-ink-muted">
+                    <p className="min-h-9 line-clamp-2 text-[11px] font-medium leading-4 text-ink-muted sm:min-h-10 sm:text-[12px] sm:leading-5">
                       {label}
                     </p>
                     <p
-                      className="em-num mt-2 text-[26px] font-semibold leading-none tracking-[-0.045em] text-ink"
+                      className="em-num mt-2 text-xl font-semibold leading-none tracking-[-0.045em] text-ink sm:text-2xl xl:text-[26px]"
                       dir="auto"
                     >
                       {value}
                     </p>
                   </div>
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/15 bg-brand/[0.06] text-brand-ink">
+                  <span
+                    className={`grid size-7 shrink-0 place-items-center rounded-lg border sm:size-8 ${tone.icon}`}
+                  >
                     <Icon className="size-3.5" aria-hidden="true" />
                   </span>
                 </div>
-                <p className="mt-auto line-clamp-2 min-h-10 border-t border-hairline/60 pt-2.5 text-[12px] leading-5 text-ink-muted">
+                <p className="mt-auto line-clamp-2 min-h-9 border-t border-hairline/60 pt-2 text-[11px] leading-4 text-ink-muted sm:min-h-10 sm:pt-2.5 sm:text-[12px] sm:leading-5">
                   {note}
                 </p>
               </CardContent>
