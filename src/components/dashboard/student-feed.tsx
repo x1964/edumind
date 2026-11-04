@@ -156,7 +156,6 @@ export function StudentFeed({
         commentError: "تعذر إرسال التعليق.",
         delete: "حذف المنشور",
         deleteComment: "حذف التعليق",
-        confirmDelete: "هل تريد حذف هذا المنشور؟ لا يمكن التراجع عن ذلك.",
         confirmDeleteComment: "هل تريد حذف هذا التعليق؟",
         report: "الإبلاغ عن المنشور",
         reportTitle: "الإبلاغ عن منشور",
@@ -208,7 +207,6 @@ export function StudentFeed({
         commentError: "Could not send your comment.",
         delete: "Delete post",
         deleteComment: "Delete comment",
-        confirmDelete: "Delete this post? This cannot be undone.",
         confirmDeleteComment: "Delete this comment?",
         report: "Report post",
         reportTitle: "Report a post",
@@ -481,7 +479,8 @@ export function StudentFeed({
   }
 
   async function deletePost(post: FeedPost) {
-    if (!window.confirm(t.confirmDelete)) return;
+    setMenuPost(null);
+    setNotice(null);
     const response = await fetch("/api/student-feed", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -493,16 +492,9 @@ export function StudentFeed({
     }
     const result = await readJson(response);
     setPosts((current) => current.filter((item) => item.id !== post.id));
-    setNotice({
-      text:
-        result.imageCleanup === false
-          ? t.imageCleanupWarning
-          : ar
-            ? "تم حذف المنشور."
-            : "Post deleted.",
-      error: result.imageCleanup === false,
-    });
-    setMenuPost(null);
+    if (result.imageCleanup === false) {
+      setNotice({ text: t.imageCleanupWarning, error: true });
+    }
   }
 
   async function deleteComment(comment: FeedComment) {
