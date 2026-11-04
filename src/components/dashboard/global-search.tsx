@@ -133,7 +133,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
         onClose={() => setOpen(false)}
         title={dict.nav.searchPlaceholder}
         closeLabel={dict.common.close}
-        className="sm:max-w-xl"
+        className="min-h-[15rem] sm:max-w-xl"
       >
         <div className="relative">
           <Search
@@ -142,6 +142,7 @@ export function GlobalSearch({ dict, className }: { dict: AppMessages; className
           />
           <input
             ref={inputRef}
+            autoFocus
             value={query}
             onChange={(event) => changeQuery(event.target.value)}
             placeholder={dict.nav.searchPlaceholder}
