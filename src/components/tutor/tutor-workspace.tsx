@@ -14,7 +14,6 @@ import {
   Copy,
   CornerDownLeft,
   Eraser,
-  ImagePlus,
   LoaderCircle,
   Plus,
   RefreshCw,
@@ -26,7 +25,6 @@ import {
 import { toast } from "sonner";
 import { ConfirmAction } from "@/components/ui/confirm-action";
 import { AiSetupNotice } from "@/components/shared/setup-notice";
-import { TutorDiagram } from "@/components/tutor/tutor-diagram";
 import { MarkdownMessage } from "@/components/tutor/markdown-message";
 import {
   clearTutorThreadAction,
@@ -84,10 +82,6 @@ export function TutorWorkspace({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [diagramCode, setDiagramCode] = useState<string | null>(null);
-  const [diagramOpen, setDiagramOpen] = useState(false);
-  const [diagramLoading, setDiagramLoading] = useState(false);
-  const [diagramError, setDiagramError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -121,46 +115,6 @@ export function TutorWorkspace({
     element.style.height = "auto";
     element.style.height = `${Math.min(element.scrollHeight, 160)}px`;
   }, [input]);
-
-  async function generateDiagram() {
-    if (!threadId || busy || diagramLoading) return;
-
-    const lastUserMessage = [...messages].reverse().find((message) => message.role === "user");
-    const question = lastUserMessage
-      ? lastUserMessage.parts
-          .filter((part): part is { type: "text"; text: string } => part.type === "text")
-          .map((part) => part.text)
-          .join("\n")
-          .trim()
-      : "";
-
-    if (!question) {
-      setDiagramError(dict.tutor.diagramError);
-      return;
-    }
-
-    setDiagramLoading(true);
-    setDiagramError(null);
-
-    try {
-      const response = await fetch("/api/ai/tutor/diagram", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ threadId, question, lang }),
-      });
-      const data = (await response.json().catch(() => null)) as {
-        mermaid?: string;
-        error?: string;
-      } | null;
-      if (!response.ok || !data?.mermaid) throw new Error(data?.error ?? "diagram_failed");
-      setDiagramCode(data.mermaid);
-      setDiagramOpen(true);
-    } catch {
-      setDiagramError(dict.tutor.diagramError);
-    } finally {
-      setDiagramLoading(false);
-    }
-  }
 
   async function ensureThread(): Promise<string | null> {
     if (threadId) return threadId;
@@ -542,21 +496,6 @@ export function TutorWorkspace({
               aria-label={dict.tutor.placeholder}
               className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl border border-hairline bg-surface-deep/70 px-3.5 py-2.5 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none disabled:opacity-60 sm:text-[13px]"
             />
-            <button
-              type="button"
-              onClick={() => void generateDiagram()}
-              disabled={!canSend || busy || diagramLoading}
-              className="inline-flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl border border-hairline text-ink-soft transition-colors hover:bg-black/[0.05] disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label={dict.tutor.generateDiagram}
-              title={dict.tutor.generateDiagram}
-            >
-              {diagramLoading ? (
-                <LoaderCircle className="size-4 animate-spin" />
-              ) : (
-                <ImagePlus className="size-4" />
-              )}
-            </button>
-
             {busy ? (
               <button
                 type="button"
@@ -581,9 +520,6 @@ export function TutorWorkspace({
               </button>
             )}
           </form>
-          {diagramError ? (
-            <p className="mt-2 text-center text-[12px] text-danger">{diagramError}</p>
-          ) : null}
           <p className="mt-2 flex items-center justify-center gap-1.5 text-[12px] text-ink-muted">
             <CornerDownLeft className="size-3" aria-hidden="true" />
             {dict.tutor.composerHint}
@@ -602,13 +538,6 @@ export function TutorWorkspace({
           {dict.mindMaps.autosaveNote}
         </span>
       </div>
-
-      <TutorDiagram
-        code={diagramCode ?? ""}
-        open={diagramOpen}
-        onClose={() => setDiagramOpen(false)}
-        dict={dict}
-      />
     </div>
   );
 }
