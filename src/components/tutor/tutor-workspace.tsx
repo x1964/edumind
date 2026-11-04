@@ -413,14 +413,12 @@ export function TutorWorkspace({
                                 <BookOpen className="size-3" aria-hidden="true" />
                                 {dict.tutor.sources}:
                               </span>
-                              {pages.map((page) => (
-                                <span
-                                  key={page}
-                                  className="rounded-md border border-brand/20 bg-brand/[0.06] px-1.5 py-0.5 text-[11px] font-medium text-brand-ink"
-                                >
-                                  {dict.tutor.page} {page}
-                                </span>
-                              ))}
+                              <span className="rounded-md border border-brand/20 bg-brand/[0.06] px-1.5 py-0.5 text-[11px] font-medium text-brand-ink">
+                                {dict.tutor.page}{" "}
+                                {pages.length === 1
+                                  ? pages[0]
+                                  : `${pages[0]}-${pages[pages.length - 1]}`}
+                              </span>
                             </div>
                           ) : null}
                           <button
