@@ -315,7 +315,7 @@ const ar = {
     copy: "نسخ الرد",
     retry: "إعادة المحاولة",
     clear: "مسح المحادثة",
-    clearBody: "سيتم حذف كل رسائل هذه المحادثة مع الاحتفاظ بالمحادثة نفسها.",
+    clearBody: "سيتم حذف هذه المحادثة بالكامل مع كل رسائلها.",
     cleared: "تم مسح المحادثة.",
     composerHint: "Enter للإرسال • Shift+Enter لسطر جديد",
     generateDiagram: "رسم تعليمي",
@@ -972,8 +972,7 @@ const en: AppMessages = {
     copy: "Copy response",
     retry: "Retry",
     clear: "Clear conversation",
-    clearBody:
-      "All messages in this conversation will be deleted. The conversation itself will stay.",
+    clearBody: "The full conversation, including all of its messages, will be deleted.",
     cleared: "Conversation cleared.",
     composerHint: "Enter to send • Shift+Enter for a new line",
     generateDiagram: "Generate diagram",

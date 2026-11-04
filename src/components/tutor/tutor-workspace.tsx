@@ -365,7 +365,8 @@ export function TutorWorkspace({
                 icon={Eraser}
                 onSuccess={() => {
                   setMessages([]);
-                  setLocalError(null);
+                  setThreadId(null);
+                  router.push("/dashboard/tutor");
                 }}
                 className="h-8 shrink-0 px-2.5"
               />

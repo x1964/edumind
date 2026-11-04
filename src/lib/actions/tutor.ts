@@ -77,8 +77,7 @@ export async function deleteTutorThreadAction(threadId: string): Promise<ActionR
 }
 
 /**
- * Clears every message in a conversation while keeping the thread itself, so
- * the user can start a fresh line of questioning in the same session.
+ * Clears a whole conversation: the thread and every message inside it.
  */
 export async function clearTutorThreadAction(threadId: string): Promise<ActionResult> {
   const { dict } = await getAppMessages();
@@ -89,19 +88,13 @@ export async function clearTutorThreadAction(threadId: string): Promise<ActionRe
 
   const supabase = await createSupabaseServerClient();
 
-  const { error: messagesError } = await supabase
-    .from("tutor_messages")
-    .delete()
-    .eq("thread_id", threadId)
-    .eq("user_id", user.id);
-
-  if (messagesError) return { ok: false, error: dict.errors.deleteFailed };
-
-  await supabase
+  const { error } = await supabase
     .from("tutor_threads")
-    .update({ title: dict.tutor.untitled, updated_at: new Date().toISOString() })
+    .delete()
     .eq("id", threadId)
     .eq("user_id", user.id);
+
+  if (error) return { ok: false, error: dict.errors.deleteFailed };
 
   revalidatePath("/dashboard/tutor");
   return { ok: true, message: dict.tutor.cleared };
