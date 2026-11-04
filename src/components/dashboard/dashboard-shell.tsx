@@ -141,18 +141,12 @@ export function DashboardShell({
 
   const navigation = (
     <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={dict.nav.main}>
-      <div className="space-y-5">
+      <div className="space-y-3">
         {NAV_GROUPS.map((group, groupIndex) => (
           <div key={group.labelKey}>
-            {collapsed ? (
-              groupIndex > 0 ? (
-                <div className="mx-3 mb-2 h-px bg-hairline/70" aria-hidden="true" />
-              ) : null
-            ) : (
-              <p className="px-3 pb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                {dict.nav[group.labelKey]}
-              </p>
-            )}
+            {collapsed && groupIndex > 0 ? (
+              <div className="mx-3 mb-2 h-px bg-hairline/70" aria-hidden="true" />
+            ) : null}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = isActive(item);

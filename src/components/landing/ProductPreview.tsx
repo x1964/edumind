@@ -1,8 +1,29 @@
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
 import { Check, FileText, ListChecks, MessageSquareText, Route, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/i18n";
+
+function useMobileViewport() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  return isMobile;
+}
 
 export function ProductPreview({ dict }: { dict: Dictionary }) {
   const p = dict.productPreview;
+  const reduceMotion = useReducedMotion();
+  const isMobile = useMobileViewport();
+  const motionEnabled = !reduceMotion && !isMobile;
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
 
@@ -11,11 +32,11 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
       {/* Ambient backdrop */}
       <div
         aria-hidden="true"
-        className="absolute -inset-x-10 -top-10 bottom-8 rounded-[40px] bg-[radial-gradient(65%_55%_at_60%_30%,rgba(5,150,105,0.13),transparent_70%)] blur-2xl"
+        className="absolute -inset-x-10 -top-10 bottom-8 rounded-[40px] bg-[radial-gradient(65%_55%_at_60%_30%,rgba(5,150,105,0.13),transparent_70%)] blur-2xl max-md:blur-lg"
       />
       <div
         aria-hidden="true"
-        className="em-dot-grid absolute -inset-x-6 -inset-y-8 -z-10 opacity-40 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_72%)]"
+        className="em-dot-grid absolute -inset-x-6 -inset-y-8 -z-10 opacity-40 max-md:opacity-25 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_72%)]"
       />
 
       <div className="relative">
@@ -75,14 +96,27 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                       aria-valuenow={68}
                       aria-label={p.status}
                     >
-                      <div className="absolute inset-y-0 start-0 w-[68%] rounded-full bg-[linear-gradient(90deg,#16a875,#059669)]" />
-                      <div className="absolute inset-y-0 start-[66%] w-3 rounded-full bg-[#b8ffe4] blur-[3px]" />
+                      <motion.div
+                        initial={motionEnabled ? { width: 0 } : { width: "68%" }}
+                        animate={motionEnabled ? { width: "68%" } : undefined}
+                        transition={{ duration: 1.1, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute inset-y-0 start-0 rounded-full bg-[linear-gradient(90deg,#16a875,#059669)]"
+                      />
+                      <motion.div
+                        initial={motionEnabled ? { opacity: 0, x: -8 } : { opacity: 1 }}
+                        animate={motionEnabled ? { opacity: 1, x: 0 } : undefined}
+                        transition={{ duration: 0.45, delay: 1.1 }}
+                        className="absolute inset-y-0 start-[66%] w-3 rounded-full bg-[#b8ffe4] blur-[3px]"
+                      />
                     </div>
                     <p className="mt-2 truncate text-[12px] text-ink-muted">{p.statusNote}</p>
                     <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                       {p.steps.map((step, index) => (
-                        <span
+                        <motion.span
                           key={step}
+                          initial={motionEnabled ? { opacity: 0, y: 4 } : false}
+                          animate={motionEnabled ? { opacity: 1, y: 0 } : undefined}
+                          transition={{ duration: 0.35, delay: 0.55 + index * 0.1 }}
                           className="inline-flex items-center gap-1 rounded-full border border-hairline/80 bg-black/[0.02] px-2 py-0.5 text-[12px] text-ink-muted"
                         >
                           {index < 2 ? (
@@ -94,7 +128,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                             />
                           )}
                           {step}
-                        </span>
+                        </motion.span>
                       ))}
                     </div>
                   </div>
@@ -104,7 +138,11 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
 
             <div className="grid gap-2.5 sm:grid-cols-[1.22fr_1fr]">
               {/* AI Tutor */}
-              <div className="flex flex-col rounded-2xl border border-hairline bg-surface-raised/70 p-3.5">
+              <motion.div
+                animate={motionEnabled ? { y: [0, -4, 0] } : undefined}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                className="flex flex-col rounded-2xl border border-hairline bg-surface-raised/70 p-3.5"
+              >
                 <div className="flex items-center gap-2">
                   <span className="grid size-6 place-items-center rounded-lg bg-brand/12 text-brand-ink">
                     <MessageSquareText className="size-3.5" aria-hidden="true" />
@@ -124,7 +162,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
                     <Sparkles className="size-2.5" aria-hidden="true" />
                   </span>
                 </div>
-              </div>
+              </motion.div>
 
               <div className="space-y-2.5">
                 {/* Summary */}
@@ -237,7 +275,11 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
         </div>
 
         {/* Floating cards */}
-        <div className="absolute -top-[86px] start-6 hidden w-[164px] rounded-xl border border-hairline-strong/80 bg-surface-raised/95 p-3 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:block">
+        <motion.div
+          animate={motionEnabled ? { y: [0, -7, 0], rotate: [0, 1, 0] } : undefined}
+          transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[86px] start-6 hidden w-[164px] rounded-xl border border-hairline-strong/80 bg-surface-raised/95 p-3 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:block"
+        >
           <div className="flex items-center gap-2">
             <span className="grid size-6 place-items-center rounded-lg bg-brand/12 text-brand-ink">
               <Route className="size-3.5" aria-hidden="true" />
@@ -250,9 +292,13 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
             <span className="h-1 flex-1 rounded-full bg-brand/40" />
             <span className="h-1 flex-1 rounded-full bg-black/10" />
           </div>
-        </div>
+        </motion.div>
 
-        <div className="absolute -end-3 bottom-[20%] hidden items-center gap-2 rounded-xl border border-hairline-strong/80 bg-surface-raised/95 px-3 py-2.5 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:flex">
+        <motion.div
+          animate={motionEnabled ? { y: [0, 6, 0] } : undefined}
+          transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 0.7 }}
+          className="absolute -end-3 bottom-[20%] hidden items-center gap-2 rounded-xl border border-hairline-strong/80 bg-surface-raised/95 px-3 py-2.5 shadow-[0_18px_40px_-20px_rgba(15,23,42,0.16)] backdrop-blur-md xl:flex"
+        >
           <span className="grid size-6 place-items-center rounded-lg bg-black/[0.05] text-ink-soft">
             <Sparkles className="size-3" aria-hidden="true" />
           </span>
@@ -260,7 +306,7 @@ export function ProductPreview({ dict }: { dict: Dictionary }) {
             <p className="text-[12px] font-medium text-ink">{p.floatContext}</p>
             <p className="text-[12px] text-ink-muted">{p.floatContextMeta}</p>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <figcaption className="mt-4 flex items-center justify-center gap-2 text-[12px] text-ink-muted">

@@ -18,7 +18,10 @@ import {
   Plus,
   RefreshCw,
   Send,
+  ShieldCheck,
+  Sparkles,
   Square,
+  SlidersHorizontal,
   Trash2,
   User,
 } from "lucide-react";
@@ -178,20 +181,25 @@ export function TutorWorkspace({
   const sourceLabel = activeThread?.materialName ?? null;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[250px_minmax(0,1fr)]">
+    <div className="grid gap-5 xl:grid-cols-[250px_minmax(0,1fr)]">
       <aside className="hidden min-w-0 xl:block">
-        <div className="rounded-2xl border border-hairline bg-surface-raised/70 p-2.5">
+        <div className="sticky top-24 rounded-2xl border border-hairline/80 bg-surface-raised/80 p-2.5 shadow-card">
           <Link
             href="/dashboard/tutor"
-            className="flex h-9 items-center justify-center gap-2 rounded-xl bg-brand/[0.1] text-[13px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
+            className="group flex h-10 items-center justify-center gap-2 rounded-xl bg-brand px-3 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_24px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep"
           >
             <Plus className="size-3.5" aria-hidden="true" />
             {dict.tutor.newChat}
           </Link>
 
-          <p className="px-2 pb-1.5 pt-3 text-[12px] font-medium uppercase tracking-[0.14em] text-ink-muted">
-            {dict.tutor.conversations}
-          </p>
+          <div className="mt-2 flex items-center justify-between px-2 pb-1 pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+              {dict.tutor.conversations}
+            </p>
+            <span className="rounded-full bg-brand/[0.08] px-1.5 py-0.5 text-[10px] font-semibold text-brand-ink">
+              {threads.length}
+            </span>
+          </div>
 
           {threads.length === 0 ? (
             <p className="px-2 py-4 text-[12px] text-ink-muted">{dict.tutor.noConversations}</p>
@@ -272,30 +280,38 @@ export function TutorWorkspace({
         ) : null}
       </div>
 
-      <section className="flex min-h-[70dvh] min-w-0 flex-col overflow-hidden rounded-2xl border border-hairline bg-surface-raised/70">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-4 py-3">
+      <section className="em-window-shadow relative flex min-h-[70dvh] min-w-0 flex-col overflow-hidden rounded-[1.35rem] border border-hairline/80 bg-surface-raised/90">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.13),transparent_62%)]" />
+        <header className="relative flex flex-wrap items-center justify-between gap-3 border-b border-hairline/80 px-4 py-3.5 sm:px-5">
           <div className="flex min-w-0 items-center gap-2.5">
-            <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.07] text-brand-ink">
-              <BrainCircuit className="size-4" aria-hidden="true" />
+            <span className="relative grid size-9 shrink-0 place-items-center rounded-xl border border-brand/25 bg-brand/[0.1] text-brand-ink shadow-[0_8px_18px_-12px_rgba(4,120,87,0.9)]">
+              <Sparkles className="size-4" aria-hidden="true" />
+              <span className="absolute -end-0.5 -top-0.5 size-2 rounded-full border-2 border-surface-raised bg-brand" />
             </span>
             <div className="min-w-0">
               <h1 className="truncate text-[13.5px] font-semibold text-ink">{heading}</h1>
-              <p className="truncate text-[12px] text-ink-muted">
-                {sourceLabel
-                  ? `${dict.tutor.selectMaterial}: ${sourceLabel}`
-                  : dict.tutor.noMaterial}
-              </p>
+              <div className="mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px] text-ink-muted">
+                <span className="size-1.5 shrink-0 rounded-full bg-brand" />
+                <p className="truncate">
+                  {sourceLabel
+                    ? `${dict.tutor.selectMaterial}: ${sourceLabel}`
+                    : dict.tutor.noMaterial}
+                </p>
+              </div>
             </div>
           </div>
 
           <div className="flex min-w-0 items-center gap-1.5">
             {!activeThread ? (
-              <label className="flex min-w-0 items-center gap-2 text-[12px] text-ink-muted">
-                <span className="shrink-0">{dict.tutor.selectMaterial}</span>
+              <label className="flex min-w-0 items-center gap-2 rounded-xl border border-hairline/80 bg-surface/70 px-2.5 py-1 text-[12px] text-ink-muted">
+                <SlidersHorizontal
+                  className="size-3.5 shrink-0 text-brand-ink"
+                  aria-hidden="true"
+                />
                 <select
                   value={selectedMaterial ?? ""}
                   onChange={(event) => setSelectedMaterial(event.target.value || null)}
-                  className="h-8 max-w-[220px] min-w-0 rounded-lg border border-hairline bg-surface-deep px-2 text-[12px] text-ink-soft focus:border-brand/50 focus:outline-none"
+                  className="h-7 max-w-[220px] min-w-0 bg-transparent text-[12px] text-ink-soft focus:outline-none"
                 >
                   <option value="">{dict.tutor.noMaterial}</option>
                   {materials.map((material) => (
@@ -337,15 +353,22 @@ export function TutorWorkspace({
           {!aiConfigured ? (
             <AiSetupNotice title={dict.tutor.notConfigured} body={dict.tutor.notConfiguredBody} />
           ) : messages.length === 0 ? (
-            <div className="mx-auto flex max-w-md flex-col items-center py-10 text-center">
-              <div className="grid size-12 place-items-center rounded-2xl border border-brand/20 bg-brand/[0.07] text-brand-ink">
-                <BrainCircuit className="size-5" aria-hidden="true" />
+            <div className="relative mx-auto flex max-w-lg flex-col items-center py-12 text-center sm:py-16">
+              <div className="absolute inset-x-1/2 top-10 h-24 w-48 -translate-x-1/2 rounded-full bg-brand/[0.08] blur-3xl" />
+              <div className="relative grid size-16 place-items-center rounded-[1.4rem] border border-brand/25 bg-brand/[0.1] text-brand-ink shadow-[0_18px_42px_-22px_rgba(4,120,87,0.75)]">
+                <BrainCircuit className="size-7" aria-hidden="true" />
               </div>
-              <h2 className="mt-4 text-[16px] font-semibold text-ink">{dict.tutor.emptyTitle}</h2>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+              <div className="relative mt-5 inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/[0.06] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-ink">
+                <ShieldCheck className="size-3" aria-hidden="true" />
+                {dict.tutor.sources}
+              </div>
+              <h2 className="relative mt-4 text-[18px] font-semibold tracking-[-0.025em] text-ink">
+                {dict.tutor.emptyTitle}
+              </h2>
+              <p className="relative mt-2 max-w-sm text-[13px] leading-relaxed text-ink-muted">
                 {dict.tutor.emptyBody}
               </p>
-              <div className="mt-5 grid w-full gap-2">
+              <div className="relative mt-7 grid w-full gap-2 sm:grid-cols-3">
                 {[dict.tutor.suggestion_1, dict.tutor.suggestion_2, dict.tutor.suggestion_3].map(
                   (suggestion) => (
                     <button
@@ -353,8 +376,9 @@ export function TutorWorkspace({
                       type="button"
                       onClick={() => void submitText(suggestion)}
                       disabled={!canSend || creating}
-                      className="rounded-xl border border-hairline bg-black/[0.02] px-3.5 py-2.5 text-start text-[12px] text-ink-soft transition-colors hover:border-brand/30 hover:bg-brand/[0.05] disabled:opacity-50"
+                      className="group rounded-xl border border-hairline/80 bg-surface/80 px-3.5 py-3 text-start text-[12px] leading-relaxed text-ink-soft transition-all hover:-translate-y-0.5 hover:border-brand/30 hover:bg-brand/[0.05] hover:shadow-card disabled:opacity-50"
                     >
+                      <span className="mb-2 block size-1.5 rounded-full bg-brand/60 transition-transform group-hover:scale-150" />
                       {suggestion}
                     </button>
                   )
@@ -470,13 +494,13 @@ export function TutorWorkspace({
           )}
         </div>
 
-        <div className="border-t border-hairline p-3 sm:p-4">
+        <div className="border-t border-hairline/80 bg-surface/60 p-3 sm:p-4">
           <form
             onSubmit={(event) => {
               event.preventDefault();
               void submitText(input);
             }}
-            className="flex items-end gap-2"
+            className="em-brand-glow flex items-end gap-2 rounded-2xl border border-brand/20 bg-surface-raised p-1.5 transition-colors focus-within:border-brand/45"
           >
             <textarea
               ref={textareaRef}
@@ -492,7 +516,7 @@ export function TutorWorkspace({
               disabled={!aiConfigured}
               placeholder={dict.tutor.placeholder}
               aria-label={dict.tutor.placeholder}
-              className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl border border-hairline bg-surface-deep/70 px-3.5 py-2.5 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none disabled:opacity-60 sm:text-[13px]"
+              className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl bg-transparent px-3 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:outline-none disabled:opacity-60 sm:text-[13px]"
             />
             {busy ? (
               <button
@@ -507,7 +531,7 @@ export function TutorWorkspace({
               <button
                 type="submit"
                 disabled={!canSend || !input.trim() || creating}
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_22px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {creating ? (
                   <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

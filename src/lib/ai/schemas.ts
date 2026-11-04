@@ -57,7 +57,32 @@ export const flashcardOutputSchema = z.object({
     .max(30),
 });
 
+export const lessonPlanOutputSchema = z.object({
+  title: z.string().min(2).max(160),
+  objectives: z.array(z.string().min(3).max(300)).min(2).max(8),
+  activities: z
+    .array(
+      z.object({
+        title: z.string().min(2).max(120),
+        minutes: z.number().int().min(1).max(120),
+        instructions: z.string().min(5).max(800),
+      })
+    )
+    .min(2)
+    .max(8),
+  assessment: z.string().min(5).max(800),
+});
+
+export const teacherDailyReportOutputSchema = z.object({
+  summary: z.string().min(10).max(1200),
+  highlights: z.array(z.string().min(3).max(300)).max(6),
+  risks: z.array(z.string().min(3).max(300)).max(6),
+  recommendations: z.array(z.string().min(3).max(300)).max(6),
+});
+
 export type SummaryOutput = z.infer<typeof summaryOutputSchema>;
 export type QuizOutput = z.infer<typeof quizOutputSchema>;
 export type MindMapOutput = z.infer<typeof mindMapOutputSchema>;
 export type FlashcardOutput = z.infer<typeof flashcardOutputSchema>;
+export type LessonPlanOutput = z.infer<typeof lessonPlanOutputSchema>;
+export type TeacherDailyReportOutput = z.infer<typeof teacherDailyReportOutputSchema>;

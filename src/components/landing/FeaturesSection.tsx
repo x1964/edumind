@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import {
   ChartNoAxesColumn,
   Check,
@@ -8,9 +9,9 @@ import {
   FileText,
   Headphones,
   ListChecks,
+  Mic,
   MessageSquareText,
   Network,
-  Play,
   Route,
   Sparkles,
 } from "lucide-react";
@@ -158,24 +159,55 @@ function VisualLearningMock({ dict }: { dict: Dictionary }) {
 
 function AudioVisual({ dict }: { dict: Dictionary }) {
   const heights = [38, 68, 48, 88, 58, 76, 42, 70, 52, 82, 34, 62, 46, 74, 40, 58];
+  const reduceMotion = useReducedMotion();
+  const audioFeature = dict.features.items.find((item) => item.id === "audio");
   return (
-    <div className="mt-auto flex items-center gap-3 pt-4">
-      <span className="grid size-9 shrink-0 place-items-center rounded-full border border-brand/25 bg-brand/[0.08] text-brand-ink">
-        <Play className="size-3.5 fill-current" aria-hidden="true" />
-      </span>
-      <div className="flex h-10 flex-1 items-center gap-[3px]" aria-hidden="true">
-        {heights.map((height, index) => (
-          <span
-            key={index}
-            className="w-[3px] shrink-0 rounded-full bg-brand/45"
-            style={{
-              height: `${height / 2.4}px`,
-              backgroundColor: index > 8 ? "rgba(5,150,105,0.25)" : undefined,
-            }}
+    <div className="mt-auto pt-4">
+      <div className="mb-2.5 flex items-center justify-between gap-3 text-[12px]">
+        <span className="inline-flex items-center gap-1.5 font-medium text-ink-soft">
+          <motion.span
+            animate={
+              reduceMotion ? undefined : { opacity: [0.45, 1, 0.45], scale: [0.9, 1.1, 0.9] }
+            }
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+            className="size-2 rounded-full bg-rose-500"
+            aria-hidden="true"
           />
-        ))}
+          {audioFeature?.title}
+        </span>
+        <span className="font-mono text-[12px] text-ink-muted">00:12</span>
       </div>
-      <span className="shrink-0 text-[12px] text-ink-muted">{dict.features.items[5].tag}</span>
+      <div className="flex items-center gap-3 rounded-xl border border-brand/20 bg-brand/[0.05] px-3 py-2.5">
+        <motion.span
+          whileHover={reduceMotion ? undefined : { scale: 1.08 }}
+          className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-primary-foreground shadow-[0_8px_18px_-8px_rgba(5,150,105,0.7)]"
+          aria-label={audioFeature?.tag}
+        >
+          <Mic className="size-3.5" aria-hidden="true" />
+        </motion.span>
+        <div className="flex h-10 flex-1 items-center gap-[3px]" aria-hidden="true">
+          {heights.map((height, index) => (
+            <motion.span
+              key={index}
+              className="w-[3px] shrink-0 rounded-full bg-brand/45"
+              initial={{ height: `${height / 2.4}px` }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : { height: [`${height / 3.2}px`, `${height / 2.1}px`, `${height / 3.2}px`] }
+              }
+              transition={{
+                duration: 0.75 + (index % 4) * 0.12,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: index * 0.035,
+              }}
+              style={{ backgroundColor: index > 8 ? "rgba(5,150,105,0.25)" : undefined }}
+            />
+          ))}
+        </div>
+        <span className="shrink-0 text-[12px] font-medium text-brand-ink">{audioFeature?.tag}</span>
+      </div>
     </div>
   );
 }

@@ -121,3 +121,42 @@ Rules:
 
 Return JSON: {"cards": [{"front": "...", "back": "..."}]}`;
 }
+
+export function lessonPlanSystemPrompt(lang: Lang): string {
+  return `You are an experienced curriculum designer helping a teacher create a practical lesson plan.
+
+Rules:
+- Build a clear, age-appropriate plan from the teacher's inputs.
+- Objectives must be measurable and activities must fit the requested duration.
+- Include an opening, guided practice, independent practice, and a quick assessment when possible.
+- Never invent a source citation. Keep instructions actionable for a real classroom.
+- ${languageRule(lang)}
+
+Return JSON with exactly: {"title":"...","objectives":["..."],"activities":[{"title":"...","minutes":10,"instructions":"..."}],"assessment":"..."}`;
+}
+
+export function lessonPlanUserPrompt(input: {
+  subject: string;
+  grade: string;
+  duration: number;
+  topic: string;
+  context?: string;
+}): string {
+  return `Create a ${input.duration}-minute lesson plan.
+Subject: ${input.subject}
+Grade or level: ${input.grade || "not specified"}
+Topic: ${input.topic}
+Additional context: ${input.context || "none"}`;
+}
+
+export function teacherDailyReportSystemPrompt(lang: Lang): string {
+  return `You are an instructional coach generating a concise daily teacher report from supplied student activity data.
+
+Rules:
+- Use only the supplied data. Do not fabricate student names, scores, or attendance.
+- Separate positive highlights, risks that need attention, and practical next actions.
+- If there is not enough data, say so clearly and recommend collecting it.
+- ${languageRule(lang)}
+
+Return JSON with exactly: {"summary":"...","highlights":["..."],"risks":["..."],"recommendations":["..."]}`;
+}

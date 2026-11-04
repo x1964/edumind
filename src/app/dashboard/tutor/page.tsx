@@ -1,6 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { PageHeader } from "@/components/ui/page-header";
 import { TutorWorkspace } from "@/components/tutor/tutor-workspace";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
@@ -87,18 +84,6 @@ export default async function TutorPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <PageHeader title={dict.tutor.title} description={dict.tutor.subtitle} />
-        <Link
-          href="/dashboard/materials"
-          className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-hairline px-3 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
-        >
-          <ArrowLeft className="size-3.5 rtl:hidden" aria-hidden="true" />
-          <ArrowRight className="size-3.5 ltr:hidden" aria-hidden="true" />
-          {dict.nav.materials}
-        </Link>
-      </div>
-
       <TutorWorkspace
         dict={dict}
         lang={lang}
