@@ -6,8 +6,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import {
-  ArrowLeft,
-  ArrowRight,
   BookOpen,
   BrainCircuit,
   Check,
@@ -22,7 +20,6 @@ import {
   Sparkles,
   Square,
   SlidersHorizontal,
-  Trash2,
   User,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -181,9 +178,9 @@ export function TutorWorkspace({
   const sourceLabel = activeThread?.materialName ?? null;
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[250px_minmax(0,1fr)]">
-      <aside className="hidden min-w-0 xl:block">
-        <div className="sticky top-24 rounded-2xl border border-hairline/80 bg-surface-raised/80 p-2.5 shadow-card">
+    <div className="relative -mx-4 -my-5 grid h-[calc(100dvh-8rem)] min-h-[30rem] w-[calc(100%+2rem)] min-w-0 grid-rows-[auto_minmax(0,1fr)] bg-surface sm:-mx-6 sm:-my-7 sm:w-[calc(100%+3rem)] lg:-mx-8 lg:-my-9 lg:h-[calc(100dvh-4rem)] lg:w-[calc(100%+4rem)] xl:-mx-10 xl:w-[calc(100%+5rem)] xl:grid-cols-[300px_minmax(0,1fr)] xl:grid-rows-1">
+      <aside className="hidden min-w-0 border-e border-hairline/80 bg-surface-deep/55 xl:flex xl:flex-col">
+        <div className="flex h-full min-h-0 flex-col p-3">
           <Link
             href="/dashboard/tutor"
             className="group flex h-10 items-center justify-center gap-2 rounded-xl bg-brand px-3 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_24px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep"
@@ -192,7 +189,7 @@ export function TutorWorkspace({
             {dict.tutor.newChat}
           </Link>
 
-          <div className="mt-2 flex items-center justify-between px-2 pb-1 pt-3">
+          <div className="mt-3 flex items-center justify-between px-2 pb-1">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
               {dict.tutor.conversations}
             </p>
@@ -204,7 +201,7 @@ export function TutorWorkspace({
           {threads.length === 0 ? (
             <p className="px-2 py-4 text-[12px] text-ink-muted">{dict.tutor.noConversations}</p>
           ) : (
-            <ul className="max-h-[42dvh] space-y-0.5 overflow-y-auto xl:max-h-[calc(100dvh-22rem)]">
+            <ul className="mt-1 min-h-0 flex-1 space-y-0.5 overflow-y-auto">
               {threads.map((thread) => {
                 const active = thread.id === threadId;
                 return (
@@ -248,7 +245,7 @@ export function TutorWorkspace({
         </div>
       </aside>
 
-      <div className="flex min-w-0 items-center gap-2 xl:hidden">
+      <div className="flex min-w-0 items-center gap-2 border-b border-hairline/80 bg-surface-deep/50 px-3 py-2 xl:hidden">
         <Link
           href="/dashboard/tutor"
           className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-brand/[0.1] px-3 text-[12px] font-semibold text-brand-ink transition-colors hover:bg-brand/[0.16]"
@@ -280,10 +277,10 @@ export function TutorWorkspace({
         ) : null}
       </div>
 
-      <section className="em-window-shadow relative flex min-h-[70dvh] min-w-0 flex-col overflow-hidden rounded-[1.35rem] border border-hairline/80 bg-surface-raised/90">
+      <section className="relative flex min-h-0 min-w-0 flex-col overflow-hidden bg-surface-raised/90">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(ellipse_at_top_right,rgba(16,185,129,0.13),transparent_62%)]" />
-        <header className="relative flex flex-wrap items-center justify-between gap-3 border-b border-hairline/80 px-4 py-3.5 sm:px-5">
-          <div className="flex min-w-0 items-center gap-2.5">
+        <header className="relative flex flex-wrap items-start justify-between gap-2.5 border-b border-hairline/80 bg-surface-raised px-3 py-3 sm:items-center sm:gap-3 sm:px-5 sm:py-3.5">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
             <span className="relative grid size-9 shrink-0 place-items-center rounded-xl border border-brand/25 bg-brand/[0.1] text-brand-ink shadow-[0_8px_18px_-12px_rgba(4,120,87,0.9)]">
               <Sparkles className="size-4" aria-hidden="true" />
               <span className="absolute -end-0.5 -top-0.5 size-2 rounded-full border-2 border-surface-raised bg-brand" />
@@ -301,9 +298,9 @@ export function TutorWorkspace({
             </div>
           </div>
 
-          <div className="flex min-w-0 items-center gap-1.5">
+          <div className="flex w-full min-w-0 items-center gap-1.5 sm:w-auto">
             {!activeThread ? (
-              <label className="flex min-w-0 items-center gap-2 rounded-xl border border-hairline/80 bg-surface/70 px-2.5 py-1 text-[12px] text-ink-muted">
+              <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-hairline/80 bg-surface/70 px-2.5 py-1 text-[12px] text-ink-muted sm:flex-none">
                 <SlidersHorizontal
                   className="size-3.5 shrink-0 text-brand-ink"
                   aria-hidden="true"
@@ -311,7 +308,7 @@ export function TutorWorkspace({
                 <select
                   value={selectedMaterial ?? ""}
                   onChange={(event) => setSelectedMaterial(event.target.value || null)}
-                  className="h-7 max-w-[220px] min-w-0 bg-transparent text-[12px] text-ink-soft focus:outline-none"
+                  className="h-7 min-w-0 flex-1 bg-transparent text-[12px] text-ink-soft focus:outline-none sm:max-w-[220px] sm:flex-none"
                 >
                   <option value="">{dict.tutor.noMaterial}</option>
                   {materials.map((material) => (
@@ -337,7 +334,7 @@ export function TutorWorkspace({
                   setMessages([]);
                   setLocalError(null);
                 }}
-                className="h-8 shrink-0 px-2.5"
+                className="ms-auto h-8 shrink-0 px-2.5"
               />
             ) : null}
           </div>
@@ -349,14 +346,17 @@ export function TutorWorkspace({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-5" aria-busy={busy}>
+        <div
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[linear-gradient(180deg,rgba(16,185,129,0.025),transparent_15rem)] px-3 py-4 sm:px-5 sm:py-5"
+          aria-busy={busy}
+        >
           {!aiConfigured ? (
             <AiSetupNotice title={dict.tutor.notConfigured} body={dict.tutor.notConfiguredBody} />
           ) : messages.length === 0 ? (
-            <div className="relative mx-auto flex max-w-lg flex-col items-center py-12 text-center sm:py-16">
-              <div className="absolute inset-x-1/2 top-10 h-24 w-48 -translate-x-1/2 rounded-full bg-brand/[0.08] blur-3xl" />
-              <div className="relative grid size-16 place-items-center rounded-[1.4rem] border border-brand/25 bg-brand/[0.1] text-brand-ink shadow-[0_18px_42px_-22px_rgba(4,120,87,0.75)]">
-                <BrainCircuit className="size-7" aria-hidden="true" />
+            <div className="relative mx-auto flex max-w-lg flex-col items-center py-7 text-center sm:py-16">
+              <div className="absolute inset-x-1/2 top-6 h-24 w-48 -translate-x-1/2 rounded-full bg-brand/[0.08] blur-3xl sm:top-10" />
+              <div className="relative grid size-14 place-items-center rounded-[1.25rem] border border-brand/25 bg-brand/[0.1] text-brand-ink shadow-[0_18px_42px_-22px_rgba(4,120,87,0.75)] sm:size-16 sm:rounded-[1.4rem]">
+                <BrainCircuit className="size-6 sm:size-7" aria-hidden="true" />
               </div>
               <div className="relative mt-5 inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/[0.06] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-ink">
                 <ShieldCheck className="size-3" aria-hidden="true" />
@@ -368,7 +368,7 @@ export function TutorWorkspace({
               <p className="relative mt-2 max-w-sm text-[13px] leading-relaxed text-ink-muted">
                 {dict.tutor.emptyBody}
               </p>
-              <div className="relative mt-7 grid w-full gap-2 sm:grid-cols-3">
+              <div className="relative mt-6 grid w-full gap-2 sm:mt-7 sm:grid-cols-3">
                 {[dict.tutor.suggestion_1, dict.tutor.suggestion_2, dict.tutor.suggestion_3].map(
                   (suggestion) => (
                     <button
@@ -386,7 +386,7 @@ export function TutorWorkspace({
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl space-y-5">
+            <div className="mx-auto max-w-4xl space-y-5">
               {messages.map((message) => {
                 const text = message.parts
                   .filter((part): part is { type: "text"; text: string } => part.type === "text")
@@ -412,7 +412,7 @@ export function TutorWorkspace({
                         <BrainCircuit className="size-3.5" />
                       )}
                     </span>
-                    <div className={cn("min-w-0 max-w-[92%]", isUser && "text-end")}>
+                    <div className={cn("min-w-0 max-w-[calc(100%-2.5rem)]", isUser && "text-end")}>
                       <div
                         className={cn(
                           "rounded-2xl px-3.5 py-2.5",
@@ -494,13 +494,13 @@ export function TutorWorkspace({
           )}
         </div>
 
-        <div className="border-t border-hairline/80 bg-surface/60 p-3 sm:p-4">
+        <div className="border-t border-hairline/80 bg-surface-deep/45 p-2.5 sm:p-4">
           <form
             onSubmit={(event) => {
               event.preventDefault();
               void submitText(input);
             }}
-            className="em-brand-glow flex items-end gap-2 rounded-2xl border border-brand/20 bg-surface-raised p-1.5 transition-colors focus-within:border-brand/45"
+            className="em-brand-glow mx-auto flex max-w-4xl items-end gap-2 rounded-2xl border border-brand/20 bg-surface-raised p-1.5 transition-colors focus-within:border-brand/45"
           >
             <textarea
               ref={textareaRef}
@@ -516,22 +516,23 @@ export function TutorWorkspace({
               disabled={!aiConfigured}
               placeholder={dict.tutor.placeholder}
               aria-label={dict.tutor.placeholder}
-              className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl bg-transparent px-3 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:outline-none disabled:opacity-60 sm:text-[13px]"
+              className="max-h-40 min-h-[42px] flex-1 resize-none rounded-xl bg-transparent px-2.5 text-base leading-relaxed text-ink placeholder:text-ink-muted/70 focus:outline-none disabled:opacity-60 sm:min-h-[44px] sm:px-3 sm:text-[13px]"
             />
             {busy ? (
               <button
                 type="button"
                 onClick={() => stop()}
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl border border-hairline px-3 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.05]"
+                aria-label={dict.tutor.stop}
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl border border-hairline px-2.5 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.05] sm:px-3"
               >
                 <Square className="size-3.5" aria-hidden="true" />
-                {dict.tutor.stop}
+                <span className="hidden sm:inline">{dict.tutor.stop}</span>
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!canSend || !input.trim() || creating}
-                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_22px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex h-[42px] items-center gap-1.5 rounded-xl bg-brand px-3 text-[13px] font-semibold text-primary-foreground shadow-[0_10px_22px_-14px_rgba(4,120,87,0.9)] transition-all hover:-translate-y-0.5 hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40 sm:px-3.5"
               >
                 {creating ? (
                   <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -542,24 +543,12 @@ export function TutorWorkspace({
               </button>
             )}
           </form>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-[12px] text-ink-muted">
+          <p className="mt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-ink-muted sm:mt-2 sm:text-[12px]">
             <CornerDownLeft className="size-3" aria-hidden="true" />
             {dict.tutor.composerHint}
           </p>
         </div>
       </section>
-
-      <div className="flex items-center justify-between gap-2 text-[12px] text-ink-muted xl:hidden">
-        <Link href="/dashboard/materials" className="inline-flex items-center gap-1">
-          <ArrowLeft className="size-3 rtl:hidden" aria-hidden="true" />
-          <ArrowRight className="size-3 ltr:hidden" aria-hidden="true" />
-          {dict.nav.materials}
-        </Link>
-        <span className="inline-flex items-center gap-1">
-          <Trash2 className="size-3" aria-hidden="true" />
-          {dict.mindMaps.autosaveNote}
-        </span>
-      </div>
     </div>
   );
 }

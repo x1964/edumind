@@ -85,6 +85,7 @@ export default async function TutorPage({
   return (
     <div className="space-y-6">
       <TutorWorkspace
+        key={activeThread?.id ?? `new-${defaultMaterialId ?? "general"}`}
         dict={dict}
         lang={lang}
         threads={threads}
