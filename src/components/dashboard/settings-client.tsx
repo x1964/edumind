@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition, type ChangeEvent } from "react";
 import {
   Bell,
   Check,
@@ -13,6 +13,7 @@ import {
   Save,
   ShieldCheck,
   Trash2,
+  Upload,
   UserRound,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -59,6 +60,7 @@ export function SettingsClient({
   memberSince: string;
 }) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [fullName, setFullName] = useState(initial.full_name ?? "");
   const [avatarUrl, setAvatarUrl] = useState(initial.avatar_url ?? "");
   const [educationLevel, setEducationLevel] = useState<string>(initial.education_level ?? "");
@@ -74,6 +76,7 @@ export function SettingsClient({
   );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isUploadingAvatar, startAvatarUpload] = useTransition();
   const [isPasswordPending, startPasswordTransition] = useTransition();
   const [isSigningOut, startSignOutTransition] = useTransition();
 
@@ -129,6 +132,25 @@ export function SettingsClient({
     });
   }
 
+  async function handleAvatarFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    startAvatarUpload(async () => {
+      try {
+        const response = await fetch("/api/profile/avatar", { method: "POST", body: formData });
+        const data = (await response.json().catch(() => null)) as { avatarUrl?: string } | null;
+        if (!response.ok || !data?.avatarUrl) throw new Error("avatar_upload_failed");
+        setAvatarUrl(data.avatarUrl);
+        toast.success(dict.settings.avatarUpdated);
+      } catch {
+        toast.error(dict.settings.avatarUploadFailed);
+      }
+    });
+  }
+
   const initialLetter = (fullName.trim() || email || "E").slice(0, 1).toUpperCase();
 
   return (
@@ -178,6 +200,28 @@ export function SettingsClient({
                     className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink placeholder:text-ink-muted/70 focus:border-brand/50 focus:outline-none"
                   />
                   <p className="text-[12px] text-ink-muted">{dict.settings.avatarHint}</p>
+                  <input
+                    ref={fileInputRef}
+                    id="settings-avatar-upload"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleAvatarFileChange}
+                    disabled={isUploadingAvatar}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
+                    className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] font-medium text-ink-soft transition-colors hover:border-brand/50 hover:text-ink focus:border-brand/50 focus:outline-none disabled:opacity-60"
+                  >
+                    {isUploadingAvatar ? (
+                      <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Upload className="size-3.5" aria-hidden="true" />
+                    )}
+                    {isUploadingAvatar ? dict.settings.avatarUploading : dict.settings.avatarUpload}
+                  </button>
                 </div>
               </div>
 
