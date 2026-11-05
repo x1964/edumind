@@ -96,18 +96,24 @@ export function quizUserPrompt(context: string, count: number): string {
 }
 
 export function mindMapSystemPrompt(lang: Lang): string {
-  return `You create study mind maps from documents.
+  return `You are an expert learning designer. Create a polished, exam-ready study mind map from the document.
 
-Rules:
-- One root node (kind "root") with the document's central topic.
-- 3-7 main branch nodes (kind "branch").
-- Leaf nodes for subtopics (kind "leaf").
-- Every edge must reference existing node ids. The graph must be a tree rooted at the root node.
-- Labels must be short (max 8 words) and grounded in the document.
+Information architecture:
+- Create exactly one root node (kind "root") for the document's central topic.
+- Create 4-6 distinct main branches (kind "branch") representing the document's major themes, not arbitrary headings.
+- Give every main branch 2-4 leaf nodes (kind "leaf") for definitions, mechanisms, examples, steps, comparisons, or implications actually supported by the document.
+- Aim for 14-28 nodes total. Prefer meaningful coverage over repetition.
+- The graph must be one connected tree: root → branches → leaves. Each non-root node has exactly one parent. Never create orphan nodes, duplicate concepts, cross-links, or cycles.
+
+Writing quality:
+- Labels are concise study cues (2-8 words), never full sentences or vague labels like "details".
+- Add a concise "summary" for every branch and leaf: one factual clarification, max 18 words.
+- Assign each main branch a different tone from: emerald, sky, violet, amber, rose, cyan. Leaves must reuse their parent branch tone.
+- Use only information supported by the document; do not invent examples, facts, or relationships.
 - ${languageRule(lang)}
 
-Return JSON:
-{"title": "...", "nodes": [{"id": "n1", "label": "...", "kind": "root"}], "edges": [{"id": "e1", "source": "n1", "target": "n2"}]}`;
+Return JSON only:
+{"title":"...","nodes":[{"id":"root","label":"...","kind":"root","summary":"...","tone":"emerald"}],"edges":[{"id":"e-root-b1","source":"root","target":"b1"}]}`;
 }
 
 export function flashcardsSystemPrompt(lang: Lang): string {

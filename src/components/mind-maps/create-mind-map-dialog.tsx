@@ -25,8 +25,19 @@ export function CreateMindMapDialog({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(defaultOpen);
-  const [materialId, setMaterialId] = useState(defaultMaterialId ?? materials[0]?.id ?? "");
+  const [selectedMaterial, setSelectedMaterial] = useState(
+    defaultMaterialId ?? materials[0]?.id ?? ""
+  );
   const [isPending, startTransition] = useTransition();
+
+  // Never send a stale id to the server: if the selected material disappeared
+  // (deleted in another tab, list refreshed, account switched), fall back to a
+  // material that still exists. A stale id is what produces the misleading
+  // "material not found" error.
+  const materialId =
+    selectedMaterial && materials.some((material) => material.id === selectedMaterial)
+      ? selectedMaterial
+      : (defaultMaterialId ?? materials[0]?.id ?? "");
 
   function generate() {
     if (!materialId) return;
@@ -40,6 +51,9 @@ export function CreateMindMapDialog({
         router.push(`/dashboard/mind-maps/${result.id}`);
       } else {
         toast.error(result.error ?? dict.mindMaps.failed);
+        // The material may have been deleted in another tab. Refresh the
+        // server data so the next attempt picks a valid material.
+        if (result.error === dict.materials.notFound) router.refresh();
       }
     });
   }
@@ -104,7 +118,7 @@ export function CreateMindMapDialog({
               <select
                 id="map-material"
                 value={materialId}
-                onChange={(event) => setMaterialId(event.target.value)}
+                onChange={(event) => setSelectedMaterial(event.target.value)}
                 className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink focus:border-brand/50 focus:outline-none"
               >
                 {materials.map((material) => (

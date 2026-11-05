@@ -72,14 +72,70 @@ export async function generateMindMap(lang: Lang, context: string): Promise<Mind
   const result = await generateStructured(mindMapOutputSchema, {
     system: mindMapSystemPrompt(lang),
     prompt: `<document>\n${context}\n</document>`,
-    maxTokens: 2800,
+    maxTokens: 4200,
   });
 
-  const nodeIds = new Set(result.nodes.map((node) => node.id));
-  const nodes = result.nodes.filter((node) => nodeIds.has(node.id)).slice(0, 40);
-  const edges = result.edges.filter(
-    (edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target) && edge.source !== edge.target
-  );
+  // Normalize the provider output before persisting it. This protects the
+  // editor from repeated ids, disconnected ideas, and non-mind-map links.
+  const nodeById = new Map<string, MindMapOutput["nodes"][number]>();
+  for (const node of result.nodes) {
+    if (!nodeById.has(node.id)) nodeById.set(node.id, node);
+  }
+
+  const root = [...nodeById.values()].find((node) => node.kind === "root");
+  if (!root) throw new Error("Mind map response has no root node");
+
+  const mindMapTones = ["emerald", "sky", "violet", "amber", "rose", "cyan"] as const;
+  const branches = result.edges
+    .filter((edge) => edge.source === root.id)
+    .map((edge) => nodeById.get(edge.target))
+    .filter((node): node is MindMapOutput["nodes"][number] => node?.kind === "branch")
+    .filter((node, index, items) => items.findIndex((item) => item.id === node.id) === index)
+    .slice(0, 6)
+    .map((node, index) => {
+      const tone = mindMapTones.includes(node.tone as (typeof mindMapTones)[number])
+        ? (node.tone as (typeof mindMapTones)[number])
+        : (mindMapTones[index] ?? "emerald");
+      return { ...node, tone };
+    });
+
+  const branchIds = new Set(branches.map((node) => node.id));
+  const leaves = result.edges
+    .filter((edge) => branchIds.has(edge.source))
+    .map((edge) => ({ edge, node: nodeById.get(edge.target) }))
+    .filter(
+      (
+        item
+      ): item is { edge: MindMapOutput["edges"][number]; node: MindMapOutput["nodes"][number] } =>
+        item.node?.kind === "leaf"
+    )
+    .filter(
+      (item, index, items) =>
+        items.findIndex((candidate) => candidate.node.id === item.node.id) === index
+    )
+    .slice(0, 24)
+    .map(({ edge, node }) => ({
+      ...node,
+      tone: branches.find((branch) => branch.id === edge.source)?.tone ?? "emerald",
+    }));
+
+  const nodes: MindMapOutput["nodes"] = [{ ...root, tone: "emerald" }, ...branches, ...leaves];
+  const edges = [
+    ...branches.map((branch) => ({
+      id: `e-${root.id}-${branch.id}`,
+      source: root.id,
+      target: branch.id,
+    })),
+    ...result.edges
+      .filter(
+        (edge) => branchIds.has(edge.source) && leaves.some((leaf) => leaf.id === edge.target)
+      )
+      .map((edge) => ({
+        id: `e-${edge.source}-${edge.target}`,
+        source: edge.source,
+        target: edge.target,
+      })),
+  ];
 
   return { title: result.title, nodes, edges };
 }

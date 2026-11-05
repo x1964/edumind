@@ -102,6 +102,8 @@ export const mindMapSchema = z.object({
         id: z.string().min(1).max(80),
         label: z.string().min(1).max(240),
         kind: z.enum(["root", "branch", "leaf"]),
+        summary: z.string().max(300).optional(),
+        tone: z.enum(["emerald", "sky", "violet", "amber", "rose", "cyan"]).optional(),
         position: z.object({ x: z.number().finite(), y: z.number().finite() }).optional(),
       })
     )

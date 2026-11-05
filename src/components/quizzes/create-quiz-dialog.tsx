@@ -30,10 +30,19 @@ export function CreateQuizDialog({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(defaultOpen);
-  const [materialId, setMaterialId] = useState(defaultMaterialId ?? materials[0]?.id ?? "");
+  const [selectedMaterial, setSelectedMaterial] = useState(
+    defaultMaterialId ?? materials[0]?.id ?? ""
+  );
   const [difficulty, setDifficulty] = useState<QuizDifficulty>("medium");
   const [count, setCount] = useState(8);
   const [isPending, startTransition] = useTransition();
+
+  // Never send a stale material id to the server (deleted material, refreshed
+  // list, or account switch), which would produce "material not found".
+  const materialId =
+    selectedMaterial && materials.some((material) => material.id === selectedMaterial)
+      ? selectedMaterial
+      : (defaultMaterialId ?? materials[0]?.id ?? "");
 
   function generate() {
     if (!materialId) return;
@@ -47,6 +56,7 @@ export function CreateQuizDialog({
         router.push(`/dashboard/quizzes/${result.id}`);
       } else {
         toast.error(result.error ?? dict.quizzes.failed);
+        if (result.error === dict.materials.notFound) router.refresh();
       }
     });
   }
@@ -111,7 +121,7 @@ export function CreateQuizDialog({
               <select
                 id="quiz-material"
                 value={materialId}
-                onChange={(event) => setMaterialId(event.target.value)}
+                onChange={(event) => setSelectedMaterial(event.target.value)}
                 className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink focus:border-brand/50 focus:outline-none"
               >
                 {materials.map((material) => (

@@ -56,6 +56,7 @@ export default async function MindMapsPage({
         description={dict.mindMaps.subtitle}
         action={
           <CreateMindMapDialog
+            key={`create-${defaultMaterialId ?? "auto"}`}
             dict={dict}
             materials={materials}
             aiConfigured={isAiConfigured()}

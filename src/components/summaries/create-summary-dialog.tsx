@@ -29,9 +29,18 @@ export function CreateSummaryDialog({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(defaultOpen);
-  const [materialId, setMaterialId] = useState(defaultMaterialId ?? materials[0]?.id ?? "");
+  const [selectedMaterial, setSelectedMaterial] = useState(
+    defaultMaterialId ?? materials[0]?.id ?? ""
+  );
   const [style, setStyle] = useState<SummaryStyle>("detailed");
   const [isPending, startTransition] = useTransition();
+
+  // Fall back when the selected material is no longer available so a stale id
+  // is never sent to the server (which would answer "material not found").
+  const materialId =
+    selectedMaterial && materials.some((material) => material.id === selectedMaterial)
+      ? selectedMaterial
+      : (defaultMaterialId ?? materials[0]?.id ?? "");
 
   function generate() {
     if (!materialId) return;
@@ -45,6 +54,7 @@ export function CreateSummaryDialog({
         router.push(`/dashboard/summaries/${result.id}`);
       } else {
         toast.error(result.error ?? dict.summaries.failed);
+        if (result.error === dict.materials.notFound) router.refresh();
       }
     });
   }
@@ -112,7 +122,7 @@ export function CreateSummaryDialog({
               <select
                 id="summary-material"
                 value={materialId}
-                onChange={(event) => setMaterialId(event.target.value)}
+                onChange={(event) => setSelectedMaterial(event.target.value)}
                 className="h-10 w-full rounded-xl border border-hairline bg-surface-deep px-3 text-[13px] text-ink focus:border-brand/50 focus:outline-none"
               >
                 {materials.map((material) => (

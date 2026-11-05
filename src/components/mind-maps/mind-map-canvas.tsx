@@ -5,6 +5,8 @@ import { useCallback, useMemo, useState, useTransition } from "react";
 import {
   Background,
   Controls,
+  Handle,
+  Position,
   ReactFlow,
   addEdge,
   useEdgesState,
@@ -12,6 +14,7 @@ import {
   type Connection,
   type Edge,
   type Node,
+  type NodeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { LoaderCircle, Save } from "lucide-react";
@@ -50,6 +53,63 @@ const NODE_STYLE: Record<string, React.CSSProperties> = {
     width: 160,
   },
 };
+
+const TONES = {
+  emerald: { accent: "#059669", soft: "#ecfdf5", ink: "#065f46" },
+  sky: { accent: "#0284c7", soft: "#f0f9ff", ink: "#075985" },
+  violet: { accent: "#7c3aed", soft: "#f5f3ff", ink: "#5b21b6" },
+  amber: { accent: "#d97706", soft: "#fffbeb", ink: "#92400e" },
+  rose: { accent: "#e11d48", soft: "#fff1f2", ink: "#9f1239" },
+  cyan: { accent: "#0891b2", soft: "#ecfeff", ink: "#155e75" },
+} as const;
+
+type MapNodeData = {
+  label: string;
+  summary?: string;
+  kind: MindMapNode["kind"];
+  tone?: keyof typeof TONES;
+};
+
+function StudyMapNode({ data }: NodeProps) {
+  const node = data as MapNodeData;
+  const tone = TONES[node.tone ?? "emerald"];
+  const isRoot = node.kind === "root";
+  const isBranch = node.kind === "branch";
+
+  return (
+    <div
+      className="min-w-[170px] max-w-[220px] rounded-2xl border px-3 py-2.5 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.35)]"
+      style={{
+        background: isRoot ? tone.accent : isBranch ? tone.soft : "#ffffff",
+        borderColor: `${tone.accent}${isRoot ? "70" : "35"}`,
+        color: isRoot ? "#ffffff" : tone.ink,
+      }}
+    >
+      <Handle type="target" position={Position.Left} className="!border-0 !bg-transparent" />
+      <p
+        className={
+          isRoot ? "text-[14px] font-bold leading-snug" : "text-[13px] font-semibold leading-snug"
+        }
+      >
+        {node.label}
+      </p>
+      {node.summary ? (
+        <p
+          className={
+            isRoot
+              ? "mt-1 text-[11px] leading-relaxed text-white/80"
+              : "mt-1 text-[11px] leading-relaxed opacity-75"
+          }
+        >
+          {node.summary}
+        </p>
+      ) : null}
+      <Handle type="source" position={Position.Right} className="!border-0 !bg-transparent" />
+    </div>
+  );
+}
+
+const nodeTypes = { study: StudyMapNode };
 
 function buildLayout(nodes: MindMapNode[], edges: MindMapEdge[]): MindMapNode[] {
   const withPositions = nodes.map((node) => ({ ...node }));
@@ -130,7 +190,13 @@ export function MindMapCanvas({
       laidOut.map((node) => ({
         id: node.id,
         position: node.position ?? { x: 0, y: 0 },
-        data: { label: node.label },
+        type: "study",
+        data: {
+          label: node.label,
+          summary: node.summary,
+          kind: node.kind,
+          tone: node.tone,
+        },
         style: NODE_STYLE[node.kind] ?? NODE_STYLE.leaf,
       })),
     [laidOut]
@@ -138,14 +204,19 @@ export function MindMapCanvas({
 
   const flowEdges = useMemo<Edge[]>(
     () =>
-      initialEdges.map((edge) => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-        animated: false,
-        style: { stroke: "#059669", strokeOpacity: 0.45, strokeWidth: 1.4 },
-      })),
-    [initialEdges]
+      initialEdges.map((edge) => {
+        const source = laidOut.find((node) => node.id === edge.source);
+        const tone = TONES[source?.tone ?? "emerald"];
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          type: "smoothstep",
+          animated: false,
+          style: { stroke: tone.accent, strokeOpacity: 0.5, strokeWidth: 1.8 },
+        };
+      }),
+    [initialEdges, laidOut]
   );
 
   const [nodes, , onNodesChange] = useNodesState(flowNodes);
@@ -158,7 +229,8 @@ export function MindMapCanvas({
           {
             ...connection,
             id: `e-${connection.source}-${connection.target}`,
-            style: { stroke: "#059669", strokeOpacity: 0.45, strokeWidth: 1.4 },
+            type: "smoothstep",
+            style: { stroke: "#059669", strokeOpacity: 0.5, strokeWidth: 1.8 },
           },
           current
         )
@@ -181,6 +253,11 @@ export function MindMapCanvas({
         label:
           typeof node.data?.label === "string" ? node.data.label : String(node.data?.label ?? ""),
         kind: kindById.get(node.id) ?? "leaf",
+        summary: typeof node.data?.summary === "string" ? node.data.summary : undefined,
+        tone:
+          typeof node.data?.tone === "string" && node.data.tone in TONES
+            ? (node.data.tone as keyof typeof TONES)
+            : undefined,
         position: { x: Math.round(node.position.x), y: Math.round(node.position.y) },
       }));
       const payloadEdges = edges.map((edge) => ({
@@ -263,6 +340,7 @@ export function MindMapCanvas({
           fitView
           minZoom={0.2}
           maxZoom={1.8}
+          nodeTypes={nodeTypes}
           proOptions={{ hideAttribution: true }}
           className="[&_.react-flow__controls]:border-hairline [&_.react-flow__controls]:bg-surface-raised [&_.react-flow__controls-button]:border-hairline [&_.react-flow__controls-button]:bg-surface-raised [&_.react-flow__controls-button]:fill-ink-soft"
         >

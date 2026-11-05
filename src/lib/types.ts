@@ -174,6 +174,8 @@ export interface MindMapNode {
   id: string;
   label: string;
   kind: "root" | "branch" | "leaf";
+  summary?: string;
+  tone?: "emerald" | "sky" | "violet" | "amber" | "rose" | "cyan";
   position?: { x: number; y: number };
 }
 

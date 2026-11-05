@@ -19,12 +19,27 @@ export async function loadMaterialContext(
   materialId: string,
   query: string
 ): Promise<MaterialContext | null> {
-  const { data: material } = await supabase
+  // Select only the columns that every schema revision is guaranteed to have,
+  // then fetch the (possibly large) extracted text separately. This keeps a
+  // missing/renamed extraction column from being mistaken for a missing
+  // material.
+  const { data: material, error: materialError } = await supabase
     .from("materials")
-    .select("id, file_name, extracted_text, status")
+    .select("id, file_name")
     .eq("id", materialId)
     .eq("user_id", userId)
     .maybeSingle();
+
+  if (materialError) {
+    // Never turn an infrastructure error into a misleading "material not
+    // found" message. The caller falls back to its generic failure state.
+    console.error("loadMaterialContext: material lookup failed", {
+      materialId,
+      code: materialError.code,
+      message: materialError.message,
+    });
+    return null;
+  }
 
   if (!material) return null;
 
@@ -37,18 +52,27 @@ export async function loadMaterialContext(
     .limit(400);
 
   const rows = (chunks ?? []) as Array<{ page: number | null; content: string }>;
-  const context =
-    rows.length > 0
-      ? selectContext(rows, query, 14_000)
-      : {
-          text: (material.extracted_text ?? "").slice(0, 14_000),
-          pages: [],
-        };
+  let text = "";
+  let pages: number[] = [];
+
+  if (rows.length > 0) {
+    const context = selectContext(rows, query, 14_000);
+    text = context.text;
+    pages = context.pages;
+  } else {
+    const { data: stored } = await supabase
+      .from("materials")
+      .select("extracted_text")
+      .eq("id", materialId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    text = ((stored?.extracted_text as string | null) ?? "").slice(0, 14_000);
+  }
 
   return {
-    text: context.text,
-    pages: context.pages,
-    hasText: context.text.trim().length > 0,
+    text,
+    pages,
+    hasText: text.trim().length > 0,
     fileName: material.file_name as string,
   };
 }

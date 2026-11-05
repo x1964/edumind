@@ -57,6 +57,7 @@ export default async function SummariesPage({
         description={dict.summaries.subtitle}
         action={
           <CreateSummaryDialog
+            key={`create-${defaultMaterialId ?? "auto"}`}
             dict={dict}
             materials={materials}
             aiConfigured={isAiConfigured()}

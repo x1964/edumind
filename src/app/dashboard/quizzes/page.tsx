@@ -84,6 +84,7 @@ export default async function QuizzesPage({
         description={dict.quizzes.subtitle}
         action={
           <CreateQuizDialog
+            key={`create-${defaultMaterialId ?? "auto"}`}
             dict={dict}
             materials={materials}
             aiConfigured={isAiConfigured()}

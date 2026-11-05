@@ -29,6 +29,8 @@ export const mindMapOutputSchema = z.object({
         id: z.string().min(1).max(40),
         label: z.string().min(1).max(160),
         kind: z.enum(["root", "branch", "leaf"]),
+        summary: z.string().max(220).optional().default(""),
+        tone: z.enum(["emerald", "sky", "violet", "amber", "rose", "cyan"]).optional(),
       })
     )
     .min(3)
