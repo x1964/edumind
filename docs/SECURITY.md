@@ -38,7 +38,7 @@ This repository does not claim that remote Supabase changes have been applied. T
 ## File uploads and private materials
 
 - Accepted files are validated by extension, size, and content signature on the server.
-- The upload limit is 20 MB; empty, oversized, malformed, and unsupported files must be rejected.
+- The upload limit is 50 MB; empty, oversized, malformed, and unsupported files must be rejected.
 - Storage paths are scoped to the authenticated user ID and use generated names rather than trusting the original filename.
 - Material objects remain private. Use authenticated download handlers or signed URLs; never publish a permanent public URL for private study material.
 - On database or chunk-processing failure, remove the uploaded object and material row where possible.

@@ -1,6 +1,6 @@
 import type { FileKind } from "@/lib/types";
 
-export const MAX_FILE_BYTES = 20 * 1024 * 1024;
+export const MAX_FILE_BYTES = 50 * 1024 * 1024;
 export const MAX_PAGES = 400;
 
 export const MIME_BY_KIND: Record<FileKind, string> = {

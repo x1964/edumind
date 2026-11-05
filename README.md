@@ -43,7 +43,7 @@ It ships with a public marketing landing page and a fully authenticated product:
 | Landing page   | Branded, responsive Arabic/English marketing page with product previews and SEO metadata.                                               |
 | Authentication | Email/password signup, login, email confirmation, password reset and optional Google OAuth. Sessions are refreshed by `src/proxy.ts`.   |
 | Onboarding     | Education level, interests, goals and learning language. Saved to `profiles`.                                                           |
-| Materials      | Client-side text extraction from PDF/DOCX/TXT, server-side validation, private storage, signed file access. Max 20 MB.                  |
+| Materials      | Client-side text extraction from PDF/DOCX/TXT, server-side validation, private storage, signed file access. Max 50 MB.                  |
 | AI Tutor       | Threaded chat grounded in the user's material content, with streaming responses and citations/pages where available.                    |
 | Summaries      | Generated in several study styles, editable, deletable and tracked as real study activity.                                              |
 | Quizzes        | Generated questions, server-side scoring through a `SECURITY DEFINER` RPC, immutable attempts and per-quiz history.                     |
@@ -230,7 +230,7 @@ It also creates the private `materials` storage bucket and per-user storage poli
 
 - Bucket name: `materials`
 - Visibility: **private**
-- Size limit: **20 MB**
+- Size limit: **50 MB**
 - Allowed MIME types: PDF, DOCX, plain text
 - Object path: `materials/<user_id>/<uuid>.<ext>`
 
@@ -291,7 +291,7 @@ Security is enforced in depth:
 - **Rate limiting** on AI endpoints and authentication-sensitive actions.
 - **Safe redirects** via a helper that only allows internal paths.
 - **Quiz answers are never sent to the client.** Correct answers live in `quiz_question_keys` (RLS enabled, no SELECT policy). Scoring happens inside `submit_quiz_attempt`; attempts cannot be edited by clients.
-- **File validation:** extension, MIME type, magic bytes, size (≤ 20 MB) and extracted text all re-checked on the server.
+- **File validation:** extension, MIME type, magic bytes, size (≤ 50 MB) and extracted text all re-checked on the server.
 - **Private storage + short-lived signed URLs.** No public file URLs.
 - **No technical error leakage.** Route-level error boundaries show localized messages.
 
@@ -369,7 +369,7 @@ Use a real Supabase project and, if available, a real AI key.
    - Complete onboarding; refresh and verify answers persisted.
    - Switch language; verify RTL/LTR and dictionary changes.
 3. **Materials**
-   - Upload PDF, DOCX and TXT files under 20 MB.
+   - Upload PDF, DOCX and TXT files under 50 MB.
    - Confirm rejected files (wrong type, oversized, corrupt) show a safe error.
    - Open a material, download via the signed URL route, delete it.
 4. **AI features** (requires AI env vars)
@@ -432,6 +432,6 @@ Requirements:
 | Every table request returns empty or 403    | Migrations/RLS not applied, or user has no profile row.                                          | Run both migrations; the auth trigger creates profiles for new users. Existing users can complete onboarding to upsert theirs. |
 | AI pages show "AI is not configured"        | `AI_BASE_URL`, `AI_API_KEY` or `AI_MODEL` is missing.                                            | Add all three and restart the server.                                                                                          |
 | Password reset link lands on the wrong host | `NEXT_PUBLIC_SITE_URL` or Supabase redirect URLs are wrong.                                      | Set the site URL and add `/auth/callback**` to Supabase redirect URLs.                                                         |
-| Upload rejected                             | File is over 20 MB, has a disallowed extension, or its content does not match the declared type. | Use PDF, DOCX or TXT under 20 MB.                                                                                              |
+| Upload rejected                             | File is over 50 MB, has a disallowed extension, or its content does not match the declared type. | Use PDF, DOCX or TXT under 50 MB.                                                                                              |
 | PDF extraction fails in the browser         | The PDF is encrypted/corrupt or uses unsupported compression.                                    | Try another file; server-side validation will also reject it safely.                                                           |
 | Google button missing                       | `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED` is false or the provider is not enabled.                      | Set it to `true` and configure Google in Supabase.                                                                             |

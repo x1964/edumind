@@ -278,7 +278,7 @@ create table if not exists public.materials (
   file_name text not null,
   file_type text not null check (file_type in ('pdf', 'docx', 'txt')),
   mime_type text not null,
-  file_size integer not null check (file_size > 0 and file_size <= 20971520),
+  file_size integer not null check (file_size > 0 and file_size <= 52428800),
   storage_path text not null unique,
   status text not null default 'processing'
     check (status in ('processing', 'ready', 'failed')),
@@ -830,7 +830,7 @@ values (
   'materials',
   'materials',
   false,
-  20971520,
+  52428800,
   array[
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
