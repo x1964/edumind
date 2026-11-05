@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BrainCircuit,
-  Ellipsis,
   FileText,
   LayoutDashboard,
+  LayoutGrid,
   ListChecks,
   type LucideIcon,
 } from "lucide-react";
@@ -124,7 +124,7 @@ export function MobileBottomNav({
                 : "group-active:bg-black/[0.04]"
             )}
           >
-            <Ellipsis
+            <LayoutGrid
               className={cn("size-[19px]", moreOpen && "scale-95")}
               strokeWidth={moreActive ? 2.4 : 1.9}
               aria-hidden="true"
