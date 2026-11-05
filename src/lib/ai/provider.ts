@@ -37,6 +37,12 @@ const MODELS = [process.env.AI_MODEL ?? "", ...(process.env.AI_MODEL_FALLBACKS ?
 const MAX_TOKENS = Number(process.env.AI_MAX_OUTPUT_TOKENS ?? "2048");
 const TIMEOUT_MS = Number(process.env.AI_TIMEOUT_MS ?? "90000");
 
+// Some OpenAI-compatible gateways (notably Google's Gemini compatibility
+// endpoint) advertise `response_format: json_object` but answer with 503 when
+// it is used. Our prompts already demand JSON and `extractJson` handles
+// fenced output, so JSON mode is opt-in instead of the default.
+const JSON_MODE = process.env.AI_JSON_MODE === "true";
+
 const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 
 export function isAiConfigured(): boolean {
@@ -77,7 +83,7 @@ async function request(options: CompletionOptions, stream: boolean): Promise<Res
           temperature: options.temperature ?? 0.4,
           max_tokens: options.maxTokens ?? MAX_TOKENS,
           stream,
-          ...(options.json ? { response_format: { type: "json_object" } } : {}),
+          ...(options.json && JSON_MODE ? { response_format: { type: "json_object" } } : {}),
         }),
         signal: options.signal ?? AbortSignal.timeout(TIMEOUT_MS),
       });

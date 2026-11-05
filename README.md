@@ -164,6 +164,7 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the br
 | `AI_MODEL_FALLBACKS`               | No          | Comma-separated model names tried when the primary model is rate-limited or unavailable (429 / 5xx).                                             |
 | `AI_MAX_OUTPUT_TOKENS`             | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
 | `AI_TIMEOUT_MS`                    | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
+| `AI_JSON_MODE`                     | No          | Sends `response_format: json_object`. Defaults to `false`; leave it off for Gemini's OpenAI-compatible endpoint, which can return 503 with it.   |
 
 **Never** put a Supabase service-role key in any `NEXT_PUBLIC_*` variable.
 
