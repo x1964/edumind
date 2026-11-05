@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { PwaRegister } from "@/components/pwa/pwa-register";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -20,14 +20,6 @@ const plexArabic = IBM_Plex_Sans_Arabic({
   variable: "--font-ibm-plex-arabic",
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-// Display face for headings and brand lockups. It only covers Latin glyphs, so
-// Arabic headings fall through to IBM Plex Sans Arabic in the font stack.
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
   display: "swap",
 });
 
@@ -104,7 +96,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${plexArabic.variable} ${bricolage.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${plexArabic.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: languageBootstrap }} />

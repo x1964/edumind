@@ -9,7 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-display);
+  --font-heading: var(--font-sans);
 
   --color-brand: var(--em-accent);
   --color-brand-deep: var(--em-accent-deep);
@@ -107,10 +107,6 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-arabic:
     var(--font-ibm-plex-arabic), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  /* Latin headings use Bricolage Grotesque; Arabic glyphs fall back to Plex. */
-  --font-display:
-    var(--font-bricolage), var(--font-ibm-plex-arabic), var(--font-geist-sans), ui-sans-serif,
-    system-ui, sans-serif;
 
   --background: var(--em-bg);
   --foreground: var(--em-text);
@@ -166,9 +162,6 @@ html[lang="ar"] {
       "ss01" 1,
       "cv01" 1;
     text-rendering: optimizeLegibility;
-  }
-  :is(h1, h2, h3, h4, h5, h6) {
-    font-family: var(--font-display);
   }
   html[lang="ar"] body {
     line-height: 1.72;
