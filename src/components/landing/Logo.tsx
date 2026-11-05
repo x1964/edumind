@@ -15,7 +15,7 @@ export function Logo({ className, compact = false }: { className?: string; compa
         />
       </span>
       {compact ? null : (
-        <span className="text-[19px] font-semibold tracking-[-0.03em] text-ink">
+        <span className="font-heading text-[19px] font-semibold tracking-[-0.03em] text-ink">
           Edu<span className="text-brand-ink">Mind</span>
         </span>
       )}
