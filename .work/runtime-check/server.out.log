@@ -1,9 +1,0 @@
-
-> edumind@0.1.0 start
-> next start -p 3100
-
-▲ Next.js 16.4.3
-- Local:         http://localhost:3100
-- Network:       http://192.168.1.2:3100
-✓ Ready in 528ms
-✓ Running next.config.ts took 77ms
