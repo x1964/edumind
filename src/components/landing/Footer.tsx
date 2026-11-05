@@ -26,22 +26,48 @@ export function Footer({ dict }: { dict: Dictionary }) {
                 {footer.socialTitle}
               </p>
               <div className="mt-2.5 flex items-center gap-2">
-                {footer.socials.map((social) => (
-                  <span
-                    key={social}
-                    title={`${social} — ${footer.soon}`}
-                    aria-disabled="true"
-                    className="inline-flex h-8 items-center gap-1.5 rounded-full border border-hairline bg-black/[0.015] px-3 text-[12px] text-ink-muted/70"
-                  >
-                    <span aria-hidden="true" className="font-semibold">
-                      {social === "X" ? "𝕏" : social === "LinkedIn" ? "in" : "▶"}
+                {footer.socials.map((social) => {
+                  const label = social.label;
+
+                  const socialContent = (
+                    <>
+                      <span aria-hidden="true" className="font-semibold">
+                        {label === "X" ? "𝕏" : label === "LinkedIn" ? "in" : "▶"}
+                      </span>
+                      {label}
+                      {!social.href && (
+                        <span className="rounded bg-black/[0.04] px-1 py-px text-[12px] text-ink-muted/60">
+                          {footer.soon}
+                        </span>
+                      )}
+                    </>
+                  );
+
+                  if (social.href) {
+                    return (
+                      <a
+                        key={label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-full border border-hairline bg-black/[0.015] px-3 text-[12px] text-ink-muted transition-colors hover:border-brand/30 hover:text-brand-ink"
+                      >
+                        {socialContent}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <span
+                      key={label}
+                      title={`${label} — ${footer.soon}`}
+                      aria-disabled="true"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-full border border-hairline bg-black/[0.015] px-3 text-[12px] text-ink-muted/70"
+                    >
+                      {socialContent}
                     </span>
-                    {social}
-                    <span className="rounded bg-black/[0.04] px-1 py-px text-[12px] text-ink-muted/60">
-                      {footer.soon}
-                    </span>
-                  </span>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

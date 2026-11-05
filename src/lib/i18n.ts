@@ -225,7 +225,7 @@ export interface FooterDict {
   termsHref?: string;
   soon: string;
   socialTitle: string;
-  socials: string[];
+  socials: { label: string; href?: string }[];
   rights: string;
   madeFor: string;
   status: string;
@@ -736,7 +736,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
       termsHref: "/terms",
       soon: "قريباً",
       socialTitle: "تابعنا",
-      socials: ["X", "LinkedIn", "YouTube"],
+      socials: [
+        { label: "X" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/company/edumindapp/" },
+        { label: "YouTube" },
+      ],
       rights: "© 2026 EduMind. كل الحقوق محفوظة.",
       madeFor: "صُنع للطلاب في كل مكان.",
       status: "الإصدار التجريبي قيد التطوير",
@@ -1243,7 +1247,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
       termsHref: "/terms",
       soon: "Soon",
       socialTitle: "Follow",
-      socials: ["X", "LinkedIn", "YouTube"],
+      socials: [
+        { label: "X" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/company/edumindapp/" },
+        { label: "YouTube" },
+      ],
       rights: "© 2026 EduMind. All rights reserved.",
       madeFor: "Made for learners everywhere.",
       status: "Private beta in progress",
