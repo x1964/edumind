@@ -22,7 +22,7 @@ Changed files: `supabase/migrations/20261107000000_security_hardening.sql`, `sup
 
 ### In-memory rate limiting was not suitable for multi-instance production
 
-The limiter now uses an Upstash Redis-compatible REST pipeline when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. Configured-store failures and missing production configuration fail closed instead of silently disabling protection. Local development retains a bounded in-process fallback. The limiter is applied to tutor AI, teacher tools, AI actions, uploads, avatars, student feed operations, and push subscription registration.
+The limiter uses an Upstash Redis-compatible REST pipeline when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured. When Upstash is absent, it uses the Supabase `consume_rate_limit` RPC, and finally a bounded in-process fallback. Store failures never block valid traffic, so a missing Upstash configuration cannot turn every upload or AI request into a 429. The limiter is applied to tutor AI, teacher tools, AI actions, uploads, avatars, student feed operations, and push subscription registration.
 
 Changed files: `src/lib/rate-limit.ts`, the affected API routes/actions, `.env.example`.
 
@@ -100,7 +100,7 @@ Result: **11 tests passed across 2 test files** (the existing AI provider tests 
 
 ## Remaining production prerequisites
 
-1. Configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` in every production instance. The application intentionally fails closed when these are absent in production.
+1. Optionally configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for Upstash-backed global limits. Without them the Supabase RPC keeps protection distributed; the in-memory limiter is the final fallback.
 2. Apply `20261107000000_security_hardening.sql` and verify quiz policies, triggers, the RPC, and `has_role` in Supabase.
 3. Add legitimate teacher/admin assignments to `public.user_roles` through a controlled administrative process.
 4. Run cross-user Supabase integration tests with two authenticated users against the deployed project, including quiz question/key inserts and quiz attempts.

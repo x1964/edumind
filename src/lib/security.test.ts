@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isValidPushEndpoint } from "@/lib/push/server";
 import { validateFileContent } from "@/lib/documents/file-validation";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, resetLocalRateLimits } from "@/lib/rate-limit";
 
 describe("security validation", () => {
   it("accepts supported HTTPS browser push providers", () => {
@@ -26,7 +26,7 @@ describe("security validation", () => {
     expect(await validateFileContent(validPdf, "pdf")).toBe(true);
   });
 
-  it("fails closed in production when distributed rate limiting is not configured", async () => {
+  it("keeps serving requests when no distributed rate limiting store is configured", async () => {
     const env = process.env as Record<string, string | undefined>;
     const previousNodeEnv = process.env.NODE_ENV;
     const previousUrl = process.env.UPSTASH_REDIS_REST_URL;
@@ -34,12 +34,23 @@ describe("security validation", () => {
     env.NODE_ENV = "production";
     delete process.env.UPSTASH_REDIS_REST_URL;
     delete process.env.UPSTASH_REDIS_REST_TOKEN;
-    const result = await checkRateLimit("security-test", 10, 60_000);
-    expect(result.allowed).toBe(false);
+    const result = await checkRateLimit(`security-test:${crypto.randomUUID()}`, 10, 60_000);
+    expect(result.allowed).toBe(true);
     env.NODE_ENV = previousNodeEnv;
     if (previousUrl === undefined) delete process.env.UPSTASH_REDIS_REST_URL;
     else process.env.UPSTASH_REDIS_REST_URL = previousUrl;
     if (previousToken === undefined) delete process.env.UPSTASH_REDIS_REST_TOKEN;
     else process.env.UPSTASH_REDIS_REST_TOKEN = previousToken;
+  });
+
+  it("still enforces the bounded in-memory fallback for bursts", async () => {
+    resetLocalRateLimits();
+    const key = `security-test:${crypto.randomUUID()}`;
+    for (let i = 0; i < 3; i += 1) {
+      expect((await checkRateLimit(key, 3, 60_000)).allowed).toBe(true);
+    }
+    const blocked = await checkRateLimit(key, 3, 60_000);
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.retryAfterSeconds).toBeGreaterThan(0);
   });
 });

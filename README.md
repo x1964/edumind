@@ -167,8 +167,8 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the br
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`  | For push    | Public Web Push VAPID key.                                                                                                                       |
 | `VAPID_PRIVATE_KEY`             | For push    | Server-only Web Push private key.                                                                                                                |
 | `VAPID_SUBJECT`                 | For push    | VAPID contact subject, normally a `mailto:` URL.                                                                                                 |
-| `UPSTASH_REDIS_REST_URL`        | Production  | Upstash Redis REST endpoint for distributed rate limiting.                                                                                       |
-| `UPSTASH_REDIS_REST_TOKEN`      | Production  | Server-only Upstash Redis REST token.                                                                                                            |
+| `UPSTASH_REDIS_REST_URL`        | Optional    | Upstash Redis REST endpoint. Preferred distributed rate limiter; the Supabase-backed limiter is used when it is absent.                          |
+| `UPSTASH_REDIS_REST_TOKEN`      | Optional    | Server-only Upstash Redis REST token.                                                                                                            |
 
 **Never** put a Supabase service-role key in any `NEXT_PUBLIC_*` variable.
 
@@ -412,7 +412,7 @@ EduMind supports browser Push notifications for new study tasks. Generate VAPID 
 4. Add the production `/auth/callback**` URL in Supabase Auth settings.
 5. Deploy. The default build command is `npm run build`.
 
-Production deployments must configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. EduMind fails closed for protected endpoints when distributed rate limiting is unavailable in production.
+Rate limiting works out of the box: the app prefers Upstash when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are configured, falls back to the Supabase `consume_rate_limit` function (included in `supabase/schema.sql` and the migrations), and finally to a bounded in-memory limiter. A missing or unreachable limiter store never blocks uploads, AI requests, or other protected endpoints.
 
 Web Analytics is already included in the root layout through `@vercel/analytics/next`. Enable **Analytics** in the Vercel project dashboard to collect aggregate visitors, page views, routes, referrers, devices and browsers. Analytics does not identify users by name or expose account data.
 

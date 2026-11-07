@@ -34,9 +34,9 @@ The canonical `supabase/schema.sql` also contains the owner-scoped quiz submissi
 
 ### Rate limiting controls verified
 
-The limiter uses Redis REST pipeline operations when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` exist. Configured Redis failures return a denied result. Missing Redis configuration in production also returns a denied result; only local development uses the in-process fallback. The limiter is applied to AI, upload, avatar, student-feed, and push-sensitive routes.
+The limiter uses Redis REST pipeline operations when `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` exist. When Redis is not configured or unreachable, it falls back to the Supabase `consume_rate_limit` RPC and then to a bounded in-memory limiter instead of rejecting valid traffic. The limiter is applied to AI, upload, avatar, student-feed, and push-sensitive routes.
 
-A local regression test confirms production missing-Redis configuration fails closed.
+A local regression test confirms a missing distributed store still allows normal requests while the bounded fallback still blocks bursts.
 
 **Live distributed result:** not run because Redis credentials are absent. Cross-instance atomic behavior remains a deployment verification requirement.
 
@@ -63,7 +63,7 @@ One compatibility issue was found in the original push allowlist: legitimate Win
 ## Fixes implemented during this verification pass
 
 - Expanded the trusted push-provider allowlist for legitimate Mozilla and Windows endpoints.
-- Added a regression test confirming production rate limiting fails closed without Redis configuration.
+- Added a regression test confirming normal requests still succeed without a distributed rate-limit store and that the bounded fallback blocks bursts.
 - Added a regression test for a Windows push provider endpoint.
 - Created this independent verification report.
 
@@ -71,7 +71,7 @@ One compatibility issue was found in the original push allowlist: legitimate Win
 
 Local automated tests: **12/12 passed across 2 test files**.
 
-The tests cover the existing AI provider tests plus push validation, file signature validation, and missing-production-Redis behavior.
+The tests cover the existing AI provider tests plus push validation, file signature validation, and fallback rate-limit behavior.
 
 The requested two-user Supabase integration tests were **not executed**. No result is claimed for:
 
@@ -118,7 +118,7 @@ Vitest emits a non-failing Vite config-loader warning because the project uses a
 1. Apply `supabase/migrations/20261107000000_security_hardening.sql` to a staging Supabase project first.
 2. Run two-user integration tests against staging for quiz RLS, RPC ownership, roles, and Storage.
 3. Provision legitimate `teacher`/`admin` rows in `public.user_roles` through a controlled administrative process.
-4. Configure Upstash Redis REST URL/token in every production instance and verify rate-limit behavior from multiple instances.
+4. Optionally configure Upstash Redis REST URL/token for Upstash-backed limits; verify behavior from multiple instances with and without it.
 5. Confirm all real browser push providers used by target browsers remain covered by the allowlist.
 6. Review CSP reports and narrow broad external `connect-src`/`img-src` allowances after production origins are known.
 
