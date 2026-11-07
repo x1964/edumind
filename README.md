@@ -43,7 +43,7 @@ It ships with a public marketing landing page and a fully authenticated product:
 | Landing page   | Branded, responsive Arabic/English marketing page with product previews and SEO metadata.                                               |
 | Authentication | Email/password signup, login, email confirmation, password reset and optional Google OAuth. Sessions are refreshed by `src/proxy.ts`.   |
 | Onboarding     | Education level, interests, goals and learning language. Saved to `profiles`.                                                           |
-| Materials      | Client-side text extraction from PDF/DOCX/TXT, server-side validation, private storage, signed file access. Max 50 MB.                  |
+| Materials      | Browser preview with server-authoritative PDF/DOCX/TXT extraction, private storage, signed file access. Max 50 MB.                      |
 | AI Tutor       | Threaded chat grounded in the user's material content, with streaming responses and citations/pages where available.                    |
 | Summaries      | Generated in several study styles, editable, deletable and tracked as real study activity.                                              |
 | Quizzes        | Generated questions, server-side scoring through a `SECURITY DEFINER` RPC, immutable attempts and per-quiz history.                     |
@@ -353,7 +353,7 @@ The CI pipeline runs linting, formatting, type checks, tests, dependency auditin
 
 ### Automated checks
 
-Run all three before shipping:
+Run the complete release gate before shipping:
 
 ```bash
 npm ci
