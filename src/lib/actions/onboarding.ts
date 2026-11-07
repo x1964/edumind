@@ -11,6 +11,9 @@ import { onboardingSchema } from "@/lib/validation";
 import type { ActionResult } from "@/lib/actions/types";
 
 export async function saveOnboardingAction(input: {
+  fullName: string;
+  username: string;
+  phone: string;
   educationLevel: string;
   interests: string[];
   goals: string[];
@@ -25,14 +28,49 @@ export async function saveOnboardingAction(input: {
   if (!user) return { ok: false, error: dict.errors.unauthorized };
 
   const parsed = onboardingSchema.safeParse({
+    fullName: input.fullName,
+    username: input.username,
+    phone: input.phone,
     educationLevel: input.educationLevel,
     interests: input.interests,
     goals: input.goals,
     learningLanguage: input.learningLanguage,
   });
-  if (!parsed.success) return { ok: false, error: dict.errors.invalidInput };
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0]?.message;
+    if (issue === "invalid_username") {
+      return { ok: false, error: dict.onboarding.invalidUsername };
+    }
+    if (issue === "invalid_phone") {
+      return { ok: false, error: dict.onboarding.invalidPhone };
+    }
+    return { ok: false, error: dict.errors.invalidInput };
+  }
 
   const supabase = await createSupabaseServerClient();
+
+  // Profile details (name, username, phone) are written first so a taken
+  // username surfaces as a clear error before onboarding is completed.
+  const { error: detailsError } = await supabase.from("profiles").upsert(
+    {
+      id: user.id,
+      full_name: parsed.data.fullName,
+      username: parsed.data.username,
+      phone: parsed.data.phone,
+    },
+    { onConflict: "id" }
+  );
+
+  if (detailsError) {
+    if (detailsError.code === "23505") {
+      return { ok: false, error: dict.onboarding.usernameTaken };
+    }
+    if (detailsError.code === "23514") {
+      return { ok: false, error: dict.onboarding.invalidUsername };
+    }
+    return { ok: false, error: dict.onboarding.saveFailed };
+  }
+
   const { error } = await supabase.rpc("complete_onboarding", {
     p_education_level: parsed.data.educationLevel,
     p_learning_interests: parsed.data.interests,
@@ -47,6 +85,9 @@ export async function saveOnboardingAction(input: {
     const { error: writeError } = await supabase.from("profiles").upsert(
       {
         id: user.id,
+        full_name: parsed.data.fullName,
+        username: parsed.data.username,
+        phone: parsed.data.phone,
         education_level: parsed.data.educationLevel,
         learning_interests: parsed.data.interests,
         learning_goals: parsed.data.goals,
@@ -56,7 +97,12 @@ export async function saveOnboardingAction(input: {
       { onConflict: "id" }
     );
 
-    if (writeError) return { ok: false, error: dict.onboarding.saveFailed };
+    if (writeError) {
+      if (writeError.code === "23505") {
+        return { ok: false, error: dict.onboarding.usernameTaken };
+      }
+      return { ok: false, error: dict.onboarding.saveFailed };
+    }
   }
 
   const store = await cookies();

@@ -7,7 +7,6 @@ import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
-import { getSiteUrl } from "@/lib/site-url";
 import { LANG_COOKIE } from "@/lib/i18n";
 import { profileSchema } from "@/lib/validation";
 import type { ActionResult } from "@/lib/actions/types";
@@ -79,23 +78,4 @@ export async function updateProfileAction(input: {
   revalidatePath("/dashboard/settings");
   revalidatePath("/dashboard", "layout");
   return { ok: true, message: dict.settings.saved };
-}
-
-export async function requestPasswordChangeAction(): Promise<ActionResult> {
-  const { dict } = await getAppMessages();
-  if (!isSupabaseConfigured()) return { ok: false, error: dict.setup.body };
-
-  const user = await getCurrentUser();
-  if (!user || !user.email) return { ok: false, error: dict.errors.unauthorized };
-
-  const siteUrl = await getSiteUrl();
-  const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
-  });
-
-  if (error?.status === 429) return { ok: false, error: dict.errors.rateLimited };
-  if (error) return { ok: false, error: dict.errors.generic };
-
-  return { ok: true, message: dict.settings.passwordUpdated };
 }

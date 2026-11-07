@@ -44,13 +44,27 @@ export default async function OnboardingPage({
   if (!user) redirect("/login?next=/onboarding");
 
   const supabase = await createSupabaseServerClient();
-  const { data: profile } = await supabase
+  const rich = await supabase
     .from("profiles")
     .select(
-      "education_level, learning_interests, learning_goals, learning_language, onboarding_completed"
+      "full_name, username, phone, education_level, learning_interests, learning_goals, learning_language, onboarding_completed"
     )
     .eq("id", user.id)
     .maybeSingle();
+
+  // Projects that have not applied the Google-only migration yet miss the
+  // username/phone columns; fall back to the base columns rather than failing.
+  const profile = rich.error
+    ? (
+        await supabase
+          .from("profiles")
+          .select(
+            "full_name, education_level, learning_interests, learning_goals, learning_language, onboarding_completed"
+          )
+          .eq("id", user.id)
+          .maybeSingle()
+      ).data
+    : rich.data;
 
   const answersComplete = profile ? hasCompleteAnswers(profile) : false;
   const completed = Boolean(profile?.onboarding_completed) || answersComplete;
@@ -94,6 +108,11 @@ export default async function OnboardingPage({
             dict={dict}
             lang={lang}
             initial={{
+              fullName: profile?.full_name ?? user.user_metadata?.full_name ?? "",
+              username:
+                (profile as { username?: string | null } | null)?.username ??
+                (user.email?.split("@")[0] ?? "").toLowerCase().replace(/[^a-z0-9_]/g, "_"),
+              phone: (profile as { phone?: string | null } | null)?.phone ?? "",
               educationLevel: profile?.education_level ?? "",
               interests: profile?.learning_interests ?? [],
               goals: profile?.learning_goals ?? [],

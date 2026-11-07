@@ -151,20 +151,19 @@ The app degrades gracefully when Supabase is not configured: auth and dashboard 
 
 Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the browser.
 
-| Variable                           | Required    | Purpose                                                                                                                                          |
-| ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`         | Yes         | Supabase project URL.                                                                                                                            |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`    | Yes         | Supabase anon/public key. Safe for browser use with RLS. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is also accepted as an alias for newer projects. |
-| `NEXT_PUBLIC_SITE_URL`             | Recommended | Absolute origin used for email confirmation and password-reset redirects. Defaults to the request origin.                                        |
-| `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED` | No          | Set to `true` to show the Google sign-in button. The provider must also be enabled in Supabase.                                                  |
-| `AI_PROVIDER`                      | No          | Informational label. The adapter speaks OpenAI-compatible Chat Completions.                                                                      |
-| `AI_BASE_URL`                      | For AI      | Base URL ending in `/v1` (for example `https://api.openai.com/v1`).                                                                              |
-| `AI_API_KEY`                       | For AI      | Server-only API key. Never exposed to the client.                                                                                                |
-| `AI_MODEL`                         | For AI      | Model name accepted by the provider.                                                                                                             |
-| `AI_MODEL_FALLBACKS`               | No          | Comma-separated model names tried when the primary model is rate-limited or unavailable (429 / 5xx).                                             |
-| `AI_MAX_OUTPUT_TOKENS`             | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
-| `AI_TIMEOUT_MS`                    | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
-| `AI_JSON_MODE`                     | No          | Sends `response_format: json_object`. Defaults to `false`; leave it off for Gemini's OpenAI-compatible endpoint, which can return 503 with it.   |
+| Variable                        | Required    | Purpose                                                                                                                                          |
+| ------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Yes         | Supabase project URL.                                                                                                                            |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes         | Supabase anon/public key. Safe for browser use with RLS. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is also accepted as an alias for newer projects. |
+| `NEXT_PUBLIC_SITE_URL`          | Recommended | Absolute origin used for OAuth and confirmation redirects. Defaults to the request origin.                                                       |
+| `AI_PROVIDER`                   | No          | Informational label. The adapter speaks OpenAI-compatible Chat Completions.                                                                      |
+| `AI_BASE_URL`                   | For AI      | Base URL ending in `/v1` (for example `https://api.openai.com/v1`).                                                                              |
+| `AI_API_KEY`                    | For AI      | Server-only API key. Never exposed to the client.                                                                                                |
+| `AI_MODEL`                      | For AI      | Model name accepted by the provider.                                                                                                             |
+| `AI_MODEL_FALLBACKS`            | No          | Comma-separated model names tried when the primary model is rate-limited or unavailable (429 / 5xx).                                             |
+| `AI_MAX_OUTPUT_TOKENS`          | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
+| `AI_TIMEOUT_MS`                 | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
+| `AI_JSON_MODE`                  | No          | Sends `response_format: json_object`. Defaults to `false`; leave it off for Gemini's OpenAI-compatible endpoint, which can return 503 with it.   |
 
 **Never** put a Supabase service-role key in any `NEXT_PUBLIC_*` variable.
 
@@ -248,11 +247,10 @@ In **Supabase Dashboard → Authentication → URL Configuration**:
 
 Password reset and email confirmation links are routed through `/auth/callback`, which exchanges the code for a session before redirecting to the requested page.
 
-To enable Google sign-in:
+Authentication is Google-only. To enable it:
 
 1. Enable the Google provider in **Authentication → Providers**.
-2. Add your Google OAuth credentials.
-3. Set `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true`.
+2. Add your Google OAuth credentials and the `/auth/callback` redirect URL.
 
 ---
 
@@ -435,4 +433,4 @@ Requirements:
 | Password reset link lands on the wrong host | `NEXT_PUBLIC_SITE_URL` or Supabase redirect URLs are wrong.                                      | Set the site URL and add `/auth/callback**` to Supabase redirect URLs.                                                         |
 | Upload rejected                             | File is over 50 MB, has a disallowed extension, or its content does not match the declared type. | Use PDF, DOCX or TXT under 50 MB.                                                                                              |
 | PDF extraction fails in the browser         | The PDF is encrypted/corrupt or uses unsupported compression.                                    | Try another file; server-side validation will also reject it safely.                                                           |
-| Google button missing                       | `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED` is false or the provider is not enabled.                      | Set it to `true` and configure Google in Supabase.                                                                             |
+| Google button missing                       | The Google provider is not enabled in Supabase.                                                  | Enable Google under Authentication → Providers and configure the callback URL.                                                 |

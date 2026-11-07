@@ -47,7 +47,22 @@ export const resetPasswordSchema = z
     message: "passwords_do_not_match",
   });
 
+export const usernameSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .regex(/^[a-z0-9_]{3,30}$/, "invalid_username");
+
+export const phoneSchema = z
+  .string()
+  .trim()
+  .regex(/^\+?[0-9][0-9\s-]{7,18}$/, "invalid_phone")
+  .transform((value) => value.replace(/[\s-]/g, ""));
+
 export const onboardingSchema = z.object({
+  fullName: z.string().trim().min(2, "name_too_short").max(80),
+  username: usernameSchema,
+  phone: phoneSchema,
   educationLevel: z.enum(["school", "university", "independent"]),
   interests: z.array(z.string()).min(1).max(8),
   goals: z.array(z.string()).min(1).max(5),

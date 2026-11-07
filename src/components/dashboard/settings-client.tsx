@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmAction } from "@/components/ui/confirm-action";
 import { InstallAppCard } from "@/components/pwa/install-app";
 import { PushNotificationsCard } from "@/components/pwa/push-notifications-card";
-import { requestPasswordChangeAction, updateProfileAction } from "@/lib/actions/settings";
+import { updateProfileAction } from "@/lib/actions/settings";
 import { signOutAction } from "@/lib/actions/auth";
 import { deleteAllMaterialsAction } from "@/lib/actions/materials";
 import type { AppMessages } from "@/lib/i18n/app";
@@ -77,7 +77,6 @@ export function SettingsClient({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isUploadingAvatar, startAvatarUpload] = useTransition();
-  const [isPasswordPending, startPasswordTransition] = useTransition();
   const [isSigningOut, startSignOutTransition] = useTransition();
 
   function toggle(list: string[], value: string, setter: (next: string[]) => void, max: number) {
@@ -111,17 +110,6 @@ export function SettingsClient({
         router.refresh();
       } else {
         setError(result.error ?? dict.settings.failed);
-      }
-    });
-  }
-
-  function requestPassword() {
-    startPasswordTransition(async () => {
-      const result = await requestPasswordChangeAction();
-      if (result.ok) {
-        toast.success(result.message ?? dict.settings.passwordUpdated);
-      } else {
-        toast.error(result.error ?? dict.errors.generic);
       }
     });
   }
@@ -475,19 +463,6 @@ export function SettingsClient({
               <p className="text-[12px] leading-relaxed text-ink-muted">
                 {dict.settings.sessionsBody}
               </p>
-              <button
-                type="button"
-                onClick={requestPassword}
-                disabled={isPasswordPending}
-                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-hairline px-3 text-[12px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04] disabled:opacity-50"
-              >
-                {isPasswordPending ? (
-                  <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
-                ) : (
-                  <KeyRound className="size-3.5" aria-hidden="true" />
-                )}
-                {dict.settings.updatePassword}
-              </button>
               <button
                 type="button"
                 onClick={signOut}

@@ -64,6 +64,8 @@ $$;
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text not null default '',
+  username text,
+  phone text,
   avatar_url text,
   education_level text check (
     education_level is null
@@ -81,6 +83,8 @@ create table if not exists public.profiles (
 
 -- Repair columns for projects created before the onboarding repair migration.
 alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists username text;
+alter table public.profiles add column if not exists phone text;
 alter table public.profiles add column if not exists avatar_url text;
 alter table public.profiles add column if not exists education_level text;
 alter table public.profiles add column if not exists learning_interests text[];
@@ -144,6 +148,18 @@ alter table public.profiles add constraint profiles_learning_language_check
 alter table public.profiles drop constraint if exists profiles_theme_check;
 alter table public.profiles add constraint profiles_theme_check
   check (theme in ('dark', 'light', 'system'));
+
+alter table public.profiles drop constraint if exists profiles_username_format_check;
+alter table public.profiles add constraint profiles_username_format_check
+  check (username is null or username ~ '^[a-z0-9_]{3,30}$');
+
+create unique index if not exists profiles_username_unique
+  on public.profiles (lower(username))
+  where username is not null;
+
+alter table public.profiles drop constraint if exists profiles_phone_format_check;
+alter table public.profiles add constraint profiles_phone_format_check
+  check (phone is null or phone ~ '^\+?[0-9]{8,19}$');
 
 alter table public.profiles enable row level security;
 

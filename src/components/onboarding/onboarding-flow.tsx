@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type ReactNode } from "react";
 import {
   Atom,
+  AtSign,
   BookMarked,
   Brain,
   BriefcaseBusiness,
@@ -14,14 +15,17 @@ import {
   Languages,
   LoaderCircle,
   Landmark,
+  Phone,
   Sigma,
   Sparkles,
   Target,
+  UserRound,
   UserRoundCheck,
 } from "lucide-react";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
 import { saveOnboardingAction } from "@/lib/actions/onboarding";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const INTEREST_ICONS = {
@@ -46,6 +50,9 @@ const EDUCATION = [
 ] as const;
 
 interface InitialValues {
+  fullName: string;
+  username: string;
+  phone: string;
   educationLevel: string;
   interests: string[];
   goals: string[];
@@ -63,6 +70,9 @@ export function OnboardingFlow({
 }) {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [fullName, setFullName] = useState(initial.fullName);
+  const [username, setUsername] = useState(initial.username);
+  const [phone, setPhone] = useState(initial.phone);
   const [educationLevel, setEducationLevel] = useState(initial.educationLevel);
   const [interests, setInterests] = useState<string[]>(initial.interests);
   const [goals, setGoals] = useState<string[]>(initial.goals);
@@ -70,8 +80,24 @@ export function OnboardingFlow({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const totalSteps = 6;
+  const totalSteps = 7;
   const progress = ((step + 1) / totalSteps) * 100;
+
+  function validateDetails() {
+    if (fullName.trim().length < 2) {
+      setError(dict.errors.invalidInput);
+      return false;
+    }
+    if (!/^[a-z0-9_]{3,30}$/.test(username.trim().toLowerCase())) {
+      setError(dict.onboarding.invalidUsername);
+      return false;
+    }
+    if (!/^\+?[0-9][0-9\s-]{7,18}$/.test(phone.trim())) {
+      setError(dict.onboarding.invalidPhone);
+      return false;
+    }
+    return true;
+  }
 
   function toggle(list: string[], value: string, setter: (next: string[]) => void, max: number) {
     if (list.includes(value)) {
@@ -82,6 +108,7 @@ export function OnboardingFlow({
   }
 
   function persist(completed: boolean) {
+    if (!validateDetails()) return;
     if (!educationLevel) {
       setError(dict.errors.invalidInput);
       return;
@@ -93,6 +120,9 @@ export function OnboardingFlow({
     setError(null);
     startTransition(async () => {
       const result = await saveOnboardingAction({
+        fullName,
+        username,
+        phone,
         educationLevel,
         interests,
         goals,
@@ -125,17 +155,14 @@ export function OnboardingFlow({
     }
 
     if (step === 1) {
-      if (!educationLevel) {
-        setError(dict.errors.invalidInput);
-        return;
-      }
+      if (!validateDetails()) return;
       setError(null);
       setStep(2);
       return;
     }
 
     if (step === 2) {
-      if (interests.length === 0) {
+      if (!educationLevel) {
         setError(dict.errors.invalidInput);
         return;
       }
@@ -145,7 +172,7 @@ export function OnboardingFlow({
     }
 
     if (step === 3) {
-      if (goals.length === 0) {
+      if (interests.length === 0) {
         setError(dict.errors.invalidInput);
         return;
       }
@@ -154,7 +181,17 @@ export function OnboardingFlow({
       return;
     }
 
-    if (step === 5) {
+    if (step === 4) {
+      if (goals.length === 0) {
+        setError(dict.errors.invalidInput);
+        return;
+      }
+      setError(null);
+      setStep(5);
+      return;
+    }
+
+    if (step === 6) {
       persist(true);
       return;
     }
@@ -163,7 +200,7 @@ export function OnboardingFlow({
     // confirms the final completion screen, so a transient database/session
     // issue cannot block progress at the language step.
     setError(null);
-    setStep(5);
+    setStep(6);
   }
 
   return (
@@ -216,6 +253,97 @@ export function OnboardingFlow({
 
         {step === 1 ? (
           <section className="space-y-5">
+            <StepHeading title={dict.onboarding.profileTitle} body={dict.onboarding.profileBody} />
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="onboardingFullName"
+                  className="block text-[13px] font-medium text-ink-soft"
+                >
+                  {dict.auth.fullName}
+                </label>
+                <div className="relative">
+                  <UserRound
+                    className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted"
+                    aria-hidden="true"
+                  />
+                  <Input
+                    id="onboardingFullName"
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
+                    autoComplete="name"
+                    minLength={2}
+                    maxLength={80}
+                    required
+                    dir="auto"
+                    className="px-9"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="onboardingUsername"
+                  className="block text-[13px] font-medium text-ink-soft"
+                >
+                  {dict.onboarding.username}
+                </label>
+                <div className="relative">
+                  <AtSign
+                    className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted"
+                    aria-hidden="true"
+                  />
+                  <Input
+                    id="onboardingUsername"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    autoComplete="username"
+                    minLength={3}
+                    maxLength={30}
+                    required
+                    dir="ltr"
+                    className="px-9"
+                  />
+                </div>
+                <p className="text-[11.5px] leading-relaxed text-ink-muted">
+                  {dict.onboarding.usernameHint}
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="onboardingPhone"
+                  className="block text-[13px] font-medium text-ink-soft"
+                >
+                  {dict.onboarding.phone}
+                </label>
+                <div className="relative">
+                  <Phone
+                    className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted"
+                    aria-hidden="true"
+                  />
+                  <Input
+                    id="onboardingPhone"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                    type="tel"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    required
+                    dir="ltr"
+                    className="px-9"
+                  />
+                </div>
+                <p className="text-[11.5px] leading-relaxed text-ink-muted">
+                  {dict.onboarding.phoneHint}
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {step === 2 ? (
+          <section className="space-y-5">
             <StepHeading
               title={dict.onboarding.educationTitle}
               body={dict.onboarding.educationBody}
@@ -260,7 +388,7 @@ export function OnboardingFlow({
           </section>
         ) : null}
 
-        {step === 2 ? (
+        {step === 3 ? (
           <section className="space-y-5">
             <StepHeading
               title={dict.onboarding.interestsTitle}
@@ -310,7 +438,7 @@ export function OnboardingFlow({
           </section>
         ) : null}
 
-        {step === 3 ? (
+        {step === 4 ? (
           <section className="space-y-5">
             <StepHeading title={dict.onboarding.goalsTitle} body={dict.onboarding.goalsBody} />
             <div className="space-y-2.5">
@@ -360,7 +488,7 @@ export function OnboardingFlow({
           </section>
         ) : null}
 
-        {step === 4 ? (
+        {step === 5 ? (
           <section className="space-y-5">
             <StepHeading
               title={dict.onboarding.languageTitle}
@@ -407,7 +535,7 @@ export function OnboardingFlow({
           </section>
         ) : null}
 
-        {step === 5 ? (
+        {step === 6 ? (
           <section className="space-y-5">
             <div className="grid size-14 place-items-center rounded-2xl border border-brand/25 bg-brand/10 text-brand-ink">
               <Check className="size-7" aria-hidden="true" />
@@ -421,6 +549,16 @@ export function OnboardingFlow({
               </p>
             </div>
             <div className="space-y-3 rounded-2xl border border-hairline bg-surface-raised/60 p-4">
+              <ReviewRow label={dict.auth.fullName}>{fullName}</ReviewRow>
+
+              <ReviewRow label={dict.onboarding.username}>
+                <span dir="ltr">@{username}</span>
+              </ReviewRow>
+
+              <ReviewRow label={dict.onboarding.phone}>
+                <span dir="ltr">{phone}</span>
+              </ReviewRow>
+
               <ReviewRow label={dict.onboarding.educationTitle}>
                 {dict.onboarding[educationLevel as "school" | "university" | "independent"]}
               </ReviewRow>
@@ -471,7 +609,7 @@ export function OnboardingFlow({
             ? dict.onboarding.saving
             : step === 0
               ? dict.onboarding.start
-              : step === 5
+              : step === 6
                 ? dict.onboarding.toDashboard
                 : dict.onboarding.continue}
         </button>
