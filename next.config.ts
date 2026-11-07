@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   compress: true,
+  serverExternalPackages: ["mammoth"],
   turbopack: {
     rules: {
       "*.css": {

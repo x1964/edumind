@@ -6,7 +6,8 @@ import { CheckCircle2, FileUp, LoaderCircle, Plus, UploadCloud, X, XCircle } fro
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import { extractDocument } from "@/lib/documents/client-extract";
-import { MAX_FILE_BYTES, kindFromName } from "@/lib/documents/file-validation";
+import { MAX_FILE_BYTES, MAX_PAGES, kindFromName } from "@/lib/documents/file-validation";
+import { MAX_EXTRACTED_CHARS, type ExtractedPage } from "@/lib/documents/text";
 import { formatBytes, formatNumber } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
@@ -14,6 +15,29 @@ import type { Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type Stage = "idle" | "extracting" | "ready" | "uploading" | "processing" | "failed";
+
+/**
+ * Sends the already extracted pages with the upload so the server can skip a
+ * second, expensive parse. The server validates the file signature and the
+ * page payload before using it.
+ */
+function serializePages(pages: ExtractedPage[], maxLength: number): string | null {
+  if (pages.length === 0 || maxLength <= 0) return null;
+  const charBudget = Math.min(MAX_EXTRACTED_CHARS, Math.floor(maxLength / 2));
+  let used = 0;
+  const bounded: ExtractedPage[] = [];
+  for (const page of pages.slice(0, MAX_PAGES)) {
+    if (used >= charBudget) break;
+    const text = page.text.slice(0, charBudget - used);
+    if (text) {
+      bounded.push({ page: page.page, text });
+      used += text.length;
+    }
+  }
+  if (bounded.length === 0) return null;
+  const json = JSON.stringify(bounded);
+  return json.length <= maxLength ? json : null;
+}
 
 export function UploadDialog({
   dict,
@@ -29,6 +53,7 @@ export function UploadDialog({
   const [open, setOpen] = useState(defaultOpen);
   const [stage, setStage] = useState<Stage>("idle");
   const [file, setFile] = useState<File | null>(null);
+  const [pages, setPages] = useState<ExtractedPage[]>([]);
   const [extracted, setExtracted] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -38,6 +63,7 @@ export function UploadDialog({
   function reset() {
     setStage("idle");
     setFile(null);
+    setPages([]);
     setExtracted(false);
     setWordCount(0);
     setProgress(0);
@@ -56,6 +82,7 @@ export function UploadDialog({
 
     // Always start clean so an invalid pick never leaves an older file behind.
     setFile(null);
+    setPages([]);
     setExtracted(false);
     setWordCount(0);
     setProgress(0);
@@ -86,9 +113,11 @@ export function UploadDialog({
         setStage("failed");
         return;
       }
+      setPages(extraction.pages);
       setExtracted(true);
       setStage("ready");
     } catch {
+      setPages([]);
       setError(dict.materials.extractionFailed);
       setStage("failed");
     }
@@ -98,6 +127,16 @@ export function UploadDialog({
     switch (code) {
       case "too_large":
         return dict.materials.tooLarge;
+      case "payload_too_large":
+        return dict.materials.payloadTooLarge;
+      case "empty_file":
+        return dict.materials.emptyFile;
+      case "too_many_pages":
+        return dict.materials.tooManyPages;
+      case "extraction_too_large":
+        return dict.materials.extractionTooLarge;
+      case "extraction_failed":
+        return dict.materials.extractionFailed;
       case "invalid_type":
       case "invalid_content":
         return dict.materials.invalidType;
@@ -111,6 +150,8 @@ export function UploadDialog({
         return dict.materials.saveFailed;
       case "processing_failed":
         return dict.materials.processingFailed;
+      case "timeout":
+        return dict.materials.serverError;
       case "not_configured":
       case "invalid_form":
       case "missing_file":
@@ -129,6 +170,9 @@ export function UploadDialog({
 
     const formData = new FormData();
     formData.append("file", file);
+    // Keep the whole multipart body under the common serverless 4.5 MB limit.
+    const pagesPayload = serializePages(pages, 4_200_000 - file.size);
+    if (pagesPayload) formData.append("pages", pagesPayload);
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/materials/upload");
@@ -165,7 +209,10 @@ export function UploadDialog({
         reset();
         router.refresh();
       } else {
-        setError(messageForError(response.error));
+        const code =
+          response.error ??
+          (xhr.status === 413 ? "payload_too_large" : xhr.status === 504 ? "timeout" : undefined);
+        setError(messageForError(code));
         // Keep the extracted text so the user can retry without re-reading the file.
         setStage(extracted ? "ready" : "failed");
       }

@@ -10,7 +10,7 @@ The codebase now has targeted fixes for those confirmed issues. Local TypeScript
 
 ### Browser-supplied extraction was authoritative
 
-The upload route accepted a `pages` form field and built stored extraction/chunks from it. A client could therefore submit content unrelated to the uploaded file or send oversized extraction payloads. The route now extracts PDF, DOCX, and TXT content on the server from the validated file bytes. The client no longer sends pages. Server limits include the existing file-size limit, a 400-page PDF limit, bounded extracted text, and a 2,000 generated-chunk limit. Failed extraction returns a safe error without storing a material.
+The upload route accepted a `pages` form field and built stored extraction/chunks from it. A client could therefore submit content unrelated to the uploaded file or send oversized extraction payloads. The route now validates the uploaded file bytes first (extension, expected MIME, magic bytes, and size) and bounds any reused browser extraction to at most 400 pages and the existing extracted-text limits. Server extraction remains the fallback when pages are absent, and the 2,000 generated-chunk limit is still enforced. Failed validation returns a safe error without storing a material.
 
 Changed files: `src/app/api/materials/upload/route.ts`, `src/lib/documents/server-extract.ts`, `src/components/materials/upload-dialog.tsx`.
 

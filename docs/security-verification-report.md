@@ -30,7 +30,7 @@ The canonical `supabase/schema.sql` also contains the owner-scoped quiz submissi
 
 ### Upload controls verified
 
-`/api/materials/upload` now ignores client-provided pages entirely. `extractDocumentOnServer` extracts from the uploaded file bytes using server-side TXT, Mammoth DOCX, and PDF.js processing. File extension, MIME expectations, magic bytes, file size, page count, extracted text, and generated chunk limits are enforced. Storage upload and database/chunk failure paths remove partial artifacts. Material file access checks both material ID and authenticated `user_id`, then returns a short-lived signed URL.
+`/api/materials/upload` validates the uploaded file bytes first: extension, expected MIME, magic bytes, file size, page count, extracted text, and generated chunk limits. The browser-extracted pages may be reused only after that validation and only within bounded page/text limits, which removes a second expensive parse and keeps uploads working when server-side PDF parsing is unavailable. When pages are absent, `extractDocumentOnServer` extracts from the file bytes using server-side TXT, Mammoth DOCX, and PDF.js processing. Storage upload and database/chunk failure paths remove partial artifacts. Material file access checks both material ID and authenticated `user_id`, then returns a short-lived signed URL.
 
 ### Rate limiting controls verified
 

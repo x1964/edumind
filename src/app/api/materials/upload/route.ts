@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -7,12 +8,51 @@ import {
   EXT_BY_KIND,
   MIME_BY_KIND,
   MAX_FILE_BYTES,
+  MAX_PAGES,
   kindFromName,
   sanitizeFileName,
   validateFileContent,
 } from "@/lib/documents/file-validation";
-import { MAX_EXTRACTED_CHARS, chunkPages } from "@/lib/documents/extraction";
+import {
+  MAX_EXTRACTED_CHARS,
+  buildExtraction,
+  chunkPages,
+  normalizeText,
+} from "@/lib/documents/extraction";
 import { extractDocumentOnServer, MAX_GENERATED_CHUNKS } from "@/lib/documents/server-extract";
+
+export const maxDuration = 60;
+
+const pagesSchema = z
+  .array(
+    z.object({
+      page: z.number().int().min(1).max(MAX_PAGES),
+      text: z.string().max(MAX_EXTRACTED_CHARS),
+    })
+  )
+  .max(MAX_PAGES);
+
+/**
+ * The browser extracts the document for the preview. That work is reused here
+ * so a slow or unavailable server-side parser can never fail an upload, but
+ * only after the real file has passed signature, size, and type validation and
+ * the page payload is bounded. Server extraction remains the fallback when the
+ * client does not send pages.
+ */
+function parseClientPages(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || value.length === 0) return null;
+  if (value.length > MAX_EXTRACTED_CHARS * 2) return null;
+  try {
+    const parsed = pagesSchema.safeParse(JSON.parse(value));
+    if (!parsed.success) return null;
+    const pages = parsed.data
+      .map((page) => ({ page: page.page, text: normalizeText(page.text) }))
+      .filter((page) => page.text.length > 0);
+    return pages.length > 0 ? pages : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: Request) {
   if (!isSupabaseConfigured()) {
@@ -23,7 +63,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const declaredLength = Number(request.headers.get("content-length"));
-  if (Number.isFinite(declaredLength) && declaredLength > MAX_FILE_BYTES + 1_048_576) {
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_FILE_BYTES + 2_097_152) {
     return NextResponse.json({ error: "too_large" }, { status: 413 });
   }
 
@@ -61,15 +101,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_content" }, { status: 415 });
   }
 
+  const clientPages = parseClientPages(formData.get("pages"));
   let extraction;
-  try {
-    extraction = await extractDocumentOnServer(file, kind);
-  } catch (error) {
-    const code =
-      error instanceof Error && error.message === "too_many_pages"
-        ? "too_many_pages"
-        : "extraction_failed";
-    return NextResponse.json({ error: code }, { status: 422 });
+  if (clientPages) {
+    extraction = buildExtraction(clientPages);
+  } else {
+    try {
+      extraction = await extractDocumentOnServer(file, kind);
+    } catch (error) {
+      console.error(
+        "[materials/upload] server extraction failed",
+        error instanceof Error ? error.message : error
+      );
+      const code =
+        error instanceof Error && error.message === "too_many_pages"
+          ? "too_many_pages"
+          : "extraction_failed";
+      return NextResponse.json({ error: code }, { status: 422 });
+    }
   }
   const hasText = extraction.text.trim().length > 20;
   const chunks = hasText ? chunkPages(extraction.pages) : [];
@@ -88,6 +137,7 @@ export async function POST(request: Request) {
   });
 
   if (upload.error) {
+    console.error("[materials/upload] storage upload failed", upload.error.message);
     return NextResponse.json({ error: "storage_failed" }, { status: 500 });
   }
 
@@ -110,6 +160,7 @@ export async function POST(request: Request) {
     .single();
 
   if (insertError || !material) {
+    console.error("[materials/upload] insert failed", insertError?.message);
     await supabase.storage.from("materials").remove([storagePath]);
     return NextResponse.json({ error: "save_failed" }, { status: 500 });
   }
@@ -126,6 +177,7 @@ export async function POST(request: Request) {
     for (let i = 0; i < rows.length; i += 100) {
       const { error } = await supabase.from("material_chunks").insert(rows.slice(i, i + 100));
       if (error) {
+        console.error("[materials/upload] chunk insert failed", error.message);
         await supabase.from("materials").delete().eq("id", material.id).eq("user_id", user.id);
         await supabase.storage.from("materials").remove([storagePath]);
         return NextResponse.json({ error: "processing_failed" }, { status: 500 });
