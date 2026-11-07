@@ -70,9 +70,16 @@ export interface TutorMessage {
   created_at: string;
 }
 
+/** A recorded change of the tutor's source material inside one conversation. */
+export interface TutorSourceChange {
+  materialId: string | null;
+  materialName: string | null;
+}
+
 /** Chat message metadata used by the tutor UI to show source pages. */
 export interface TutorChatMetadata {
   pages?: number[];
+  sourceChange?: TutorSourceChange;
 }
 
 /** A tutor chat message carrying citation metadata. */
@@ -88,6 +95,21 @@ export function tutorCitationPages(citations: unknown): number[] {
       pages.filter((page): page is number => typeof page === "number" && Number.isFinite(page))
     )
   ).sort((a, b) => a - b);
+}
+
+/** Reads the source-change marker stored in `tutor_messages.citations`. */
+export function tutorSourceChange(citations: unknown): TutorSourceChange | null {
+  if (!citations || typeof citations !== "object") return null;
+  const value = citations as {
+    kind?: unknown;
+    materialId?: unknown;
+    materialName?: unknown;
+  };
+  if (value.kind !== "source_change") return null;
+  return {
+    materialId: typeof value.materialId === "string" ? value.materialId : null,
+    materialName: typeof value.materialName === "string" ? value.materialName : null,
+  };
 }
 
 export interface Summary {

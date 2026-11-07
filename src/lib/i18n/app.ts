@@ -367,6 +367,9 @@ const ar = {
     noDocumentText: "لا يوجد نص مستخرج في هذا الملف، لذا سأجيب من المعرفة العامة مع توضيح ذلك.",
     retryHint: "يمكنك إعادة إرسال سؤالك.",
     generalKnowledge: "معرفة عامة",
+    sourceChangedTo: "تم تغيير المصدر إلى",
+    sourceChangedToGeneral: "تم التبديل إلى المعرفة العامة (بدون ملف)",
+    sourceUpdated: "تم تحديث مصدر الشرح.",
   },
   summaries: {
     title: "الملخصات الذكية",
@@ -1052,6 +1055,9 @@ const en: AppMessages = {
       "This material has no extracted text, so I'll answer from general knowledge and say so.",
     retryHint: "You can send your question again.",
     generalKnowledge: "General knowledge",
+    sourceChangedTo: "Source changed to",
+    sourceChangedToGeneral: "Switched to general knowledge (no document)",
+    sourceUpdated: "Explanation source updated.",
   },
   summaries: {
     title: "Smart Summaries",

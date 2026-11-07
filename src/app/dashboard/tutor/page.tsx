@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isAiConfigured } from "@/lib/ai/provider";
 import {
   tutorCitationPages,
+  tutorSourceChange,
   type TutorChatMessage,
   type TutorMessage,
   type TutorThread,
@@ -65,8 +66,17 @@ export default async function TutorPage({
     initialMessages = (
       (messageRows ?? []) as Pick<TutorMessage, "id" | "role" | "content" | "citations">[]
     )
-      .filter((row) => row.role === "user" || row.role === "assistant")
+      .filter((row) => row.role === "user" || row.role === "assistant" || row.role === "system")
       .map((row) => {
+        if (row.role === "system") {
+          const sourceChange = tutorSourceChange(row.citations);
+          return {
+            id: row.id,
+            role: "system" as const,
+            parts: sourceChange ? [] : [{ type: "text" as const, text: row.content }],
+            ...(sourceChange ? { metadata: { sourceChange } } : {}),
+          };
+        }
         const pages = tutorCitationPages(row.citations);
         return {
           id: row.id,

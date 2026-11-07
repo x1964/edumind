@@ -38,22 +38,22 @@ It ships with a public marketing landing page and a fully authenticated product:
 
 ## Features
 
-| Area           | What it does                                                                                                                            |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Landing page   | Branded, responsive Arabic/English marketing page with product previews and SEO metadata.                                               |
-| Authentication | Email/password signup, login, email confirmation, password reset and optional Google OAuth. Sessions are refreshed by `src/proxy.ts`.   |
-| Onboarding     | Education level, interests, goals and learning language. Saved to `profiles`.                                                           |
-| Materials      | Browser preview with server-authoritative PDF/DOCX/TXT extraction, private storage, signed file access. Max 50 MB.                      |
-| AI Tutor       | Threaded chat grounded in the user's material content, with streaming responses and citations/pages where available.                    |
-| Summaries      | Generated in several study styles, editable, deletable and tracked as real study activity.                                              |
-| Quizzes        | Generated questions, server-side scoring through a `SECURITY DEFINER` RPC, immutable attempts and per-quiz history.                     |
-| Mind maps      | Generated nodes/edges rendered with React Flow, editable positions and connections, saved back to the database.                         |
-| Study planner  | Create/edit/complete/delete tasks with priorities, due dates and estimated minutes.                                                     |
-| Progress       | Recharts analytics computed exclusively from the user's rows (study sessions, quiz attempts, materials).                                |
-| Web Analytics  | Vercel Web Analytics tracks aggregate page views, visitors, routes and traffic sources after it is enabled for the Vercel project.      |
-| Settings       | Profile, avatar URL, education, interests, goals, language, theme preference, notifications, password reset and bulk material deletion. |
-| PWA            | Installable on Android/desktop/iOS, standalone launch, shortcuts, offline fallback page and an in-app update prompt.                    |
-| UX states      | Route-level `loading.tsx`, `error.tsx`, `not-found.tsx`, empty states and explicit setup/configuration notices.                         |
+| Area           | What it does                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Landing page   | Branded, responsive Arabic/English marketing page with product previews and SEO metadata.                                                         |
+| Authentication | Email/password signup, login, email confirmation, password reset and optional Google OAuth. Sessions are refreshed by `src/proxy.ts`.             |
+| Onboarding     | Education level, interests, goals and learning language. Saved to `profiles`.                                                                     |
+| Materials      | Browser preview with server-authoritative PDF/DOCX/TXT extraction, private storage, signed file access. Max 50 MB.                                |
+| AI Tutor       | Threaded chat grounded in the user's material content, with streaming responses, citations/pages where available, and in-thread source switching. |
+| Summaries      | Generated in several study styles, editable, deletable and tracked as real study activity.                                                        |
+| Quizzes        | Generated questions, server-side scoring through a `SECURITY DEFINER` RPC, immutable attempts and per-quiz history.                               |
+| Mind maps      | Generated nodes/edges rendered with React Flow, editable positions and connections, saved back to the database.                                   |
+| Study planner  | Create/edit/complete/delete tasks with priorities, due dates and estimated minutes.                                                               |
+| Progress       | Recharts analytics computed exclusively from the user's rows (study sessions, quiz attempts, materials).                                          |
+| Web Analytics  | Vercel Web Analytics tracks aggregate page views, visitors, routes and traffic sources after it is enabled for the Vercel project.                |
+| Settings       | Profile, avatar URL, education, interests, goals, language, theme preference, notifications, password reset and bulk material deletion.           |
+| PWA            | Installable on Android/desktop/iOS, standalone launch, shortcuts, offline fallback page and an in-app update prompt.                              |
+| UX states      | Route-level `loading.tsx`, `error.tsx`, `not-found.tsx`, empty states and explicit setup/configuration notices.                                   |
 
 There are no seeded statistics and no fabricated AI output. When the AI provider is not configured, AI features render a clear "AI is not configured" state instead of inventing answers.
 

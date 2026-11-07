@@ -30,6 +30,7 @@ import {
   clearTutorThreadAction,
   createTutorThreadAction,
   deleteTutorThreadAction,
+  updateTutorThreadMaterialAction,
 } from "@/lib/actions/tutor";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
@@ -81,6 +82,7 @@ export function TutorWorkspace({
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [switchingSource, setSwitchingSource] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -102,7 +104,7 @@ export function TutorWorkspace({
     });
 
   const busy = status === "submitted" || status === "streaming";
-  const canSend = aiConfigured && !busy;
+  const canSend = aiConfigured && !busy && !switchingSource;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -136,7 +138,7 @@ export function TutorWorkspace({
 
   async function submitText(raw: string) {
     const text = raw.trim();
-    if (!text || !canSend || creating) return;
+    if (!text || !canSend || creating || switchingSource) return;
     setLocalError(null);
     const id = await ensureThread();
     if (!id) return;
@@ -157,6 +159,40 @@ export function TutorWorkspace({
     }
   }
 
+  async function changeSource(nextValue: string) {
+    const next = nextValue || null;
+    if (next === selectedMaterial || switchingSource) return;
+    const previous = selectedMaterial;
+    setSelectedMaterial(next);
+    if (!threadId) return;
+
+    setSwitchingSource(true);
+    const result = await updateTutorThreadMaterialAction(threadId, next);
+    setSwitchingSource(false);
+    if (!result.ok) {
+      setSelectedMaterial(previous);
+      toast.error(result.error ?? dict.errors.saveFailed);
+      return;
+    }
+
+    const materialName = next
+      ? (materials.find((material) => material.id === next)?.file_name ?? null)
+      : null;
+    if (messages.length > 0) {
+      setMessages((current) => [
+        ...current,
+        {
+          id: crypto.randomUUID(),
+          role: "system",
+          parts: [],
+          metadata: { sourceChange: { materialId: next, materialName } },
+        } as TutorChatMessage,
+      ]);
+    }
+    toast.success(result.message ?? dict.tutor.sourceUpdated);
+    router.refresh();
+  }
+
   function retry() {
     if (!threadId) return;
     void regenerate({
@@ -175,7 +211,11 @@ export function TutorWorkspace({
   }
 
   const heading = activeThread?.title ?? dict.tutor.newChat;
-  const sourceLabel = activeThread?.materialName ?? null;
+  const sourceLabel = selectedMaterial
+    ? (materials.find((material) => material.id === selectedMaterial)?.file_name ??
+      activeThread?.materialName ??
+      null)
+    : null;
 
   return (
     <div className="relative -mx-4 -my-5 grid h-[calc(100dvh-8rem)] min-h-[30rem] w-[calc(100%+2rem)] min-w-0 grid-rows-[auto_minmax(0,1fr)] bg-surface sm:-mx-6 sm:-my-7 sm:w-[calc(100%+3rem)] lg:-mx-8 lg:-my-9 lg:h-[calc(100dvh-4rem)] lg:w-[calc(100%+4rem)] xl:-mx-10 xl:w-[calc(100%+5rem)] xl:grid-cols-[300px_minmax(0,1fr)] xl:grid-rows-1">
@@ -299,26 +339,34 @@ export function TutorWorkspace({
           </div>
 
           <div className="flex w-full min-w-0 items-center gap-1.5 sm:w-auto">
-            {!activeThread ? (
-              <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-hairline/80 bg-surface/70 px-2.5 py-1 text-[12px] text-ink-muted sm:flex-none">
+            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-hairline/80 bg-surface/70 px-2.5 py-1 text-[12px] text-ink-muted sm:flex-none">
+              {switchingSource ? (
+                <LoaderCircle
+                  className="size-3.5 shrink-0 animate-spin text-brand-ink"
+                  aria-hidden="true"
+                />
+              ) : (
                 <SlidersHorizontal
                   className="size-3.5 shrink-0 text-brand-ink"
                   aria-hidden="true"
                 />
-                <select
-                  value={selectedMaterial ?? ""}
-                  onChange={(event) => setSelectedMaterial(event.target.value || null)}
-                  className="h-7 min-w-0 flex-1 bg-transparent text-[12px] text-ink-soft focus:outline-none sm:max-w-[220px] sm:flex-none"
-                >
-                  <option value="">{dict.tutor.noMaterial}</option>
-                  {materials.map((material) => (
-                    <option key={material.id} value={material.id}>
-                      {material.file_name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
+              )}
+              <select
+                value={selectedMaterial ?? ""}
+                onChange={(event) => void changeSource(event.target.value)}
+                disabled={busy || switchingSource || creating}
+                aria-label={dict.tutor.selectMaterial}
+                title={dict.tutor.selectMaterial}
+                className="h-7 min-w-0 flex-1 bg-transparent text-[12px] text-ink-soft focus:outline-none disabled:opacity-60 sm:max-w-[220px] sm:flex-none"
+              >
+                <option value="">{dict.tutor.noMaterial}</option>
+                {materials.map((material) => (
+                  <option key={material.id} value={material.id}>
+                    {material.file_name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             {threadId && messages.length > 0 ? (
               <ConfirmAction
@@ -392,6 +440,24 @@ export function TutorWorkspace({
                   .filter((part): part is { type: "text"; text: string } => part.type === "text")
                   .map((part) => part.text)
                   .join("\n");
+                if (message.role === "system") {
+                  const change = message.metadata?.sourceChange;
+                  const label = change
+                    ? change.materialName
+                      ? `${dict.tutor.sourceChangedTo}: ${change.materialName}`
+                      : dict.tutor.sourceChangedToGeneral
+                    : text;
+                  if (!label) return null;
+                  return (
+                    <div key={message.id} className="flex items-center gap-3 py-1" role="note">
+                      <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
+                      <span className="max-w-full truncate rounded-full border border-brand/20 bg-brand/[0.06] px-2.5 py-1 text-[11px] font-medium text-brand-ink">
+                        {label}
+                      </span>
+                      <span className="h-px flex-1 bg-hairline" aria-hidden="true" />
+                    </div>
+                  );
+                }
                 if (!text) return null;
                 const isUser = message.role === "user";
                 const pages = isUser ? [] : (message.metadata?.pages ?? []);

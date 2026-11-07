@@ -7,6 +7,7 @@ import { isAiConfigured, streamChat, type ChatMessage } from "@/lib/ai/provider"
 import { tutorSystemPrompt } from "@/lib/ai/prompts";
 import { loadMaterialContext } from "@/lib/ai/context";
 import { checkRateLimit, AI_RATE_LIMIT } from "@/lib/rate-limit";
+import { tutorSourceChange } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 
 const bodySchema = z.object({
@@ -88,13 +89,27 @@ export async function POST(request: Request) {
 
   const { data: historyRows } = await supabase
     .from("tutor_messages")
-    .select("role, content")
+    .select("role, content, citations")
     .eq("thread_id", threadId)
     .eq("user_id", user.id)
     .order("created_at", { ascending: true })
-    .limit(30);
+    .limit(60);
 
-  const history: ChatMessage[] = ((historyRows ?? []) as Array<{ role: string; content: string }>)
+  const rows = (historyRows ?? []) as Array<{
+    role: string;
+    content: string;
+    citations: unknown;
+  }>;
+
+  // When the explanation source changes, keep the visible history but only
+  // send the model messages that belong to the current source.
+  let historyStart = 0;
+  rows.forEach((row, index) => {
+    if (row.role === "system" && tutorSourceChange(row.citations)) historyStart = index + 1;
+  });
+
+  const history: ChatMessage[] = rows
+    .slice(historyStart)
     .filter((row) => row.role === "user" || row.role === "assistant")
     .slice(-16)
     .map((row) => ({ role: row.role as "user" | "assistant", content: row.content }));
