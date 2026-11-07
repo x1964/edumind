@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -8,26 +7,12 @@ import {
   EXT_BY_KIND,
   MIME_BY_KIND,
   MAX_FILE_BYTES,
-  MAX_PAGES,
   kindFromName,
   sanitizeFileName,
   validateFileContent,
 } from "@/lib/documents/file-validation";
-import {
-  MAX_EXTRACTED_CHARS,
-  buildExtraction,
-  chunkPages,
-  normalizeText,
-} from "@/lib/documents/extraction";
-
-const pagesSchema = z
-  .array(
-    z.object({
-      page: z.number().int().min(1).max(MAX_PAGES),
-      text: z.string().max(500_000),
-    })
-  )
-  .max(MAX_PAGES);
+import { MAX_EXTRACTED_CHARS, chunkPages } from "@/lib/documents/extraction";
+import { extractDocumentOnServer, MAX_GENERATED_CHUNKS } from "@/lib/documents/server-extract";
 
 export async function POST(request: Request) {
   if (!isSupabaseConfigured()) {
@@ -37,7 +22,12 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const limit = checkRateLimit(
+  const declaredLength = Number(request.headers.get("content-length"));
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_FILE_BYTES + 1_048_576) {
+    return NextResponse.json({ error: "too_large" }, { status: 413 });
+  }
+
+  const limit = await checkRateLimit(
     `upload:${user.id}`,
     UPLOAD_RATE_LIMIT.limit,
     UPLOAD_RATE_LIMIT.windowMs
@@ -71,22 +61,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_content" }, { status: 415 });
   }
 
-  let pages: Array<{ page: number; text: string }> = [];
-  const rawPages = formData.get("pages");
-  if (typeof rawPages === "string" && rawPages.length > 0) {
-    try {
-      const parsed = pagesSchema.safeParse(JSON.parse(rawPages));
-      if (parsed.success) pages = parsed.data;
-    } catch {
-      pages = [];
-    }
+  let extraction;
+  try {
+    extraction = await extractDocumentOnServer(file, kind);
+  } catch (error) {
+    const code =
+      error instanceof Error && error.message === "too_many_pages"
+        ? "too_many_pages"
+        : "extraction_failed";
+    return NextResponse.json({ error: code }, { status: 422 });
   }
-
-  const extraction = buildExtraction(
-    pages.map((page) => ({ page: page.page, text: normalizeText(page.text) }))
-  );
   const hasText = extraction.text.trim().length > 20;
   const chunks = hasText ? chunkPages(extraction.pages) : [];
+  if (chunks.length > MAX_GENERATED_CHUNKS) {
+    return NextResponse.json({ error: "extraction_too_large" }, { status: 422 });
+  }
 
   const supabase = await createSupabaseServerClient();
   const displayName = sanitizeFileName(file.name);

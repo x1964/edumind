@@ -9,6 +9,34 @@ interface PushSubscriptionRow {
   auth: string;
 }
 
+const TRUSTED_PUSH_HOSTS = [
+  "fcm.googleapis.com",
+  "push.services.mozilla.com",
+  "updates.push.services.mozilla.com",
+  "web.push.apple.com",
+  "notify.windows.com",
+  "wns.windows.com",
+];
+
+export function isValidPushEndpoint(value: string): boolean {
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || url.username || url.password || url.port) return false;
+    if (hostname === "localhost" || hostname.endsWith(".localhost") || hostname === "0.0.0.0")
+      return false;
+    if (
+      /^(10|127)\.|^192\.168\.|^169\.254\.|^172\.(1[6-9]|2\d|3[0-1])\.|^::1$|^fc[0-9a-f]{2}:/i.test(
+        hostname
+      )
+    )
+      return false;
+    return TRUSTED_PUSH_HOSTS.some((host) => hostname === host || hostname.endsWith(`.${host}`));
+  } catch {
+    return false;
+  }
+}
+
 export interface PushPayload {
   title: string;
   body: string;

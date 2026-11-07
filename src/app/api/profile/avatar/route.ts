@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   if (!contentType.includes("multipart/form-data")) return fail("invalid_form");
 
-  const rateLimit = checkRateLimit(
+  const rateLimit = await checkRateLimit(
     `avatars:${AVATAR_RATE_LIMIT_SCOPE}:${user.id}`,
     5,
     10 * 60 * 1000

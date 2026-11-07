@@ -37,7 +37,7 @@ async function guard() {
   if (!isAiConfigured()) return { error: dict.errors.aiNotConfigured };
   const user = await getCurrentUser();
   if (!user) return { error: dict.errors.unauthorized };
-  const limit = checkRateLimit(`ai:${user.id}`, AI_RATE_LIMIT.limit, AI_RATE_LIMIT.windowMs);
+  const limit = await checkRateLimit(`ai:${user.id}`, AI_RATE_LIMIT.limit, AI_RATE_LIMIT.windowMs);
   if (!limit.allowed) return { error: dict.errors.rateLimited };
   return { user, dict, lang };
 }

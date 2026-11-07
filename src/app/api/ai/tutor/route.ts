@@ -42,7 +42,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "ai_not_configured" }, { status: 503 });
   }
 
-  const limit = checkRateLimit(`tutor:${user.id}`, AI_RATE_LIMIT.limit, AI_RATE_LIMIT.windowMs);
+  const limit = await checkRateLimit(
+    `tutor:${user.id}`,
+    AI_RATE_LIMIT.limit,
+    AI_RATE_LIMIT.windowMs
+  );
   if (!limit.allowed) {
     return Response.json(
       { error: "rate_limited", retryAfter: limit.retryAfterSeconds },

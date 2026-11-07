@@ -4,9 +4,11 @@ import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { isPushConfigured } from "@/lib/push/server";
+import { isValidPushEndpoint } from "@/lib/push/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const subscriptionSchema = z.object({
-  endpoint: z.string().url().max(2048),
+  endpoint: z.string().url().max(2048).refine(isValidPushEndpoint, "unsupported_endpoint"),
   keys: z.object({
     p256dh: z.string().min(16).max(512),
     auth: z.string().min(8).max(256),
@@ -26,6 +28,13 @@ async function requireUser(options: { requirePushConfig?: boolean } = {}) {
 export async function POST(request: Request) {
   const auth = await requireUser();
   if ("error" in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  const limit = await checkRateLimit(`push:${auth.user.id}`, 10, 10 * 60 * 1000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: "rate_limited", retryAfter: limit.retryAfterSeconds },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
+    );
+  }
 
   let body: unknown;
   try {
@@ -59,7 +68,7 @@ export async function DELETE(request: Request) {
   if ("error" in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
 
   const endpoint = new URL(request.url).searchParams.get("endpoint");
-  const parsed = z.string().url().max(2048).safeParse(endpoint);
+  const parsed = z.string().url().max(2048).refine(isValidPushEndpoint).safeParse(endpoint);
   if (!parsed.success) return NextResponse.json({ error: "invalid_endpoint" }, { status: 400 });
 
   const supabase = await createSupabaseServerClient();

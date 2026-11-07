@@ -34,7 +34,15 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return Response.json({ error: "unauthorized" }, { status: 401 });
   if (!isAiConfigured()) return Response.json({ error: "ai_not_configured" }, { status: 503 });
-  const limit = checkRateLimit(
+  const roleClient = await createSupabaseServerClient();
+  const [{ data: isTeacher }, { data: isAdmin }] = await Promise.all([
+    roleClient.rpc("has_role", { p_role: "teacher" }),
+    roleClient.rpc("has_role", { p_role: "admin" }),
+  ]);
+  if (isTeacher !== true && isAdmin !== true) {
+    return Response.json({ error: "forbidden" }, { status: 403 });
+  }
+  const limit = await checkRateLimit(
     `teacher-tools:${user.id}`,
     AI_RATE_LIMIT.limit,
     AI_RATE_LIMIT.windowMs

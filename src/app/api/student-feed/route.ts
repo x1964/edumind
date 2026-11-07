@@ -39,8 +39,8 @@ function isSameOrigin(request: Request) {
   }
 }
 
-function limited(userId: string, scope: string, limit: number, windowMs: number) {
-  const result = checkRateLimit(`student-feed:${scope}:${userId}`, limit, windowMs);
+async function limited(userId: string, scope: string, limit: number, windowMs: number) {
+  const result = await checkRateLimit(`student-feed:${scope}:${userId}`, limit, windowMs);
   return result.allowed
     ? null
     : NextResponse.json(
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
 
   if (contentType.includes("multipart/form-data")) {
-    const rateLimit = limited(user.id, "post", 5, 10 * 60 * 1000);
+    const rateLimit = await limited(user.id, "post", 5, 10 * 60 * 1000);
     if (rateLimit) return rateLimit;
     const declaredSize = Number(request.headers.get("content-length"));
     if (Number.isFinite(declaredSize) && declaredSize > MAX_IMAGE_BYTES + 16_384)
@@ -230,7 +230,7 @@ export async function POST(request: Request) {
   if (action.data.action === "like") {
     const parsed = z.object({ postId: postIdSchema }).safeParse(body);
     if (!parsed.success) return fail("invalid_input");
-    const rateLimit = limited(user.id, "like", 60, 60_000);
+    const rateLimit = await limited(user.id, "like", 60, 60_000);
     if (rateLimit) return rateLimit;
     const { data, error } = await supabase.rpc("toggle_student_post_like", {
       p_post_id: parsed.data.postId,
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
   if (action.data.action === "comment") {
     const parsed = commentSchema.safeParse(body);
     if (!parsed.success) return fail("invalid_input");
-    const rateLimit = limited(user.id, "comment", 20, 10 * 60 * 1000);
+    const rateLimit = await limited(user.id, "comment", 20, 10 * 60 * 1000);
     if (rateLimit) return rateLimit;
     const { data, error } = await supabase
       .from("student_post_comments")
@@ -267,7 +267,7 @@ export async function POST(request: Request) {
 
   const parsed = reportSchema.safeParse(body);
   if (!parsed.success) return fail("invalid_input");
-  const rateLimit = limited(user.id, "report", 5, 60 * 60 * 1000);
+  const rateLimit = await limited(user.id, "report", 5, 60 * 60 * 1000);
   if (rateLimit) return rateLimit;
   const { error } = await supabase.from("student_post_reports").insert({
     post_id: parsed.data.postId,
@@ -284,7 +284,7 @@ export async function DELETE(request: Request) {
   if (!isSupabaseConfigured()) return fail("not_configured", 503);
   const user = await getCurrentUser();
   if (!user) return fail("unauthorized", 401);
-  const rateLimit = limited(user.id, "delete", 15, 10 * 60 * 1000);
+  const rateLimit = await limited(user.id, "delete", 15, 10 * 60 * 1000);
   if (rateLimit) return rateLimit;
   let body: unknown;
   try {

@@ -164,6 +164,11 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the br
 | `AI_MAX_OUTPUT_TOKENS`          | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
 | `AI_TIMEOUT_MS`                 | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
 | `AI_JSON_MODE`                  | No          | Sends `response_format: json_object`. Defaults to `false`; leave it off for Gemini's OpenAI-compatible endpoint, which can return 503 with it.   |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`  | For push    | Public Web Push VAPID key.                                                                                                                       |
+| `VAPID_PRIVATE_KEY`             | For push    | Server-only Web Push private key.                                                                                                                |
+| `VAPID_SUBJECT`                 | For push    | VAPID contact subject, normally a `mailto:` URL.                                                                                                 |
+| `UPSTASH_REDIS_REST_URL`        | Production  | Upstash Redis REST endpoint for distributed rate limiting.                                                                                       |
+| `UPSTASH_REDIS_REST_TOKEN`      | Production  | Server-only Upstash Redis REST token.                                                                                                            |
 
 **Never** put a Supabase service-role key in any `NEXT_PUBLIC_*` variable.
 
@@ -336,10 +341,11 @@ npm run build          # Production build (Turbopack + TypeScript)
 npm run start          # Serve the production build
 npm run lint           # ESLint with the project configuration
 npm run type-check     # Next.js route type generation + TypeScript
+npm run test           # Vitest unit and security regression tests
 npm run format:check   # Prettier validation
 ```
 
-The repository currently has no automated test suite. Use the checks above plus the manual test plan below.
+The CI pipeline runs linting, formatting, type checks, tests, dependency auditing and a production build on every pull request and on pushes to the protected branches.
 
 ---
 
@@ -350,9 +356,12 @@ The repository currently has no automated test suite. Use the checks above plus 
 Run all three before shipping:
 
 ```bash
+npm ci
 npm run type-check
 npm run lint
+npm run test
 npx prettier --check .
+npm audit
 npm run build
 ```
 
@@ -402,6 +411,8 @@ EduMind supports browser Push notifications for new study tasks. Generate VAPID 
 3. Set `NEXT_PUBLIC_SITE_URL` to the production origin.
 4. Add the production `/auth/callback**` URL in Supabase Auth settings.
 5. Deploy. The default build command is `npm run build`.
+
+Production deployments must configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. EduMind fails closed for protected endpoints when distributed rate limiting is unavailable in production.
 
 Web Analytics is already included in the root layout through `@vercel/analytics/next`. Enable **Analytics** in the Vercel project dashboard to collect aggregate visitors, page views, routes, referrers, devices and browsers. Analytics does not identify users by name or expose account data.
 

@@ -1,0 +1,10 @@
+# Default review owner
+* @x1964
+
+# Security-sensitive application and database code
+/src/app/api/ @x1964
+/src/lib/supabase/ @x1964
+/src/lib/rate-limit.ts @x1964
+/src/lib/push/ @x1964
+/supabase/ @x1964
+/.github/ @x1964

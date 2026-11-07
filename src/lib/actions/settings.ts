@@ -9,6 +9,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { LANG_COOKIE } from "@/lib/i18n";
 import { profileSchema } from "@/lib/validation";
+import { SUPABASE_URL } from "@/lib/supabase/config";
 import type { ActionResult } from "@/lib/actions/types";
 
 const avatarSchema = z
@@ -50,6 +51,17 @@ export async function updateProfileAction(input: {
 
   const avatar = avatarSchema.safeParse(input.avatarUrl ?? "");
   if (!avatar.success) return { ok: false, error: dict.errors.invalidInput };
+  if (avatar.data) {
+    try {
+      const url = new URL(avatar.data);
+      const trustedPrefix = `${SUPABASE_URL}/storage/v1/object/public/avatars/${user.id}/`;
+      if (url.origin !== new URL(SUPABASE_URL).origin || !url.href.startsWith(trustedPrefix)) {
+        return { ok: false, error: dict.errors.invalidInput };
+      }
+    } catch {
+      return { ok: false, error: dict.errors.invalidInput };
+    }
+  }
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase

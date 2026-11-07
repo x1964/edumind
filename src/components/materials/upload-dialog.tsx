@@ -29,7 +29,6 @@ export function UploadDialog({
   const [open, setOpen] = useState(defaultOpen);
   const [stage, setStage] = useState<Stage>("idle");
   const [file, setFile] = useState<File | null>(null);
-  const [pages, setPages] = useState<Array<{ page: number; text: string }>>([]);
   const [extracted, setExtracted] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -39,7 +38,6 @@ export function UploadDialog({
   function reset() {
     setStage("idle");
     setFile(null);
-    setPages([]);
     setExtracted(false);
     setWordCount(0);
     setProgress(0);
@@ -58,7 +56,6 @@ export function UploadDialog({
 
     // Always start clean so an invalid pick never leaves an older file behind.
     setFile(null);
-    setPages([]);
     setExtracted(false);
     setWordCount(0);
     setProgress(0);
@@ -83,7 +80,6 @@ export function UploadDialog({
     setStage("extracting");
     try {
       const extraction = await extractDocument(selected, kind);
-      setPages(extraction.pages);
       setWordCount(extraction.wordCount);
       if (extraction.textLength < 20) {
         setError(dict.materials.noText);
@@ -133,7 +129,6 @@ export function UploadDialog({
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("pages", JSON.stringify(pages));
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api/materials/upload");

@@ -599,10 +599,11 @@ begin
   end if;
 
   for v_question in
-    select * from public.quiz_questions where quiz_id = p_quiz_id order by position
+    select * from public.quiz_questions where quiz_id = p_quiz_id and user_id = v_user order by position
   loop
     v_total := v_total + 1;
-    select * into v_key from public.quiz_question_keys where question_id = v_question.id;
+    select * into v_key from public.quiz_question_keys
+      where question_id = v_question.id and quiz_id = p_quiz_id and user_id = v_user;
     v_answer := coalesce(p_answers ->> v_question.id::text, '');
 
     if v_key is null then
@@ -1001,6 +1002,29 @@ create index if not exists push_task_reminders_user_idx
   on public.push_task_reminders (user_id, created_at desc);
 alter table public.push_task_reminders enable row level security;
 revoke all on public.push_task_reminders from anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Trusted application roles. Client roles are intentionally not writable.
+-- Teacher/admin assignments are provisioned server-side or in the SQL editor.
+create table if not exists public.user_roles (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  role text not null check (role in ('teacher', 'admin')),
+  created_at timestamptz not null default now(),
+  primary key (user_id, role)
+);
+alter table public.user_roles enable row level security;
+revoke all on public.user_roles from anon, authenticated;
+
+create or replace function public.has_role(p_role text)
+returns boolean language sql security definer set search_path = public stable
+as $$
+  select p_role in ('teacher', 'admin') and exists (
+    select 1 from public.user_roles
+    where user_id = auth.uid() and role = p_role
+  );
+$$;
+revoke all on function public.has_role(text) from public;
+grant execute on function public.has_role(text) to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Repair / backfill
