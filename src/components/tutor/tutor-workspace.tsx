@@ -531,12 +531,33 @@ export function TutorWorkspace({
               })}
 
               {busy ? (
-                <div className="flex items-center gap-2 text-[12px] text-ink-muted">
-                  <LoaderCircle
-                    className="size-3.5 animate-spin text-brand-ink"
+                <div className="flex gap-3" role="status" aria-live="polite">
+                  <span
+                    className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg border border-brand/20 bg-brand/[0.08] text-brand-ink"
                     aria-hidden="true"
-                  />
-                  {dict.tutor.thinking}
+                  >
+                    <BrainCircuit className="size-3.5" />
+                  </span>
+                  <div className="relative min-w-[9.5rem] overflow-hidden rounded-2xl border border-hairline/60 bg-surface-deep/50 px-3.5 py-2.5 shadow-[0_10px_30px_-24px_rgba(4,120,87,0.55)]">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex items-center gap-1" aria-hidden="true">
+                        {[0, 1, 2].map((index) => (
+                          <span
+                            key={index}
+                            className="em-typing-dot size-1.5 rounded-full bg-brand"
+                            style={{ animationDelay: `${index * 160}ms` }}
+                          />
+                        ))}
+                      </span>
+                      <span className="text-[12px] font-medium text-ink-soft">
+                        {dict.tutor.thinking}
+                      </span>
+                    </div>
+                    <span
+                      className="em-typing-bar absolute inset-x-0 bottom-0 h-0.5"
+                      aria-hidden="true"
+                    />
+                  </div>
                 </div>
               ) : null}
 
