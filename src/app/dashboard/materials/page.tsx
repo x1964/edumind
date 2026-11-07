@@ -12,7 +12,7 @@ import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { deleteMaterialAction } from "@/lib/actions/materials";
-import { formatBytes, formatDate, formatFileName } from "@/lib/format";
+import { formatBytes, formatDate, formatFileName, formatNumber } from "@/lib/format";
 import type { MaterialSummaryRow } from "@/lib/types";
 import type { AppMessages } from "@/lib/i18n/app";
 
@@ -44,6 +44,8 @@ export default async function MaterialsPage({
     query = query.order("created_at", { ascending: true });
   } else if (params.sort === "name") {
     query = query.order("file_name", { ascending: true });
+  } else if (params.sort === "recent") {
+    query = query.order("last_opened_at", { ascending: false, nullsFirst: false });
   } else {
     query = query.order("created_at", { ascending: false });
   }
@@ -51,6 +53,7 @@ export default async function MaterialsPage({
   const { data } = await query;
   const materials = (data ?? []) as MaterialSummaryRow[];
   const hasFilters = Boolean(search || params.type);
+  const totalBytes = materials.reduce((sum, material) => sum + material.file_size, 0);
 
   return (
     <div className="space-y-6">
@@ -62,11 +65,36 @@ export default async function MaterialsPage({
 
       <MaterialsToolbar dict={dict} />
 
+      {materials.length > 0 ? (
+        <dl className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[12px]">
+          <div className="flex items-center gap-1.5">
+            <dt className="text-ink-muted">{dict.materials.totalFiles}</dt>
+            <dd className="em-num font-semibold text-ink-soft">
+              {formatNumber(materials.length, lang)}
+            </dd>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <dt className="text-ink-muted">{dict.materials.totalSize}</dt>
+            <dd className="em-num font-semibold text-ink-soft">{formatBytes(totalBytes, lang)}</dd>
+          </div>
+        </dl>
+      ) : null}
+
       {materials.length === 0 ? (
         <EmptyState
           icon={hasFilters ? <SearchX className="size-5" /> : <FileText className="size-5" />}
           title={hasFilters ? dict.common.noData : dict.materials.empty}
-          description={hasFilters ? dict.materials.searchPlaceholder : dict.materials.emptyBody}
+          description={hasFilters ? dict.materials.noResultsBody : dict.materials.emptyBody}
+          action={
+            hasFilters ? (
+              <Link
+                href="/dashboard/materials"
+                className="inline-flex h-9 items-center rounded-xl border border-hairline bg-surface-raised px-3.5 text-[13px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
+              >
+                {dict.common.clearFilters}
+              </Link>
+            ) : undefined
+          }
         />
       ) : (
         <Card className="border-hairline/60 bg-surface-raised/80">

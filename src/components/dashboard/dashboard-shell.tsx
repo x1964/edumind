@@ -47,12 +47,7 @@ const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }
     items: [
       { href: "/dashboard", labelKey: "overview", icon: LayoutDashboard, exact: true },
       { href: "/dashboard/materials", labelKey: "materials", icon: FileText },
-      {
-        href: "/dashboard/feed",
-        labelKey: "overview",
-        icon: Newspaper,
-        label: { ar: "الملتقى الدراسي", en: "Student Feed" },
-      },
+      { href: "/dashboard/feed", labelKey: "feed", icon: Newspaper },
       { href: "/dashboard/tutor", labelKey: "tutor", icon: BrainCircuit },
     ],
   },

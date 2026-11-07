@@ -9,8 +9,15 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [value, setValue] = useState(searchParams.get("q") ?? "");
-  const hasFilters = Boolean(searchParams.get("q") || searchParams.get("type"));
+  const paramQ = searchParams.get("q") ?? "";
+  const [value, setValue] = useState(paramQ);
+  const hasFilters = Boolean(paramQ || searchParams.get("type"));
+
+  useEffect(() => {
+    // Keep the input in sync when the URL changes externally (e.g. "clear filters").
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setValue(paramQ);
+  }, [paramQ]);
 
   function update(next: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -58,17 +65,21 @@ export function MaterialsToolbar({ dict }: { dict: AppMessages }) {
         <select
           value={searchParams.get("sort") ?? "newest"}
           onChange={(event) => update({ sort: event.target.value })}
-          aria-label={dict.materials.sortNewest}
+          aria-label={dict.materials.sortLabel}
           className="h-10 min-w-0 rounded-xl border border-hairline bg-black/[0.025] px-3 text-base text-ink-soft focus:border-brand/50 focus:outline-none sm:h-9 sm:text-[12px]"
         >
           <option value="newest">{dict.materials.sortNewest}</option>
           <option value="oldest">{dict.materials.sortOldest}</option>
+          <option value="recent">{dict.materials.sortRecent}</option>
           <option value="name">{dict.materials.sortName}</option>
         </select>
         {hasFilters ? (
           <button
             type="button"
-            onClick={() => update({ q: null, type: null })}
+            onClick={() => {
+              setValue("");
+              update({ q: null, type: null });
+            }}
             className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl border border-hairline px-3 text-[12.5px] font-medium text-ink-soft transition-colors hover:bg-black/[0.04]"
           >
             <X className="size-3.5" aria-hidden="true" />

@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { CheckCircle2, FileUp, LoaderCircle, Plus, UploadCloud, XCircle } from "lucide-react";
+import { CheckCircle2, FileUp, LoaderCircle, Plus, UploadCloud, X, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Modal } from "@/components/ui/modal";
 import { extractDocument } from "@/lib/documents/client-extract";
 import { MAX_FILE_BYTES, kindFromName } from "@/lib/documents/file-validation";
-import { formatBytes } from "@/lib/format";
+import { formatBytes, formatNumber } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
@@ -30,6 +30,7 @@ export function UploadDialog({
   const [stage, setStage] = useState<Stage>("idle");
   const [file, setFile] = useState<File | null>(null);
   const [pages, setPages] = useState<Array<{ page: number; text: string }>>([]);
+  const [extracted, setExtracted] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export function UploadDialog({
     setStage("idle");
     setFile(null);
     setPages([]);
+    setExtracted(false);
     setWordCount(0);
     setProgress(0);
     setError(null);
@@ -53,7 +55,16 @@ export function UploadDialog({
 
   async function handleFile(selected: File | null) {
     if (!selected) return;
+
+    // Always start clean so an invalid pick never leaves an older file behind.
+    setFile(null);
+    setPages([]);
+    setExtracted(false);
+    setWordCount(0);
+    setProgress(0);
     setError(null);
+    setStage("idle");
+
     const kind = kindFromName(selected.name);
     if (!kind) {
       setError(dict.materials.invalidType);
@@ -79,10 +90,37 @@ export function UploadDialog({
         setStage("failed");
         return;
       }
+      setExtracted(true);
       setStage("ready");
     } catch {
       setError(dict.materials.extractionFailed);
       setStage("failed");
+    }
+  }
+
+  function messageForError(code?: string) {
+    switch (code) {
+      case "too_large":
+        return dict.materials.tooLarge;
+      case "invalid_type":
+      case "invalid_content":
+        return dict.materials.invalidType;
+      case "rate_limited":
+        return dict.errors.rateLimited;
+      case "unauthorized":
+        return dict.materials.sessionExpired;
+      case "storage_failed":
+        return dict.materials.storageFailed;
+      case "save_failed":
+        return dict.materials.saveFailed;
+      case "processing_failed":
+        return dict.materials.processingFailed;
+      case "not_configured":
+      case "invalid_form":
+      case "missing_file":
+        return dict.materials.serverError;
+      default:
+        return dict.materials.uploadFailed;
     }
   }
 
@@ -113,11 +151,11 @@ export function UploadDialog({
     };
     xhr.onerror = () => {
       setError(dict.materials.uploadFailed);
-      setStage("failed");
+      setStage(extracted ? "ready" : "failed");
     };
     xhr.ontimeout = () => {
       setError(dict.materials.uploadFailed);
-      setStage("failed");
+      setStage(extracted ? "ready" : "failed");
     };
     xhr.onload = () => {
       const response = (xhr.response ?? {}) as { error?: string; status?: string };
@@ -132,16 +170,9 @@ export function UploadDialog({
         reset();
         router.refresh();
       } else {
-        setError(
-          response.error === "too_large"
-            ? dict.materials.tooLarge
-            : response.error === "invalid_type" || response.error === "invalid_content"
-              ? dict.materials.invalidType
-              : response.error === "rate_limited"
-                ? dict.errors.rateLimited
-                : dict.materials.uploadFailed
-        );
-        setStage("failed");
+        setError(messageForError(response.error));
+        // Keep the extracted text so the user can retry without re-reading the file.
+        setStage(extracted ? "ready" : "failed");
       }
     };
 
@@ -149,6 +180,7 @@ export function UploadDialog({
   }
 
   const busy = stage === "extracting" || stage === "uploading" || stage === "processing";
+  const canUpload = Boolean(file) && extracted && !busy;
 
   return (
     <>
@@ -180,7 +212,7 @@ export function UploadDialog({
             <button
               type="button"
               onClick={upload}
-              disabled={!file || stage !== "ready"}
+              disabled={!canUpload}
               className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-4 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-brand-deep disabled:cursor-not-allowed disabled:opacity-40"
             >
               {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
@@ -231,6 +263,10 @@ export function UploadDialog({
               type="file"
               accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
               className="sr-only"
+              onClick={(event) => {
+                // Allow re-selecting the same file after a failed attempt.
+                event.currentTarget.value = "";
+              }}
               onChange={(event) => void handleFile(event.target.files?.[0] ?? null)}
             />
           </div>
@@ -247,11 +283,22 @@ export function UploadDialog({
                   </p>
                   <p className="text-[12px] text-ink-muted">
                     {formatBytes(file.size, lang)}
-                    {stage === "ready"
-                      ? ` · ${wordCount.toLocaleString()} ${dict.common.words}`
+                    {extracted && wordCount > 0
+                      ? ` · ${formatNumber(wordCount, lang)} ${dict.common.words}`
                       : ""}
                   </p>
                 </div>
+                {!busy ? (
+                  <button
+                    type="button"
+                    onClick={reset}
+                    aria-label={dict.materials.removeFile}
+                    title={dict.materials.removeFile}
+                    className="grid size-7 shrink-0 place-items-center rounded-lg text-ink-muted transition-colors hover:bg-black/[0.06] hover:text-ink"
+                  >
+                    <X className="size-3.5" aria-hidden="true" />
+                  </button>
+                ) : null}
                 {stage === "extracting" ? (
                   <LoaderCircle className="size-4 animate-spin text-brand-ink" aria-hidden="true" />
                 ) : stage === "failed" ? (
@@ -262,7 +309,16 @@ export function UploadDialog({
               </div>
 
               {stage === "extracting" ? (
-                <p className="mt-2 text-[12px] text-ink-muted">{dict.materials.processing}</p>
+                <p className="mt-2 flex flex-wrap items-center gap-x-1.5 text-[12px] text-ink-muted">
+                  <span className="inline-flex items-center gap-1.5">
+                    <LoaderCircle
+                      className="size-3 animate-spin text-brand-ink"
+                      aria-hidden="true"
+                    />
+                    {dict.materials.processing}
+                  </span>
+                  <span className="text-ink-muted/80">{dict.materials.extractingHint}</span>
+                </p>
               ) : null}
 
               {stage === "uploading" ? (
