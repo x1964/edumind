@@ -1,4 +1,8 @@
-import { ListenClient, type SavedTranscript } from "@/components/voice/listen-client";
+import {
+  ListenClient,
+  type ListenLessonSource,
+  type SavedTranscript,
+} from "@/components/voice/listen-client";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
@@ -6,6 +10,15 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { voiceCapabilities } from "@/lib/ai/voice";
 
 export const instant = false;
+
+interface LessonRow {
+  id: string;
+  title_ar: string;
+  title_en: string;
+  description_ar: string | null;
+  description_en: string | null;
+  content: string | null;
+}
 
 export default async function ListenPage({
   searchParams,
@@ -18,12 +31,22 @@ export default async function ListenPage({
   if (!user) return null;
 
   const supabase = await createSupabaseServerClient();
-  const { data: audioRows } = await supabase
-    .from("audio_lessons")
-    .select("id, title, transcript, language, created_at")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(50);
+  const [{ data: audioRows }, { data: lessonRows }] = await Promise.all([
+    supabase
+      .from("audio_lessons")
+      .select("id, title, transcript, language, created_at, lesson_id, thread_id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("lessons")
+      .select(
+        "id, title_ar, title_en, description_ar, description_en, content, difficulty, estimated_minutes"
+      )
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(50),
+  ]);
 
   let initialText = "";
   let initialTitle = "";
@@ -52,6 +75,8 @@ export default async function ListenPage({
       transcript: string;
       language: "ar" | "en";
       created_at: string;
+      lesson_id: string | null;
+      thread_id: string | null;
     }>
   ).map((row) => ({
     id: row.id,
@@ -59,6 +84,17 @@ export default async function ListenPage({
     transcript: row.transcript,
     language: row.language,
     createdAt: row.created_at,
+    lessonId: row.lesson_id,
+    threadId: row.thread_id,
+  }));
+
+  const lessons: ListenLessonSource[] = ((lessonRows ?? []) as LessonRow[]).map((row) => ({
+    id: row.id,
+    titleAr: row.title_ar,
+    titleEn: row.title_en,
+    descriptionAr: row.description_ar,
+    descriptionEn: row.description_en,
+    content: row.content,
   }));
 
   const capabilities = voiceCapabilities();
@@ -73,7 +109,8 @@ export default async function ListenPage({
         saved={saved}
         initialText={initialText}
         initialTitle={initialTitle}
-        lessonId={lessonId}
+        initialLessonId={lessonId}
+        lessons={lessons}
       />
     </div>
   );

@@ -19,9 +19,30 @@ export interface SavedTranscript {
   transcript: string;
   language: "ar" | "en";
   createdAt: string;
+  lessonId?: string | null;
+  threadId?: string | null;
+}
+
+/**
+ * A listening source that originates from a lesson (uploaded study material).
+ */
+export interface ListenLessonSource {
+  id: string;
+  titleAr: string;
+  titleEn: string;
+  descriptionAr: string | null;
+  descriptionEn: string | null;
+  content: string | null;
 }
 
 const SPEEDS = [0.75, 1, 1.25, 1.5] as const;
+
+function formatListenSeconds(totalSeconds: number): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
 
 export function ListenClient({
   dict,
@@ -30,7 +51,8 @@ export function ListenClient({
   saved,
   initialText,
   initialTitle,
-  lessonId,
+  initialLessonId,
+  lessons,
 }: {
   dict: AppMessages;
   lang: Lang;
@@ -38,7 +60,8 @@ export function ListenClient({
   saved: SavedTranscript[];
   initialText: string;
   initialTitle: string;
-  lessonId: string | null;
+  initialLessonId: string | null;
+  lessons: ListenLessonSource[];
 }) {
   const router = useRouter();
   const [text, setText] = useState(initialText);
@@ -52,20 +75,41 @@ export function ListenClient({
   const [isSaving, startSaving] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
   const [activeSaved, setActiveSaved] = useState<string | null>(null);
+  const [sourceId, setSourceId] = useState<string | null>(initialLessonId);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const urlRef = useRef<string | null>(null);
+  const startTimestampRef = useRef<number | null>(null);
 
   const canUseServer = voice.configured && (speechLang !== "ar" || voice.arabic);
+
+  const progress =
+    durationSeconds && durationSeconds > 0 ? Math.min(1, elapsedSeconds / durationSeconds) : null;
 
   useEffect(() => {
     return () => {
       if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+      const audio = audioRef.current;
+      if (audio) {
+        audio.pause();
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
+
+  // Browser speech keeps a monotonic clock while speaking.
+  useEffect(() => {
+    if (!playing || !usingBrowser) return;
+    const anchor = startTimestampRef.current ?? Date.now();
+    const intervalId = window.setInterval(() => {
+      setElapsedSeconds((Date.now() - anchor) / 1000);
+    }, 250);
+    return () => window.clearInterval(intervalId);
+  }, [playing, usingBrowser]);
 
   function stopAll() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -76,7 +120,10 @@ export function ListenClient({
       audio.pause();
       audio.currentTime = 0;
     }
+    startTimestampRef.current = null;
     setPlaying(false);
+    setElapsedSeconds(0);
+    setDurationSeconds(null);
   }
 
   function speakWithBrowser() {
@@ -92,8 +139,15 @@ export function ListenClient({
       .getVoices()
       .find((voiceItem) => voiceItem.lang.toLowerCase().startsWith(speechLang));
     if (chosen) utterance.voice = chosen;
-    utterance.onend = () => setPlaying(false);
+    startTimestampRef.current = Date.now();
+    setElapsedSeconds(0);
+    utterance.onend = () => {
+      startTimestampRef.current = null;
+      setPlaying(false);
+      setElapsedSeconds(0);
+    };
     utterance.onerror = () => {
+      startTimestampRef.current = null;
       setPlaying(false);
       setError(dict.learn.audioError);
     };
@@ -112,6 +166,8 @@ export function ListenClient({
     }
 
     setLoading(true);
+    setElapsedSeconds(0);
+    setDurationSeconds(null);
     try {
       const response = await fetch("/api/voice/speak", {
         method: "POST",
@@ -134,9 +190,17 @@ export function ListenClient({
       const audio = audioRef.current;
       if (!audio) {
         const next = new Audio(url);
-        next.onended = () => setPlaying(false);
-        next.onpause = () => setPlaying(false);
-        next.onplay = () => setPlaying(true);
+        next.onended = () => {
+          setPlaying(false);
+          setElapsedSeconds(0);
+          setDurationSeconds(null);
+        };
+        next.ontimeupdate = () => {
+          setElapsedSeconds(next.currentTime);
+        };
+        next.onloadedmetadata = () => {
+          setDurationSeconds(Number.isFinite(next.duration) ? next.duration : null);
+        };
         audioRef.current = next;
       } else {
         audio.src = url;
@@ -158,6 +222,7 @@ export function ListenClient({
     if (usingBrowser) {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.pause();
+        startTimestampRef.current = Date.now() - elapsedSeconds * 1000;
       }
     } else {
       audioRef.current?.pause();
@@ -169,6 +234,7 @@ export function ListenClient({
     if (usingBrowser) {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.resume();
+        startTimestampRef.current = Date.now() - elapsedSeconds * 1000;
       }
     } else {
       void audioRef.current?.play();
@@ -183,7 +249,7 @@ export function ListenClient({
         title: title.trim() || text.trim().slice(0, 60),
         transcript: text,
         language: speechLang,
-        lessonId,
+        lessonId: sourceId,
         durationSeconds: null,
       });
       if (result.ok) {
@@ -200,6 +266,7 @@ export function ListenClient({
     setText(item.transcript);
     setTitle(item.title);
     setSpeechLang(item.language);
+    setSourceId(item.lessonId ?? null);
     setActiveSaved(item.id);
     setError(null);
   }
@@ -215,6 +282,30 @@ export function ListenClient({
         toast.error(result.error ?? dict.errors.deleteFailed);
       }
     });
+  }
+
+  function handleSourceChange(value: string) {
+    stopAll();
+    const nextId = value || null;
+    setSourceId(nextId);
+    setElapsedSeconds(0);
+    setDurationSeconds(null);
+    if (!nextId) {
+      setError(null);
+      return;
+    }
+    const lesson = lessons.find((item) => item.id === nextId) ?? null;
+    if (!lesson) {
+      setError(null);
+      return;
+    }
+    setText(
+      [lang === "ar" ? lesson.descriptionAr : lesson.descriptionEn, lesson.content]
+        .filter(Boolean)
+        .join("\n\n")
+    );
+    setTitle(lang === "ar" ? lesson.titleAr : lesson.titleEn);
+    setError(null);
   }
 
   return (
@@ -273,6 +364,22 @@ export function ListenClient({
             </div>
 
             <div className="space-y-1.5">
+              <Label htmlFor="listen-source">{dict.learn.chooseSource}</Label>
+              <Select
+                id="listen-source"
+                value={sourceId ?? ""}
+                onChange={(event) => handleSourceChange(event.target.value)}
+              >
+                <option value="">{dict.learn.sourceCustom}</option>
+                {lessons.map((lesson) => (
+                  <option key={lesson.id} value={lesson.id}>
+                    {lang === "ar" ? lesson.titleAr : lesson.titleEn}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
               <Label htmlFor="listen-title">{dict.learn.sourceLabel}</Label>
               <Input
                 id="listen-title"
@@ -287,7 +394,11 @@ export function ListenClient({
               <Textarea
                 id="listen-text"
                 value={text}
-                onChange={(event) => setText(event.target.value)}
+                onChange={(event) => {
+                  setText(event.target.value);
+                  setElapsedSeconds(0);
+                  setDurationSeconds(null);
+                }}
                 rows={8}
                 maxLength={20000}
                 placeholder={dict.learn.pasteText}
@@ -358,6 +469,27 @@ export function ListenClient({
                 {dict.learn.saveForLater}
               </button>
             </div>
+
+            {progress !== null && durationSeconds ? (
+              <div className="space-y-2">
+                <div
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-black/[0.06]"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(progress * 100)}
+                >
+                  <div
+                    className="h-full rounded-full bg-brand transition-[width] duration-200 ease-linear"
+                    style={{ width: `${Math.min(100, progress * 100)}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-ink-muted">
+                  <span>{formatListenSeconds(elapsedSeconds)}</span>
+                  <span>{formatListenSeconds(durationSeconds)}</span>
+                </div>
+              </div>
+            ) : null}
 
             <p className="text-[11px] leading-relaxed text-ink-muted">
               {canUseServer ? dict.learn.serverVoice : dict.learn.browserVoiceNote}
