@@ -13,7 +13,9 @@ import {
   NotebookPen,
   Plus,
   Sparkles,
+  Target,
   Timer,
+  Trophy,
   Upload,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +23,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FileKindIcon } from "@/components/shared/file-icon";
 import { PageHeader } from "@/components/ui/page-header";
+import { TodayPlan } from "@/components/learning/plan-board";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentProfile } from "@/lib/supabase/auth";
 import { getDashboardData } from "@/lib/data/dashboard";
+import {
+  getLearningXp,
+  getRecommendations,
+  getTodayPlan,
+  getUpcomingExams,
+  getWeakTopics,
+} from "@/lib/learning/queries";
 import { formatDate, formatDuration, formatFileName, formatNumber } from "@/lib/format";
 import type { AppMessages } from "@/lib/i18n/app";
 
@@ -34,7 +44,14 @@ export default async function DashboardOverviewPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login?next=/dashboard");
 
-  const data = await getDashboardData(profile.id);
+  const [data, today, exams, weakTopics, xp, recommendations] = await Promise.all([
+    getDashboardData(profile.id),
+    getTodayPlan(profile.id),
+    getUpcomingExams(profile.id),
+    getWeakTopics(profile.id),
+    getLearningXp(profile.id),
+    getRecommendations(profile.id, lang),
+  ]);
 
   const stats = [
     {
@@ -115,6 +132,207 @@ export default async function DashboardOverviewPage() {
           </Link>
         }
       />
+
+      <div className="grid items-start gap-5 sm:gap-6 xl:grid-cols-12">
+        <div className="xl:col-span-8">
+          <TodayPlan dict={dict} lang={lang} items={today.items} />
+        </div>
+
+        <div className="space-y-5 xl:col-span-4">
+          <Card className="border-hairline/60 bg-surface-raised/80">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="size-4 text-brand-ink" aria-hidden="true" />
+                <CardTitle>{dict.dashboard.xpAndLevel}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3 pt-4">
+              <div className="flex items-end justify-between gap-2">
+                <p className="em-num text-[26px] font-semibold leading-none text-ink">
+                  {formatNumber(xp.xp, lang)}
+                </p>
+                <span className="rounded-full border border-brand/25 bg-brand/10 px-2.5 py-0.5 text-[12px] font-medium text-brand-ink">
+                  {dict.learn.levelLabel} {formatNumber(xp.level, lang)}
+                </span>
+              </div>
+              <p className="text-[12px] text-ink-muted">{dict.learn.xpLabel}</p>
+              {xp.achievements.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-hairline px-3 py-3 text-center text-[12px] text-ink-muted">
+                  {dict.learn.noAchievements}
+                </p>
+              ) : (
+                <ul className="flex flex-wrap gap-1.5">
+                  {xp.achievements.map((achievement) => (
+                    <li
+                      key={achievement.code}
+                      className="rounded-full border border-amber-500/30 bg-amber-500/[0.1] px-2.5 py-0.5 text-[11px] font-medium text-amber-700"
+                    >
+                      {achievement.code === "first_plan"
+                        ? dict.learn.achievementFirstPlan
+                        : achievement.code === "level_5"
+                          ? dict.learn.achievementLevel5
+                          : achievement.code === "xp_100"
+                            ? dict.learn.achievementXp100
+                            : achievement.code}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-hairline/60 bg-surface-raised/80">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Target className="size-4 text-brand-ink" aria-hidden="true" />
+                <CardTitle>{dict.dashboard.nextRecommendation}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2 pt-4">
+              {recommendations.slice(0, 2).map((recommendation) => (
+                <Link
+                  key={recommendation.id}
+                  href={recommendation.href}
+                  className="block rounded-xl border border-hairline/70 bg-black/[0.015] px-3 py-2.5 transition-colors hover:border-brand/30 hover:bg-brand/[0.04]"
+                >
+                  <span className="block truncate text-[12.5px] font-medium text-ink">
+                    {recommendation.title}
+                  </span>
+                  <span className="mt-0.5 block text-[11.5px] leading-relaxed text-ink-muted">
+                    {recommendation.reason}
+                  </span>
+                </Link>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-hairline/60 bg-surface-raised/80">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CalendarClock className="size-4 text-brand-ink" aria-hidden="true" />
+                <CardTitle>{dict.dashboard.upcomingExamsTitle}</CardTitle>
+              </div>
+              <Link
+                href="/dashboard/exams"
+                className="text-[12px] font-medium text-brand-ink hover:opacity-80"
+              >
+                {dict.nav.exams}
+              </Link>
+            </CardHeader>
+            <CardContent className="space-y-2 pt-4">
+              {exams.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-hairline px-3 py-4 text-center">
+                  <p className="text-[12px] text-ink-muted">{dict.dashboard.noUpcomingExams}</p>
+                  <Link
+                    href="/dashboard/academic-profile"
+                    className="mt-2 inline-flex h-8 items-center rounded-lg border border-hairline px-3 text-[12px] font-medium text-ink-soft hover:bg-black/[0.04]"
+                  >
+                    {dict.dashboard.addExamDates}
+                  </Link>
+                </div>
+              ) : (
+                <ul className="space-y-1.5">
+                  {exams.map((exam) => (
+                    <li key={exam.subjectId} className="flex items-center gap-2">
+                      <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-soft">
+                        {lang === "ar" ? exam.nameAr : exam.nameEn}
+                      </span>
+                      <span className="shrink-0 text-[11.5px] text-ink-muted" dir="ltr">
+                        {formatDate(exam.examDate, lang)}
+                      </span>
+                      <Badge tone={exam.daysLeft <= 7 ? "danger" : "warning"}>
+                        {exam.daysLeft}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="border-hairline/60 bg-surface-raised/80 xl:col-span-6">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <BrainCircuit className="size-4 text-brand-ink" aria-hidden="true" />
+              <CardTitle>{dict.dashboard.weakTopicsTitle}</CardTitle>
+            </div>
+            <Link
+              href="/dashboard/progress"
+              className="text-[12px] font-medium text-brand-ink hover:opacity-80"
+            >
+              {dict.common.viewAll}
+            </Link>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {weakTopics.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-hairline px-4 py-5 text-center text-[12px] text-ink-muted">
+                {dict.learn.noWeakTopics}
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {weakTopics.map((topic) => (
+                  <li key={topic.topic} className="flex items-start gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[12.5px] font-medium text-ink">{topic.topic}</p>
+                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-black/[0.06]">
+                        <div
+                          className="h-full rounded-full bg-amber-500"
+                          style={{ width: `${Math.max(4, topic.accuracy)}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-[12px] text-ink-muted" dir="ltr">
+                      {topic.accuracy}%
+                    </span>
+                    <Link
+                      href={`/dashboard/tutor?prompt=${encodeURIComponent(topic.topic)}`}
+                      className="shrink-0 text-[12px] font-medium text-brand-ink hover:opacity-80"
+                    >
+                      {dict.learn.reviewTopic}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="border-hairline/60 bg-surface-raised/80 xl:col-span-6">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-4 text-brand-ink" aria-hidden="true" />
+              <CardTitle>{dict.dashboard.continueTeacher}</CardTitle>
+            </div>
+            <Link
+              href="/dashboard/tutor"
+              className="text-[12px] font-medium text-brand-ink hover:opacity-80"
+            >
+              {dict.nav.tutor}
+            </Link>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <p className="text-[12.5px] leading-relaxed text-ink-muted">
+              {dict.dashboard.continueTeacherBody}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href="/dashboard/tutor"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-brand px-3 text-[12px] font-semibold text-primary-foreground hover:bg-brand-deep"
+              >
+                <BrainCircuit className="size-3.5" aria-hidden="true" />
+                {dict.dashboard.askTutor}
+              </Link>
+              <Link
+                href="/dashboard/listen"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-3 text-[12px] font-medium text-ink-soft hover:bg-black/[0.04]"
+              >
+                {dict.nav.listen}
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <section aria-label={dict.dashboard.quickStats}>
         <div className="grid grid-cols-2 items-stretch gap-5 sm:grid-cols-3 sm:gap-6 xl:grid-cols-5">

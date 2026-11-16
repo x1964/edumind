@@ -108,6 +108,58 @@ export const studyTaskSchema = z.object({
   estimatedMinutes: z.coerce.number().int().min(5).max(1440).nullable().optional(),
 });
 
+export const academicProfileSchema = z.object({
+  systemId: z.string().uuid().nullable(),
+  stageId: z.string().uuid().nullable(),
+  gradeId: z.string().uuid().nullable(),
+  trackId: z.string().uuid().nullable(),
+  academicYear: z.string().trim().max(20).nullable(),
+  dailyMinutes: z.coerce.number().int().min(15).max(720),
+  preferredStartMinute: z.coerce.number().int().min(0).max(1439),
+  studyDays: z.array(z.number().int().min(0).max(6)).max(7),
+  goals: z.string().trim().max(500).nullable(),
+  completed: z.boolean().default(true),
+});
+
+export const studentSubjectSchema = z.object({
+  subjectId: z.string().uuid(),
+  examDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable(),
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+});
+
+export const studentSubjectsSchema = z.array(studentSubjectSchema).max(20);
+
+export const planItemRescheduleSchema = z.object({
+  itemId: z.string().uuid(),
+  plannedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+export const roomCreateSchema = z.object({
+  name: z.string().trim().min(2).max(60),
+  subjectId: z.string().uuid().nullable(),
+  lessonId: z.string().uuid().nullable(),
+});
+
+export const roomJoinSchema = z.object({
+  code: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9]{6}$/),
+});
+
+export const roomReportSchema = z.object({
+  roomId: z.string().uuid(),
+  reason: z.string().trim().min(3).max(500),
+});
+
+export const challengeAnswerSchema = z
+  .record(z.string().uuid(), z.string().trim().max(4000))
+  .refine((answers) => Object.keys(answers).length <= 100, "too_many_answers");
+
 export const mindMapSchema = z.object({
   title: z.string().trim().min(2).max(160),
   materialId: z.string().uuid().nullable().optional(),

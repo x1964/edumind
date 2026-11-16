@@ -8,7 +8,10 @@ import {
   CalendarClock,
   ChevronsLeft,
   ChevronsRight,
+  FileSearch,
   FileText,
+  GraduationCap,
+  Headphones,
   LayoutDashboard,
   LineChart,
   ListChecks,
@@ -16,6 +19,8 @@ import {
   Newspaper,
   NotebookPen,
   Settings,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { Logo } from "@/components/landing/Logo";
 import { AppLanguageSwitcher } from "@/components/dashboard/app-language-switcher";
@@ -63,7 +68,11 @@ const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }
     labelKey: "plan",
     items: [
       { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
+      { href: "/dashboard/exams", labelKey: "exams", icon: FileSearch },
+      { href: "/dashboard/study-rooms", labelKey: "studyRooms", icon: Users },
+      { href: "/dashboard/listen", labelKey: "listen", icon: Headphones },
       { href: "/dashboard/progress", labelKey: "progress", icon: LineChart },
+      { href: "/dashboard/academic-profile", labelKey: "academicProfile", icon: GraduationCap },
     ],
   },
   {
@@ -71,6 +80,25 @@ const NAV_GROUPS: Array<{ labelKey: keyof AppMessages["nav"]; items: NavItem[] }
     items: [{ href: "/dashboard/settings", labelKey: "settings", icon: Settings }],
   },
 ];
+
+function buildNavGroups(isAdmin: boolean) {
+  if (!isAdmin) return NAV_GROUPS;
+  return [
+    ...NAV_GROUPS.slice(0, -1),
+    {
+      labelKey: "account" as const,
+      items: [
+        {
+          href: "/dashboard/admin/exams",
+          labelKey: "exams" as const,
+          icon: ShieldCheck,
+          label: { ar: "إدارة الاختبارات", en: "Exam management" },
+        },
+      ],
+    },
+    ...NAV_GROUPS.slice(-1),
+  ];
+}
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -103,13 +131,16 @@ export function DashboardShell({
   dict,
   lang,
   profile,
+  isAdmin = false,
 }: {
   children: ReactNode;
   dict: AppMessages;
   lang: Lang;
   profile: ShellProfile;
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
+  const navGroups = buildNavGroups(isAdmin);
   const collapsed = useSyncExternalStore(
     subscribeSidebar,
     getSidebarSnapshot,
@@ -132,12 +163,12 @@ export function DashboardShell({
     return item.label ? item.label[lang] : dict.nav[item.labelKey];
   }
 
-  const currentItem = NAV_GROUPS.flatMap((group) => group.items).find(isActive);
+  const currentItem = navGroups.flatMap((group) => group.items).find(isActive);
 
   const navigation = (
     <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={dict.nav.main}>
       <div className="space-y-3">
-        {NAV_GROUPS.map((group, groupIndex) => (
+        {navGroups.map((group, groupIndex) => (
           <div key={group.labelKey}>
             {collapsed && groupIndex > 0 ? (
               <div className="mx-3 mb-2 h-px bg-hairline/70" aria-hidden="true" />
@@ -305,7 +336,12 @@ export function DashboardShell({
       <MobileBottomNav dict={dict} moreOpen={moreOpen} onMore={() => setMoreOpen(true)} />
 
       {moreOpen ? (
-        <MobileMoreSheet dict={dict} lang={lang} onClose={() => setMoreOpen(false)} />
+        <MobileMoreSheet
+          dict={dict}
+          lang={lang}
+          isAdmin={isAdmin}
+          onClose={() => setMoreOpen(false)}
+        />
       ) : null}
     </div>
   );

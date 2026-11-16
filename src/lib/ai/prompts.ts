@@ -6,10 +6,30 @@ const languageRule = (lang: Lang) =>
     ? "اكتب كل الرد باللغة العربية الفصحى المبسطة. لا تخلط الإنجليزية إلا للمصطلحات التقنية الضرورية مع شرحها."
     : "Write the entire response in clear English. Do not mix languages.";
 
+export type TutorMode = "explain" | "simple" | "question" | "revision" | "practice" | "exam";
+
+const modeRule = (mode: TutorMode): string => {
+  switch (mode) {
+    case "simple":
+      return "Use very simple language, short sentences and one concrete analogy per idea. Avoid jargon unless you define it immediately.";
+    case "question":
+      return "Answer the student's specific question directly in the first two sentences, then give the reasoning and one follow-up check.";
+    case "revision":
+      return "Be concise. Give a compact concept map in bullet form, the 5 most important facts, and 3 quick recall questions with answers hidden under a short heading.";
+    case "practice":
+      return "Teach by practice. Give exactly one exercise at a time, wait for the student's answer, then give feedback before the next exercise.";
+    case "exam":
+      return "Prepare the student for an exam. Focus on likely question forms, mark allocation, common mistakes and a short timed practice task. Never claim to know the actual future exam.";
+    default:
+      return "Give a structured explanation: the core idea, a worked example, the steps, and a short understanding check.";
+  }
+};
+
 export function tutorSystemPrompt(
   lang: Lang,
   materialContext: string | null,
-  hasMaterial: boolean
+  hasMaterial: boolean,
+  options?: { mode?: TutorMode; studentContext?: string | null }
 ): string {
   const base = `You are EduMind, a patient and professional personal tutor.
 
@@ -20,6 +40,9 @@ Teaching method:
 4. Check understanding with a short question when appropriate.
 5. Never claim the student understood just because you gave an answer.
 
+Teaching mode:
+${modeRule(options?.mode ?? "explain")}
+
 Rules:
 - Be warm, concise and academically accurate.
 - Use Markdown formatting. Use LaTeX only when it helps (wrap in $...$).
@@ -27,13 +50,17 @@ Rules:
 - If something is uncertain, say so.
 - ${languageRule(lang)}`;
 
+  const studentBlock = options?.studentContext
+    ? `\n\nStudent context (use it to adapt the level. Do not recite it back unless relevant):\n${options.studentContext}`
+    : "";
+
   if (!hasMaterial) {
-    return `${base}
+    return `${base}${studentBlock}
 
 The student has not attached a document. Answer from general knowledge and say so if the topic requires their specific course material.`;
   }
 
-  return `${base}
+  return `${base}${studentBlock}
 
 The student attached a study document. Its extracted content is provided between <document> tags.
 - Ground your explanation in the document whenever possible.

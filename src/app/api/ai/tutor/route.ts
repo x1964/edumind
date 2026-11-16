@@ -14,6 +14,10 @@ const bodySchema = z.object({
   threadId: z.string().uuid(),
   materialId: z.string().uuid().nullable().optional(),
   lang: z.enum(["ar", "en"]).default("ar"),
+  mode: z
+    .enum(["explain", "simple", "question", "revision", "practice", "exam"])
+    .default("explain"),
+  lessonId: z.string().uuid().nullable().optional(),
   messages: z
     .array(
       z.object({
@@ -30,6 +34,90 @@ const bodySchema = z.object({
     )
     .max(100),
 });
+
+async function buildStudentContext(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  userId: string,
+  lang: Lang,
+  lessonId: string | null
+): Promise<string> {
+  const lines: string[] = [];
+  const { data: profile } = await supabase
+    .from("student_profiles")
+    .select(
+      "academic_year, daily_minutes, grade_levels(name_ar, name_en), academic_tracks(name_ar, name_en)"
+    )
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (profile) {
+    const grade = Array.isArray(profile.grade_levels)
+      ? profile.grade_levels[0]
+      : profile.grade_levels;
+    const track = Array.isArray(profile.academic_tracks)
+      ? profile.academic_tracks[0]
+      : profile.academic_tracks;
+    const gradeName = grade ? (lang === "ar" ? grade.name_ar : grade.name_en) : null;
+    const trackName = track ? (lang === "ar" ? track.name_ar : track.name_en) : null;
+    if (gradeName) lines.push(`Grade/level: ${gradeName}`);
+    if (trackName) lines.push(`Track: ${trackName}`);
+    if (profile.academic_year) lines.push(`Academic year: ${profile.academic_year}`);
+    if (profile.daily_minutes) lines.push(`Daily study budget: ${profile.daily_minutes} minutes`);
+  }
+
+  const { data: subjects } = await supabase
+    .from("student_subjects")
+    .select("subjects(name_ar, name_en)")
+    .eq("user_id", userId)
+    .limit(20);
+  const subjectNames = (
+    (subjects ?? []) as Array<{
+      subjects:
+        { name_ar: string; name_en: string } | Array<{ name_ar: string; name_en: string }> | null;
+    }>
+  )
+    .map((row) => {
+      const subject = Array.isArray(row.subjects) ? row.subjects[0] : row.subjects;
+      return subject ? (lang === "ar" ? subject.name_ar : subject.name_en) : null;
+    })
+    .filter((name): name is string => Boolean(name));
+  if (subjectNames.length > 0) lines.push(`Subjects: ${subjectNames.join(", ")}`);
+
+  const { getWeakTopics, getTodayPlan } = await import("@/lib/learning/queries");
+  const [weakTopics, today] = await Promise.all([getWeakTopics(userId), getTodayPlan(userId)]);
+  if (weakTopics.length > 0) {
+    lines.push(
+      `Weak topics from real previous assessments: ${weakTopics
+        .slice(0, 4)
+        .map((topic) => `${topic.topic} (${topic.accuracy}% accuracy)`)
+        .join("; ")}.`
+    );
+  }
+  if (today.items.length > 0) {
+    lines.push(
+      `Today's plan: ${today.items
+        .slice(0, 6)
+        .map((item) => item.title)
+        .join("; ")}.`
+    );
+  }
+
+  if (lessonId) {
+    const { data: lesson } = await supabase
+      .from("lessons")
+      .select("title_ar, title_en, description_ar, description_en, content")
+      .eq("id", lessonId)
+      .eq("published", true)
+      .maybeSingle();
+    if (lesson) {
+      lines.push(`Current lesson: ${lang === "ar" ? lesson.title_ar : lesson.title_en}`);
+      const content = typeof lesson.content === "string" ? lesson.content.slice(0, 4000) : "";
+      if (content) lines.push(`Lesson material:\n${content}`);
+    }
+  }
+
+  return lines.join("\n").slice(0, 6000);
+}
 
 export async function POST(request: Request) {
   if (!isSupabaseConfigured()) {
@@ -129,7 +217,15 @@ export async function POST(request: Request) {
     }
   }
 
-  const system = tutorSystemPrompt(lang as Lang, documentContext, Boolean(thread.material_id));
+  const system = tutorSystemPrompt(lang as Lang, documentContext, Boolean(thread.material_id), {
+    mode: parsed.data.mode,
+    studentContext: await buildStudentContext(
+      supabase,
+      user.id,
+      lang as Lang,
+      parsed.data.lessonId ?? null
+    ),
+  });
 
   await supabase.from("tutor_messages").insert({
     thread_id: threadId,

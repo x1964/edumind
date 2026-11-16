@@ -26,11 +26,17 @@ const PRIMARY_ITEMS: Array<{
 ];
 
 const SHEET_ROUTES = [
+  "/dashboard/feed",
   "/dashboard/summaries",
   "/dashboard/mind-maps",
   "/dashboard/study-plan",
+  "/dashboard/exams",
+  "/dashboard/study-rooms",
+  "/dashboard/listen",
+  "/dashboard/academic-profile",
   "/dashboard/progress",
   "/dashboard/settings",
+  "/dashboard/admin",
 ];
 
 function isRouteActive(pathname: string, href: string, exact?: boolean) {

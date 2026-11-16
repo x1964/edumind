@@ -82,6 +82,45 @@ export const teacherDailyReportOutputSchema = z.object({
   recommendations: z.array(z.string().min(3).max(300)).max(6),
 });
 
+const examQuestionTypeSchema = z.enum([
+  "multiple_choice",
+  "true_false",
+  "short_answer",
+  "essay",
+  "matching",
+]);
+
+export const examQuestionClassificationSchema = z.object({
+  questions: z
+    .array(
+      z.object({
+        index: z.number().int().min(0).max(500),
+        topic: z.string().min(1).max(120),
+        unitTitle: z.string().max(160).optional().default(""),
+        questionType: examQuestionTypeSchema,
+        difficulty: z.enum(["easy", "medium", "hard"]),
+      })
+    )
+    .min(1)
+    .max(200),
+});
+
+export const examImportOutputSchema = z.object({
+  questions: z
+    .array(
+      z.object({
+        prompt: z.string().min(5).max(2000),
+        topic: z.string().min(1).max(120),
+        unitTitle: z.string().max(160).optional().default(""),
+        questionType: examQuestionTypeSchema,
+        difficulty: z.enum(["easy", "medium", "hard"]),
+        marks: z.number().int().min(1).max(100).optional().default(1),
+      })
+    )
+    .min(1)
+    .max(100),
+});
+
 export type SummaryOutput = z.infer<typeof summaryOutputSchema>;
 export type QuizOutput = z.infer<typeof quizOutputSchema>;
 export type MindMapOutput = z.infer<typeof mindMapOutputSchema>;

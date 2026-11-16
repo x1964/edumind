@@ -9,6 +9,7 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentProfile } from "@/lib/supabase/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { isCurrentUserAdmin } from "@/lib/supabase/roles";
 
 export const instant = false;
 
@@ -31,10 +32,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login?next=/dashboard");
 
+  const isAdmin = await isCurrentUserAdmin();
+
   return (
     <DashboardShell
       dict={dict}
       lang={lang}
+      isAdmin={isAdmin}
       profile={{
         fullName: profile.fullName,
         email: profile.email,

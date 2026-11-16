@@ -63,6 +63,7 @@ export function TutorWorkspace({
   aiConfigured,
   defaultMaterialId,
   missingThread,
+  initialPrompt = "",
 }: {
   dict: AppMessages;
   lang: Lang;
@@ -73,13 +74,14 @@ export function TutorWorkspace({
   aiConfigured: boolean;
   defaultMaterialId: string | null;
   missingThread: boolean;
+  initialPrompt?: string;
 }) {
   const router = useRouter();
   const [threadId, setThreadId] = useState<string | null>(activeThread?.id ?? null);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(
     activeThread?.materialId ?? defaultMaterialId ?? null
   );
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialPrompt);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [switchingSource, setSwitchingSource] = useState(false);

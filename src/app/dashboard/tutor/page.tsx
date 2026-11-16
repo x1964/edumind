@@ -20,7 +20,7 @@ interface ThreadRow extends TutorThread {
 export default async function TutorPage({
   searchParams,
 }: {
-  searchParams: Promise<{ thread?: string; material?: string }>;
+  searchParams: Promise<{ thread?: string; material?: string; prompt?: string }>;
 }) {
   const { dict, lang } = await getAppMessages();
   const params = await searchParams;
@@ -114,6 +114,7 @@ export default async function TutorPage({
         aiConfigured={isAiConfigured()}
         defaultMaterialId={defaultMaterialId}
         missingThread={missingThread}
+        initialPrompt={params.prompt?.slice(0, 400) ?? ""}
       />
     </div>
   );

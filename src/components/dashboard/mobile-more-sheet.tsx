@@ -5,12 +5,17 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import {
   CalendarClock,
+  FileSearch,
+  GraduationCap,
+  Headphones,
   LineChart,
   LogOut,
   Network,
   Newspaper,
   NotebookPen,
   Settings,
+  ShieldCheck,
+  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -30,16 +35,22 @@ const TOOLS: Array<{
   { href: "/dashboard/summaries", labelKey: "summaries", icon: NotebookPen },
   { href: "/dashboard/mind-maps", labelKey: "mindMaps", icon: Network },
   { href: "/dashboard/study-plan", labelKey: "studyPlan", icon: CalendarClock },
+  { href: "/dashboard/exams", labelKey: "exams", icon: FileSearch },
+  { href: "/dashboard/study-rooms", labelKey: "studyRooms", icon: Users },
+  { href: "/dashboard/listen", labelKey: "listen", icon: Headphones },
+  { href: "/dashboard/academic-profile", labelKey: "academicProfile", icon: GraduationCap },
   { href: "/dashboard/progress", labelKey: "progress", icon: LineChart },
 ];
 
 export function MobileMoreSheet({
   dict,
   lang,
+  isAdmin = false,
   onClose,
 }: {
   dict: AppMessages;
   lang: Lang;
+  isAdmin?: boolean;
   onClose: () => void;
 }) {
   const pathname = usePathname();
@@ -119,6 +130,20 @@ export function MobileMoreSheet({
                 </Link>
               );
             })}
+            {isAdmin ? (
+              <Link
+                href="/dashboard/admin/exams"
+                onClick={onClose}
+                className="em-tap flex min-w-0 items-center gap-2.5 rounded-2xl border border-hairline/70 bg-surface px-3 py-3 transition-colors active:border-brand/30 active:bg-brand/[0.05]"
+              >
+                <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-brand/15 bg-gradient-to-br from-brand/[0.16] to-brand/[0.04] text-brand-ink">
+                  <ShieldCheck className="size-4" aria-hidden="true" />
+                </span>
+                <span className="min-w-0 truncate text-[12px] font-medium text-ink">
+                  {dict.learn.adminTitle}
+                </span>
+              </Link>
+            ) : null}
           </div>
 
           <p className="mt-5 px-1 pb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-muted">

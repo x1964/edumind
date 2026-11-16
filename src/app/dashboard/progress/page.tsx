@@ -10,6 +10,7 @@ import {
 import { getAppMessages } from "@/lib/i18n/app-server";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getLearningXp, getWeakTopics } from "@/lib/learning/queries";
 import { formatDate, formatDuration, formatNumber } from "@/lib/format";
 
 export const instant = false;
@@ -44,7 +45,14 @@ export default async function ProgressPage() {
       .eq("status", "ready"),
   ]);
 
-  const [{ data: sessionRows }, { data: attemptRows }, { data: materialRows }] = await Promise.all([
+  const [
+    { data: sessionRows },
+    { data: attemptRows },
+    { data: materialRows },
+    xp,
+    weakTopics,
+    { data: masteryRows },
+  ] = await Promise.all([
     supabase
       .from("study_sessions")
       .select("duration_seconds, ended_at")
@@ -59,7 +67,16 @@ export default async function ProgressPage() {
       .order("completed_at", { ascending: true })
       .limit(100),
     supabase.from("materials").select("file_type, status").eq("user_id", user.id).limit(1000),
+    getLearningXp(user.id),
+    getWeakTopics(user.id),
+    supabase.from("lesson_progress").select("mastery, status").eq("user_id", user.id).limit(500),
   ]);
+
+  const masteryList = (masteryRows ?? []) as Array<{ mastery: number; status: string }>;
+  const averageMastery =
+    masteryList.length > 0
+      ? Math.round(masteryList.reduce((sum, row) => sum + row.mastery, 0) / masteryList.length)
+      : null;
 
   const sessions = (sessionRows ?? []) as Array<{ duration_seconds: number; ended_at: string }>;
   const attempts = (attemptRows ?? []) as Array<{ score: number; completed_at: string }>;
@@ -180,6 +197,57 @@ export default async function ProgressPage() {
             {formatNumber(sessions.length, lang)}
           </span>
         </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Card className="border-hairline/60 bg-surface-raised/80">
+          <CardContent className="p-4">
+            <p className="text-[12px] font-medium text-ink-muted">{dict.dashboard.xpAndLevel}</p>
+            <p className="em-num mt-2 text-[26px] font-semibold leading-none text-ink">
+              {formatNumber(xp.xp, lang)}
+            </p>
+            <p className="mt-2 text-[12px] text-ink-muted">
+              {dict.learn.levelLabel} {formatNumber(xp.level, lang)}
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="border-hairline/60 bg-surface-raised/80">
+          <CardContent className="p-4">
+            <p className="text-[12px] font-medium text-ink-muted">{dict.dashboard.masteryLabel}</p>
+            <p className="em-num mt-2 text-[26px] font-semibold leading-none text-ink">
+              {averageMastery === null ? "—" : `${formatNumber(averageMastery, lang)}%`}
+            </p>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-black/[0.06]">
+              <div
+                className="h-full rounded-full bg-brand"
+                style={{ width: `${averageMastery ?? 0}%` }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-hairline/60 bg-surface-raised/80">
+          <CardContent className="p-4">
+            <p className="text-[12px] font-medium text-ink-muted">
+              {dict.dashboard.weakTopicsTitle}
+            </p>
+            {weakTopics.length === 0 ? (
+              <p className="mt-3 text-[12px] text-ink-muted">{dict.learn.noWeakTopics}</p>
+            ) : (
+              <ul className="mt-2 space-y-1">
+                {weakTopics.slice(0, 3).map((topic) => (
+                  <li key={topic.topic} className="flex items-center gap-2">
+                    <span className="min-w-0 flex-1 truncate text-[12px] text-ink-soft">
+                      {topic.topic}
+                    </span>
+                    <span className="text-[11.5px] text-ink-muted" dir="ltr">
+                      {topic.accuracy}%
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {!hasData ? (
