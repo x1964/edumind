@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Headphones, LoaderCircle, Pause, Play, Save, Square, Trash2, Volume2 } from "lucide-react";
+import { Headphones, LoaderCircle, Pause, Play, Save, Square, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,24 +24,105 @@ export interface SavedTranscript {
 }
 
 /**
- * A listening source that originates from a lesson (uploaded study material).
+ * A listening source: a lesson, one of the student's summaries, or the latest
+ * answer in a tutor conversation. Content is already plain text.
  */
-export interface ListenLessonSource {
+export interface ListenSource {
   id: string;
+  kind: "lesson" | "summary" | "tutor";
   titleAr: string;
   titleEn: string;
-  descriptionAr: string | null;
-  descriptionEn: string | null;
-  content: string | null;
+  content: string;
 }
 
 const SPEEDS = [0.75, 1, 1.25, 1.5] as const;
+const MAX_SERVER_CHARS = 5000;
+/** Chrome silently stops an utterance after a few sentences; keep each one short. */
+const MAX_CHUNK_CHARS = 180;
+/** Rough characters spoken per second, used only for the progress estimate. */
+const CHARS_PER_SECOND: Record<Lang, number> = { ar: 11, en: 14 };
 
 function formatListenSeconds(totalSeconds: number): string {
   const safe = Math.max(0, Math.floor(totalSeconds));
   const minutes = Math.floor(safe / 60);
   const seconds = safe % 60;
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function splitLongSegment(segment: string, maxChars: number): string[] {
+  if (segment.length <= maxChars) return [segment];
+  const words = segment.split(/\s+/).filter(Boolean);
+  const parts: string[] = [];
+  let current = "";
+  for (const word of words) {
+    if (!current) {
+      current = word;
+    } else if (`${current} ${word}`.length <= maxChars) {
+      current = `${current} ${word}`;
+    } else {
+      parts.push(current);
+      current = word;
+    }
+  }
+  if (current) parts.push(current);
+  // A single unbroken word longer than the limit still has to be split.
+  return parts.flatMap((part) =>
+    part.length <= maxChars ? [part] : (part.match(new RegExp(`.{1,${maxChars}}`, "gs")) ?? [])
+  );
+}
+
+/**
+ * Splits a transcript into short utterances so long texts are read to the end
+ * instead of being truncated by the browser speech engine.
+ */
+function splitIntoChunks(text: string, maxChars = MAX_CHUNK_CHARS): string[] {
+  const normalized = text.replace(/\r\n/g, "\n").trim();
+  if (!normalized) return [];
+
+  const segments = normalized
+    .split(/(?<=[.!?ØŸâ€¦\n])\s+/u)
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+    .flatMap((segment) => splitLongSegment(segment, maxChars));
+
+  const chunks: string[] = [];
+  let current = "";
+  for (const segment of segments) {
+    if (!current) {
+      current = segment;
+    } else if (`${current} ${segment}`.length <= maxChars) {
+      current = `${current} ${segment}`;
+    } else {
+      chunks.push(current);
+      current = segment;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+/** Small indirection so event-driven helpers stay outside React's purity checks. */
+function timeNow(): number {
+  return Date.now();
+}
+
+function pickDefaultVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
+  if (voices.length === 0) return null;
+  return (
+    voices.find((voice) => /natural|neural|google|premium|enhanced/i.test(voice.name)) ??
+    voices.find((voice) => !voice.localService) ??
+    voices[0] ??
+    null
+  );
+}
+
+interface BrowserPlayback {
+  chunks: string[];
+  index: number;
+  charsDone: number;
+  chunkStartedAt: number;
+  pausedAt: number | null;
+  cancelled: boolean;
 }
 
 export function ListenClient({
@@ -51,8 +132,8 @@ export function ListenClient({
   saved,
   initialText,
   initialTitle,
-  initialLessonId,
-  lessons,
+  initialSourceId,
+  sources,
 }: {
   dict: AppMessages;
   lang: Lang;
@@ -60,58 +141,128 @@ export function ListenClient({
   saved: SavedTranscript[];
   initialText: string;
   initialTitle: string;
-  initialLessonId: string | null;
-  lessons: ListenLessonSource[];
+  initialSourceId: string | null;
+  sources: ListenSource[];
 }) {
   const router = useRouter();
   const [text, setText] = useState(initialText);
   const [title, setTitle] = useState(initialTitle);
   const [speechLang, setSpeechLang] = useState<Lang>(lang);
   const [speed, setSpeed] = useState<number>(1);
+  const [preferServer, setPreferServer] = useState(voice.configured);
+  const [voiceName, setVoiceName] = useState("");
+  const [systemVoices, setSystemVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [usingBrowser, setUsingBrowser] = useState(!voice.configured);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, startSaving] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
   const [activeSaved, setActiveSaved] = useState<string | null>(null);
-  const [sourceId, setSourceId] = useState<string | null>(initialLessonId);
+  const [sourceId, setSourceId] = useState<string | null>(initialSourceId);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [durationSeconds, setDurationSeconds] = useState<number | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const urlRef = useRef<string | null>(null);
-  const startTimestampRef = useRef<number | null>(null);
+  const browserRef = useRef<BrowserPlayback | null>(null);
+  const speedRef = useRef(speed);
+  const charsPerSecondRef = useRef(CHARS_PER_SECOND[lang]);
 
-  const canUseServer = voice.configured && (speechLang !== "ar" || voice.arabic);
+  const serverAvailable = voice.configured && (speechLang !== "ar" || voice.arabic);
+  const canUseServer = serverAvailable && preferServer;
+
+  const languageVoices = useMemo(
+    () => systemVoices.filter((item) => item.lang.toLowerCase().startsWith(speechLang)),
+    [systemVoices, speechLang]
+  );
 
   const progress =
     durationSeconds && durationSeconds > 0 ? Math.min(1, elapsedSeconds / durationSeconds) : null;
 
+  const sourceGroups = useMemo(
+    () =>
+      [
+        { kind: "lesson" as const, label: dict.learn.sourceLesson },
+        { kind: "summary" as const, label: dict.learn.sourceSummary },
+        { kind: "tutor" as const, label: dict.learn.sourceTutor },
+      ]
+        .map((group) => ({
+          ...group,
+          items: sources.filter((source) => source.kind === group.kind),
+        }))
+        .filter((group) => group.items.length > 0),
+    [dict.learn.sourceLesson, dict.learn.sourceSummary, dict.learn.sourceTutor, sources]
+  );
+
+  // The browser exposes its voice list asynchronously (and again once the
+  // system voices finish loading), so it must be subscribed to, not read once.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const synth = window.speechSynthesis;
+    const load = () => setSystemVoices(synth.getVoices());
+    load();
+    synth.addEventListener?.("voiceschanged", load);
+    return () => synth.removeEventListener?.("voiceschanged", load);
+  }, []);
+
   useEffect(() => {
     return () => {
-      if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+      const state = browserRef.current;
+      if (state) state.cancelled = true;
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
       const audio = audioRef.current;
       if (audio) {
         audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
       }
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current);
+        urlRef.current = null;
       }
     };
   }, []);
 
-  // Browser speech keeps a monotonic clock while speaking.
+  // Progress clock for the browser voice. Server audio reports its own time.
   useEffect(() => {
     if (!playing || !usingBrowser) return;
-    const anchor = startTimestampRef.current ?? Date.now();
     const intervalId = window.setInterval(() => {
-      setElapsedSeconds((Date.now() - anchor) / 1000);
+      const state = browserRef.current;
+      if (!state || state.pausedAt !== null) return;
+      const rate = charsPerSecondRef.current * speedRef.current;
+      const elapsed = state.charsDone / rate + (timeNow() - state.chunkStartedAt) / 1000;
+      const total = state.chunks.reduce((sum, chunk) => sum + chunk.length, 0) / rate;
+      setElapsedSeconds(Math.min(elapsed, Math.max(total, 0.1)));
     }, 250);
     return () => window.clearInterval(intervalId);
   }, [playing, usingBrowser]);
 
+  function ensureAudio(): HTMLAudioElement {
+    if (audioRef.current) return audioRef.current;
+    const audio = new Audio();
+    audio.onended = () => {
+      setPlaying(false);
+      setPaused(false);
+    };
+    audio.ontimeupdate = () => setElapsedSeconds(audio.currentTime);
+    audio.onloadedmetadata = () => {
+      setDurationSeconds(Number.isFinite(audio.duration) ? audio.duration : null);
+    };
+    audio.onerror = () => setError(dict.learn.audioError);
+    audioRef.current = audio;
+    return audio;
+  }
+
   function stopAll() {
+    const state = browserRef.current;
+    if (state) {
+      state.cancelled = true;
+      browserRef.current = null;
+    }
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -120,10 +271,63 @@ export function ListenClient({
       audio.pause();
       audio.currentTime = 0;
     }
-    startTimestampRef.current = null;
     setPlaying(false);
+    setPaused(false);
     setElapsedSeconds(0);
     setDurationSeconds(null);
+  }
+
+  function speakChunk() {
+    const state = browserRef.current;
+    if (!state || state.cancelled) return;
+    if (state.index >= state.chunks.length) {
+      const rate = charsPerSecondRef.current * speedRef.current;
+      const total = state.chunks.reduce((sum, chunk) => sum + chunk.length, 0) / rate;
+      setElapsedSeconds(total);
+      setDurationSeconds(total);
+      setPlaying(false);
+      setPaused(false);
+      browserRef.current = null;
+      return;
+    }
+
+    const chunk = state.chunks[state.index];
+    const utterance = new SpeechSynthesisUtterance(chunk);
+    utterance.lang = speechLang === "ar" ? "ar-SA" : "en-US";
+    utterance.rate = speedRef.current;
+    const chosen =
+      languageVoices.find((item) => item.name === voiceName) ?? pickDefaultVoice(languageVoices);
+    if (chosen) utterance.voice = chosen;
+
+    state.chunkStartedAt = timeNow();
+    state.pausedAt = null;
+
+    utterance.onend = () => {
+      const current = browserRef.current;
+      if (!current || current.cancelled) return;
+      current.charsDone += chunk.length;
+      current.index += 1;
+      speakChunk();
+    };
+    utterance.onerror = (event) => {
+      const current = browserRef.current;
+      // Cancelling playback on purpose must not surface as an error.
+      if (
+        !current ||
+        current.cancelled ||
+        event.error === "interrupted" ||
+        event.error === "canceled"
+      ) {
+        return;
+      }
+      current.cancelled = true;
+      browserRef.current = null;
+      setPlaying(false);
+      setPaused(false);
+      setError(dict.learn.audioError);
+    };
+
+    window.speechSynthesis.speak(utterance);
   }
 
   function speakWithBrowser() {
@@ -131,87 +335,69 @@ export function ListenClient({
       setError(dict.learn.audioError);
       return;
     }
+    stopAll();
+    const chunks = splitIntoChunks(text.slice(0, 20_000));
+    if (chunks.length === 0) return;
+
+    charsPerSecondRef.current = CHARS_PER_SECOND[speechLang];
+    const rate = charsPerSecondRef.current * speed;
+    const estimated = chunks.reduce((sum, chunk) => sum + chunk.length, 0) / rate;
+
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text.slice(0, 5000));
-    utterance.lang = speechLang === "ar" ? "ar-SA" : "en-US";
-    utterance.rate = speed;
-    const chosen = window.speechSynthesis
-      .getVoices()
-      .find((voiceItem) => voiceItem.lang.toLowerCase().startsWith(speechLang));
-    if (chosen) utterance.voice = chosen;
-    startTimestampRef.current = Date.now();
+    browserRef.current = {
+      chunks,
+      index: 0,
+      charsDone: 0,
+      chunkStartedAt: timeNow(),
+      pausedAt: null,
+      cancelled: false,
+    };
+    setUsingBrowser(true);
+    setDurationSeconds(estimated);
     setElapsedSeconds(0);
-    utterance.onend = () => {
-      startTimestampRef.current = null;
-      setPlaying(false);
-      setElapsedSeconds(0);
-    };
-    utterance.onerror = () => {
-      startTimestampRef.current = null;
-      setPlaying(false);
-      setError(dict.learn.audioError);
-    };
-    window.speechSynthesis.speak(utterance);
     setPlaying(true);
+    setPaused(false);
+    setError(null);
+    speakChunk();
   }
 
   async function play() {
     if (!text.trim()) return;
     setError(null);
-    setUsingBrowser(!canUseServer);
 
     if (!canUseServer) {
       speakWithBrowser();
       return;
     }
 
+    stopAll();
     setLoading(true);
-    setElapsedSeconds(0);
-    setDurationSeconds(null);
     try {
       const response = await fetch("/api/voice/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text.slice(0, 5000), lang: speechLang, speed }),
+        body: JSON.stringify({ text: text.slice(0, MAX_SERVER_CHARS), lang: speechLang, speed }),
       });
 
       if (!response.ok) {
-        // Provider failure is not a dead end: the labelled browser fallback is real.
-        setUsingBrowser(true);
-        setLoading(false);
-        speakWithBrowser();
-        return;
+        if (response.status === 429) toast.error(dict.errors.rateLimited);
+        throw new Error(`voice_${response.status}`);
       }
 
       const blob = await response.blob();
       if (urlRef.current) URL.revokeObjectURL(urlRef.current);
       const url = URL.createObjectURL(blob);
       urlRef.current = url;
-      const audio = audioRef.current;
-      if (!audio) {
-        const next = new Audio(url);
-        next.onended = () => {
-          setPlaying(false);
-          setElapsedSeconds(0);
-          setDurationSeconds(null);
-        };
-        next.ontimeupdate = () => {
-          setElapsedSeconds(next.currentTime);
-        };
-        next.onloadedmetadata = () => {
-          setDurationSeconds(Number.isFinite(next.duration) ? next.duration : null);
-        };
-        audioRef.current = next;
-      } else {
-        audio.src = url;
-      }
-      const playback = audioRef.current;
-      if (!playback) return;
-      playback.playbackRate = speed;
-      await playback.play();
+
+      const audio = ensureAudio();
+      if (audio.src !== url) audio.src = url;
+      audio.playbackRate = speed;
+      await audio.play();
+      setUsingBrowser(false);
       setPlaying(true);
+      setPaused(false);
     } catch {
-      setUsingBrowser(true);
+      // A provider failure is not a dead end: the browser voice is a real fallback.
       speakWithBrowser();
     } finally {
       setLoading(false);
@@ -222,35 +408,66 @@ export function ListenClient({
     if (usingBrowser) {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.pause();
-        startTimestampRef.current = Date.now() - elapsedSeconds * 1000;
       }
+      const state = browserRef.current;
+      if (state) state.pausedAt = timeNow();
     } else {
       audioRef.current?.pause();
     }
     setPlaying(false);
+    setPaused(true);
   }
 
   function resume() {
     if (usingBrowser) {
+      const state = browserRef.current;
+      if (!state) {
+        void play();
+        return;
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.resume();
-        startTimestampRef.current = Date.now() - elapsedSeconds * 1000;
       }
+      if (state.pausedAt !== null) {
+        state.chunkStartedAt += timeNow() - state.pausedAt;
+        state.pausedAt = null;
+      }
+      // Some Chromium builds leave the engine paused forever; if nothing is
+      // speaking shortly after resuming, replay the current chunk instead.
+      window.setTimeout(() => {
+        const current = browserRef.current;
+        if (!current || current.cancelled) return;
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            speakChunk();
+          }
+        }
+      }, 600);
     } else {
       void audioRef.current?.play();
     }
     setPlaying(true);
+    setPaused(false);
+  }
+
+  function changeSpeed(next: number) {
+    setSpeed(next);
+    speedRef.current = next;
+    const audio = audioRef.current;
+    if (audio && !usingBrowser) audio.playbackRate = next;
   }
 
   function saveTranscript() {
     if (!text.trim()) return;
+    const measured =
+      durationSeconds && Number.isFinite(durationSeconds) ? Math.round(durationSeconds) : null;
     startSaving(async () => {
       const result = await saveAudioLessonAction({
         title: title.trim() || text.trim().slice(0, 60),
         transcript: text,
         language: speechLang,
         lessonId: sourceId,
-        durationSeconds: null,
+        durationSeconds: measured,
       });
       if (result.ok) {
         toast.success(result.message ?? dict.learn.transcriptSaved);
@@ -266,6 +483,7 @@ export function ListenClient({
     setText(item.transcript);
     setTitle(item.title);
     setSpeechLang(item.language);
+    setVoiceName("");
     setSourceId(item.lessonId ?? null);
     setActiveSaved(item.id);
     setError(null);
@@ -294,16 +512,12 @@ export function ListenClient({
       setError(null);
       return;
     }
-    const lesson = lessons.find((item) => item.id === nextId) ?? null;
+    const lesson = sources.find((item) => item.id === nextId) ?? null;
     if (!lesson) {
       setError(null);
       return;
     }
-    setText(
-      [lang === "ar" ? lesson.descriptionAr : lesson.descriptionEn, lesson.content]
-        .filter(Boolean)
-        .join("\n\n")
-    );
+    setText(lesson.content);
     setTitle(lang === "ar" ? lesson.titleAr : lesson.titleEn);
     setError(null);
   }
@@ -332,6 +546,25 @@ export function ListenClient({
               </p>
             ) : null}
 
+            {voice.configured ? (
+              <div className="space-y-1.5">
+                <Label htmlFor="listen-voice-mode">{dict.learn.voiceMode}</Label>
+                <Select
+                  id="listen-voice-mode"
+                  value={preferServer ? "server" : "browser"}
+                  onChange={(event) => {
+                    stopAll();
+                    setPreferServer(event.target.value === "server");
+                  }}
+                >
+                  <option value="server" disabled={!serverAvailable}>
+                    {dict.learn.serverVoice}
+                  </option>
+                  <option value="browser">{dict.learn.browserVoice}</option>
+                </Select>
+              </div>
+            ) : null}
+
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="listen-lang">{dict.common.language}</Label>
@@ -341,6 +574,7 @@ export function ListenClient({
                   onChange={(event) => {
                     stopAll();
                     setSpeechLang(event.target.value as Lang);
+                    setVoiceName("");
                   }}
                 >
                   <option value="ar">{dict.learn.langAr}</option>
@@ -352,16 +586,39 @@ export function ListenClient({
                 <Select
                   id="listen-speed"
                   value={String(speed)}
-                  onChange={(event) => setSpeed(Number(event.target.value))}
+                  onChange={(event) => changeSpeed(Number(event.target.value))}
                 >
                   {SPEEDS.map((value) => (
                     <option key={value} value={value}>
-                      {value}×
+                      {value}Ã—
                     </option>
                   ))}
                 </Select>
               </div>
             </div>
+
+            {!canUseServer ? (
+              <div className="space-y-1.5">
+                <Label htmlFor="listen-voice">{dict.learn.voiceSelect}</Label>
+                <Select
+                  id="listen-voice"
+                  value={voiceName}
+                  onChange={(event) => setVoiceName(event.target.value)}
+                >
+                  <option value="">{dict.learn.voiceAuto}</option>
+                  {languageVoices.map((item) => (
+                    <option key={`${item.name}-${item.lang}`} value={item.name}>
+                      {item.name} ({item.lang})
+                    </option>
+                  ))}
+                </Select>
+                {languageVoices.length === 0 ? (
+                  <p className="text-[11.5px] leading-relaxed text-amber-700">
+                    {dict.learn.voiceMissing}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
             <div className="space-y-1.5">
               <Label htmlFor="listen-source">{dict.learn.chooseSource}</Label>
@@ -371,10 +628,14 @@ export function ListenClient({
                 onChange={(event) => handleSourceChange(event.target.value)}
               >
                 <option value="">{dict.learn.sourceCustom}</option>
-                {lessons.map((lesson) => (
-                  <option key={lesson.id} value={lesson.id}>
-                    {lang === "ar" ? lesson.titleAr : lesson.titleEn}
-                  </option>
+                {sourceGroups.map((group) => (
+                  <optgroup key={group.kind} label={group.label}>
+                    {group.items.map((source) => (
+                      <option key={source.id} value={source.id}>
+                        {lang === "ar" ? source.titleAr : source.titleEn}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </Select>
             </div>
@@ -395,9 +656,8 @@ export function ListenClient({
                 id="listen-text"
                 value={text}
                 onChange={(event) => {
+                  if (playing || paused) stopAll();
                   setText(event.target.value);
-                  setElapsedSeconds(0);
-                  setDurationSeconds(null);
                 }}
                 rows={8}
                 maxLength={20000}
@@ -413,7 +673,7 @@ export function ListenClient({
             ) : null}
 
             <div className="flex flex-wrap items-center gap-2">
-              {!playing ? (
+              {!playing && !paused ? (
                 <button
                   type="button"
                   onClick={loading ? undefined : play}
@@ -427,6 +687,15 @@ export function ListenClient({
                   )}
                   {loading ? dict.learn.loadingAudio : dict.learn.play}
                 </button>
+              ) : paused ? (
+                <button
+                  type="button"
+                  onClick={resume}
+                  className="inline-flex h-9 items-center gap-2 rounded-xl bg-brand px-3.5 text-[13px] font-semibold text-primary-foreground hover:bg-brand-deep"
+                >
+                  <Play className="size-4" aria-hidden="true" />
+                  {dict.learn.resume}
+                </button>
               ) : (
                 <button
                   type="button"
@@ -439,17 +708,8 @@ export function ListenClient({
               )}
               <button
                 type="button"
-                onClick={resume}
-                disabled={!text.trim()}
-                className="inline-flex h-9 items-center gap-2 rounded-xl border border-hairline px-3 text-[12.5px] font-medium text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
-              >
-                <Volume2 className="size-3.5" aria-hidden="true" />
-                {dict.learn.resume}
-              </button>
-              <button
-                type="button"
                 onClick={stopAll}
-                disabled={!text.trim()}
+                disabled={(!playing && !paused) || !text.trim()}
                 className="inline-flex h-9 items-center gap-2 rounded-xl border border-hairline px-3 text-[12.5px] font-medium text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
               >
                 <Square className="size-3.5" aria-hidden="true" />
@@ -526,7 +786,7 @@ export function ListenClient({
                       {item.title}
                     </span>
                     <span className="mt-0.5 block text-[11px] text-ink-muted">
-                      {item.language === "ar" ? dict.learn.langAr : dict.learn.langEn} ·{" "}
+                      {item.language === "ar" ? dict.learn.langAr : dict.learn.langEn} Â·{" "}
                       {item.transcript.slice(0, 60)}
                     </span>
                   </button>

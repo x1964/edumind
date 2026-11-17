@@ -89,7 +89,6 @@ export async function createStudyRoomAction(input: {
     room_id: room.id,
     user_id: user.id,
     role: "owner",
-    status: "active",
   });
 
   if (participantError) {
@@ -262,6 +261,42 @@ export async function finishRoomChallengeAction(
   await supabase.from("study_rooms").update({ status: "open" }).eq("id", roomId);
   revalidateRooms(roomId);
   return { ok: true, message: dict.learn.challengeFinished };
+}
+
+export async function closeStudyRoomAction(roomId: string): Promise<ActionResult> {
+  const { dict } = await getAppMessages();
+  if (!isSupabaseConfigured()) return { ok: false, error: dict.setup.body };
+
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: dict.errors.unauthorized };
+
+  const supabase = await createSupabaseServerClient();
+  const { data: room } = await supabase
+    .from("study_rooms")
+    .select("owner_id, status")
+    .eq("id", roomId)
+    .maybeSingle();
+
+  if (!room) return { ok: false, error: dict.learn.roomNotFound };
+  if (room.owner_id !== user.id) return { ok: false, error: dict.errors.forbidden };
+  if (room.status === "closed") return { ok: true, message: dict.learn.roomClosed };
+
+  const { error } = await supabase
+    .from("study_rooms")
+    .update({ status: "closed" })
+    .eq("id", roomId)
+    .eq("owner_id", user.id);
+  if (error) return { ok: false, error: dict.errors.saveFailed };
+
+  // Close any open challenge so members don't keep answering into a dead room.
+  await supabase
+    .from("study_challenges")
+    .update({ status: "finished" })
+    .eq("room_id", roomId)
+    .in("status", ["pending", "active"]);
+
+  revalidateRooms(roomId);
+  return { ok: true, message: dict.learn.roomEnded };
 }
 
 export async function reportStudyRoomAction(input: {

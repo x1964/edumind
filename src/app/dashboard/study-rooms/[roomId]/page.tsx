@@ -14,6 +14,7 @@ interface RoomRow {
   status: "open" | "in_progress" | "closed";
   owner_id: string;
   lesson_id: string | null;
+  expires_at: string;
   subjects:
     { name_ar: string; name_en: string } | Array<{ name_ar: string; name_en: string }> | null;
 }
@@ -58,7 +59,7 @@ export default async function StudyRoomPage({ params }: { params: Promise<{ room
   const [{ data: roomData }, { data: participantData }] = await Promise.all([
     supabase
       .from("study_rooms")
-      .select("id, code, name, status, owner_id, lesson_id, subjects(name_ar, name_en)")
+      .select("id, code, name, status, owner_id, lesson_id, expires_at, subjects(name_ar, name_en)")
       .eq("id", roomId)
       .maybeSingle(),
     supabase.rpc("get_room_participants", { p_room_id: roomId }),
@@ -164,6 +165,7 @@ export default async function StudyRoomPage({ params }: { params: Promise<{ room
     status: row.status,
     subjectName: subject ? (lang === "ar" ? subject.name_ar : subject.name_en) : null,
     ownerId: row.owner_id,
+    expiresAt: row.expires_at,
   };
 
   return (

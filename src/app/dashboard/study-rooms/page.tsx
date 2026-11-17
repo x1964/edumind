@@ -32,10 +32,16 @@ interface ParticipationRow {
     | null;
 }
 
-export default async function StudyRoomsPage() {
+export default async function StudyRoomsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ code?: string }>;
+}) {
   const { dict, lang } = await getAppMessages();
   const user = await getCurrentUser();
   if (!user) return null;
+  const params = await searchParams;
+  const initialCode = (params.code ?? "").trim().toUpperCase().slice(0, 6);
 
   const supabase = await createSupabaseServerClient();
   const [{ data: participationRows }, catalog] = await Promise.all([
@@ -98,7 +104,13 @@ export default async function StudyRoomsPage() {
   return (
     <div className="space-y-6">
       <PageHeader title={dict.learn.roomsTitle} description={dict.learn.roomsSubtitle} />
-      <RoomsClient dict={dict} lang={lang} subjects={catalog.subjects} rooms={rooms} />
+      <RoomsClient
+        dict={dict}
+        lang={lang}
+        subjects={catalog.subjects}
+        rooms={rooms}
+        initialCode={initialCode}
+      />
     </div>
   );
 }

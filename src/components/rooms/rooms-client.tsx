@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { createStudyRoomAction, joinStudyRoomAction } from "@/lib/actions/rooms";
+import { useAutoRefresh } from "@/hooks/use-auto-refresh";
 import type { CatalogOption } from "@/lib/learning/queries";
 import type { AppMessages } from "@/lib/i18n/app";
 import type { Lang } from "@/lib/i18n";
@@ -28,17 +29,20 @@ export function RoomsClient({
   lang,
   subjects,
   rooms,
+  initialCode = "",
 }: {
   dict: AppMessages;
   lang: Lang;
   subjects: CatalogOption[];
   rooms: RoomSummary[];
+  initialCode?: string;
 }) {
   const router = useRouter();
+  useAutoRefresh(15_000);
   const [isPending, startTransition] = useTransition();
   const [name, setName] = useState("");
   const [subjectId, setSubjectId] = useState("");
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(initialCode);
   const [error, setError] = useState<string | null>(null);
 
   function createRoom() {
@@ -192,7 +196,7 @@ export function RoomsClient({
                         ? dict.learn.roomClosed
                         : room.status === "in_progress"
                           ? dict.learn.challengeActive
-                          : dict.learn.pendingLabel}
+                          : dict.learn.roomOpen}
                     </span>
                   </div>
                   <span className="mt-1 inline-flex items-center gap-1 text-[11.5px] font-medium text-brand-ink">

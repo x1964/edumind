@@ -10,8 +10,11 @@ import {
   Flag,
   LoaderCircle,
   LogOut,
+  MessageCircle,
   Play,
+  RefreshCw,
   Send,
+  Share2,
   Timer,
   Trophy,
   Users,
@@ -23,12 +26,14 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  closeStudyRoomAction,
   finishRoomChallengeAction,
   leaveStudyRoomAction,
   reportStudyRoomAction,
   startRoomChallengeAction,
   submitChallengeAnswersAction,
 } from "@/lib/actions/rooms";
+import { useAutoRefresh } from "@/hooks/use-auto-refresh";
 import type { AppMessages } from "@/lib/i18n/app";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +44,7 @@ export interface RoomInfo {
   status: "open" | "in_progress" | "closed";
   subjectName: string | null;
   ownerId: string;
+  expiresAt: string | null;
 }
 
 export interface ChallengeInfo {
@@ -54,6 +60,13 @@ export interface ChallengeInfo {
     prompt: string;
     options: string[] | null;
   }>;
+}
+
+function formatRemaining(totalSeconds: number): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(safe / 3600);
+  const minutes = Math.floor((safe % 3600) / 60);
+  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, "0")}m` : `${minutes}m`;
 }
 
 export function RoomClient({
@@ -76,7 +89,9 @@ export function RoomClient({
   myScore: number | null;
 }) {
   const router = useRouter();
+  const refresh = useAutoRefresh(12_000, room.status !== "closed");
   const [isPending, startTransition] = useTransition();
+  const [isRefreshing, startRefresh] = useTransition();
   const [quizId, setQuizId] = useState(quizOptions[0]?.id ?? "");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -90,20 +105,35 @@ export function RoomClient({
     return () => window.clearInterval(timer);
   }, [challenge]);
 
+  // Keep the "ends in…" label honest even when there is no active challenge.
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const remaining = useMemo(() => {
     if (!challenge?.endsAt) return null;
     return Math.max(0, Math.floor((new Date(challenge.endsAt).getTime() - now) / 1000));
   }, [challenge, now]);
 
+  const expiresIn = useMemo(() => {
+    if (!room.expiresAt) return null;
+    return Math.max(0, Math.floor((new Date(room.expiresAt).getTime() - now) / 1000));
+  }, [room.expiresAt, now]);
+
   const answered = Object.values(answers).filter((value) => value.trim().length > 0).length;
 
-  function run(action: () => Promise<{ ok: boolean; error?: string; message?: string }>) {
+  function run(
+    action: () => Promise<{ ok: boolean; error?: string; message?: string }>,
+    onSuccess?: () => void
+  ) {
     setError(null);
     startTransition(async () => {
       const result = await action();
       if (result.ok) {
         toast.success(result.message ?? dict.common.saved);
-        router.refresh();
+        if (onSuccess) onSuccess();
+        else router.refresh();
       } else {
         setError(result.error ?? dict.errors.saveFailed);
       }
@@ -117,38 +147,131 @@ export function RoomClient({
     );
   }
 
+  function inviteUrl() {
+    if (typeof window === "undefined") return "";
+    const url = new URL("/dashboard/study-rooms", window.location.origin);
+    url.searchParams.set("code", room.code);
+    return url.toString();
+  }
+
+  function copyInvite() {
+    const url = inviteUrl();
+    if (!url) return;
+    void navigator.clipboard.writeText(url).then(
+      () => toast.success(dict.learn.inviteCopied),
+      () => toast.error(dict.errors.generic)
+    );
+  }
+
+  function shareWhatsApp() {
+    const url = inviteUrl();
+    if (!url) return;
+    const message = `${room.name} — ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+  }
+
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-hairline bg-surface-raised/80 px-4 py-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate text-[16px] font-semibold text-ink">{room.name}</h2>
-          <p className="mt-0.5 text-[12px] text-ink-muted">
-            {room.subjectName ?? dict.learn.roomSubject} ·{" "}
-            {room.status === "closed"
-              ? dict.learn.roomClosed
-              : room.status === "in_progress"
-                ? dict.learn.challengeActive
-                : dict.learn.pendingLabel}
-          </p>
+      <div className="rounded-2xl border border-hairline bg-surface-raised/80 px-4 py-3">
+        <div className="flex flex-wrap items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-[16px] font-semibold text-ink">{room.name}</h2>
+            <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-ink-muted">
+              <span>{room.subjectName ?? dict.learn.roomSubject}</span>
+              <span aria-hidden="true">·</span>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 font-medium",
+                  room.status === "closed" ? "text-danger" : "text-brand-ink"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    room.status === "closed" ? "bg-danger" : "animate-pulse bg-brand"
+                  )}
+                />
+                {room.status === "closed"
+                  ? dict.learn.roomClosed
+                  : room.status === "in_progress"
+                    ? dict.learn.challengeActive
+                    : dict.learn.roomOpen}
+              </span>
+              {expiresIn !== null && room.status !== "closed" ? (
+                <span className="text-ink-muted">
+                  · {dict.learn.roomExpiresIn.replace("{time}", formatRemaining(expiresIn))}
+                </span>
+              ) : null}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => startRefresh(() => refresh())}
+              disabled={isRefreshing}
+              title={dict.learn.liveUpdates}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
+            >
+              <RefreshCw
+                className={cn("size-3.5", isRefreshing && "animate-spin")}
+                aria-hidden="true"
+              />
+              {dict.common.refresh}
+            </button>
+            <button
+              type="button"
+              onClick={copyCode}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 font-mono text-[12px] text-ink-soft hover:bg-black/[0.04]"
+              dir="ltr"
+              title={dict.learn.copyCode}
+            >
+              <ClipboardCopy className="size-3.5" aria-hidden="true" />
+              {room.code}
+            </button>
+            <button
+              type="button"
+              onClick={copyInvite}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] text-ink-soft hover:bg-black/[0.04]"
+            >
+              <Share2 className="size-3.5" aria-hidden="true" />
+              {dict.learn.inviteFriends}
+            </button>
+            <button
+              type="button"
+              onClick={shareWhatsApp}
+              aria-label={dict.learn.shareWhatsapp}
+              title={dict.learn.shareWhatsapp}
+              className="grid size-8 place-items-center rounded-lg border border-hairline text-ink-soft hover:bg-black/[0.04]"
+            >
+              <MessageCircle className="size-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                run(
+                  () => leaveStudyRoomAction(room.id),
+                  () => router.push("/dashboard/study-rooms")
+                )
+              }
+              disabled={isPending}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
+            >
+              <LogOut className="size-3.5" aria-hidden="true" />
+              {dict.learn.leaveRoom}
+            </button>
+            {isOwner && room.status !== "closed" ? (
+              <button
+                type="button"
+                onClick={() => run(() => closeStudyRoomAction(room.id))}
+                disabled={isPending}
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-danger/30 px-2.5 text-[12px] text-danger hover:bg-danger/[0.06] disabled:opacity-50"
+              >
+                {dict.learn.closeRoom}
+              </button>
+            ) : null}
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={copyCode}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 font-mono text-[12px] text-ink-soft hover:bg-black/[0.04]"
-          dir="ltr"
-        >
-          <ClipboardCopy className="size-3.5" aria-hidden="true" />
-          {room.code}
-        </button>
-        <button
-          type="button"
-          onClick={() => run(() => leaveStudyRoomAction(room.id))}
-          disabled={isPending}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-hairline px-2.5 text-[12px] text-ink-soft hover:bg-black/[0.04] disabled:opacity-50"
-        >
-          <LogOut className="size-3.5" aria-hidden="true" />
-          {dict.learn.leaveRoom}
-        </button>
       </div>
 
       {error ? (

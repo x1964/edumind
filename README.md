@@ -164,6 +164,12 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` variables reach the br
 | `AI_MAX_OUTPUT_TOKENS`          | No          | Maximum completion tokens. Defaults to `2048` (`4096` recommended for thinking models).                                                          |
 | `AI_TIMEOUT_MS`                 | No          | Per-request timeout in milliseconds. Defaults to `90000`.                                                                                        |
 | `AI_JSON_MODE`                  | No          | Sends `response_format: json_object`. Defaults to `false`; leave it off for Gemini's OpenAI-compatible endpoint, which can return 503 with it.   |
+| `TTS_BASE_URL`                  | No          | OpenAI-compatible base URL for `/audio/speech`. Without it the listen page uses the device's browser voice.                                      |
+| `TTS_API_KEY`                   | For TTS     | Server-only speech provider key.                                                                                                                 |
+| `TTS_MODEL`                     | For TTS     | Speech model name (for example `gpt-4o-mini-tts`).                                                                                               |
+| `TTS_VOICE`                     | No          | Default provider voice id. Defaults to `alloy`.                                                                                                  |
+| `TTS_ARABIC_VOICE`              | No          | Voice id used for Arabic when the provider offers one.                                                                                           |
+| `TTS_SUPPORTS_ARABIC`           | No          | Set to `false` to route Arabic through the browser voice instead. Defaults to `true`.                                                            |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`  | For push    | Public Web Push VAPID key.                                                                                                                       |
 | `VAPID_PRIVATE_KEY`             | For push    | Server-only Web Push private key.                                                                                                                |
 | `VAPID_SUBJECT`                 | For push    | VAPID contact subject, normally a `mailto:` URL.                                                                                                 |
