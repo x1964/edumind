@@ -35,7 +35,7 @@ export function FAQSection({ dict }: { dict: Dictionary }) {
                   {faq.moreLabel}
                 </div>
                 <CtaLink
-                  href="#start"
+                  href="/signup"
                   variant="secondary"
                   className="mt-3 h-9 w-full text-[13px]"
                   withArrow

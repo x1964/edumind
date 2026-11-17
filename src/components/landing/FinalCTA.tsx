@@ -41,7 +41,7 @@ export function FinalCTA({ dict }: { dict: Dictionary }) {
                 {final.description}
               </p>
 
-              <CtaLink href="#learning-preview" size="lg" className="mt-8 min-w-[240px]" withArrow>
+              <CtaLink href="/signup" size="lg" className="mt-8 min-w-[240px]" withArrow>
                 {final.cta}
               </CtaLink>
 

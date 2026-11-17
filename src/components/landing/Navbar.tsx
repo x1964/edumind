@@ -17,6 +17,7 @@ interface NavbarProps {
 export function Navbar({ lang, dict }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const links = navLinks(dict);
 
@@ -26,6 +27,28 @@ export function Navbar({ lang, dict }: NavbarProps) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const sections = navLinks(dict)
+      .map((link) => document.getElementById(link.href.slice(1)))
+      .filter((section): section is HTMLElement => section !== null);
+
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible[0]) setActiveId(`#${visible[0].target.id}`);
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [dict]);
 
   useEffect(() => {
     if (!open) return;
@@ -60,19 +83,29 @@ export function Navbar({ lang, dict }: NavbarProps) {
         </a>
 
         <nav aria-label={dict.nav.tools} className="hidden items-center gap-1 lg:flex">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="group relative rounded-full px-3.5 py-2 text-[13.5px] font-medium text-ink-soft transition-all duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
-            >
-              {link.label}
-              <span
-                aria-hidden="true"
-                className="absolute inset-x-3.5 -bottom-0.5 h-px scale-x-0 bg-brand/70 transition-transform duration-300 group-hover:scale-x-100"
-              />
-            </a>
-          ))}
+          {links.map((link) => {
+            const isActive = activeId === link.href;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? "true" : undefined}
+                className={cn(
+                  "group relative rounded-full px-3.5 py-2 text-[13.5px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50",
+                  isActive ? "text-ink" : "text-ink-soft hover:text-ink"
+                )}
+              >
+                {link.label}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute inset-x-3.5 -bottom-0.5 h-px bg-brand/70 transition-transform duration-300",
+                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  )}
+                />
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">

@@ -5,7 +5,7 @@ import { SectionHeading } from "./SectionHeading";
 
 const icons = [Upload, ScanText, Route];
 
-function StepVisual({ index }: { index: number }) {
+function StepVisual({ index, dict }: { index: number; dict: Dictionary }) {
   if (index === 0) {
     return (
       <div className="mt-5 flex flex-wrap gap-1.5">
@@ -45,7 +45,12 @@ function StepVisual({ index }: { index: number }) {
 
   return (
     <div className="mt-5 flex flex-wrap gap-1.5">
-      {["شرح", "ملخص", "اختبار", "خريطة"].map((tool) => (
+      {[
+        dict.learning.tabs.explanation,
+        dict.learning.tabs.summary,
+        dict.learning.tabs.quiz,
+        dict.learning.tabs.mindmap,
+      ].map((tool) => (
         <span
           key={tool}
           className="rounded-md border border-hairline bg-black/[0.02] px-2 py-1 text-[12px] text-ink-muted"
@@ -119,7 +124,7 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
                       <p className="mt-2 text-[13px] leading-[1.85] text-ink-soft">
                         {step.description}
                       </p>
-                      <StepVisual index={index} />
+                      <StepVisual index={index} dict={dict} />
                     </div>
                   </article>
                 </Reveal>

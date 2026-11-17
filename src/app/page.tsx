@@ -6,7 +6,7 @@ import { getDictionary, getLang } from "@/lib/lang";
 
 const title = "EduMind — Learn Smarter. Understand Deeper.";
 const description =
-  "EduMind turns your study documents into AI tutoring, smart summaries, interactive quizzes, mind maps, and personalized learning experiences. ارفع ملفاتك وافهم كل حاجة بطريقتك.";
+  "EduMind turns your study documents into plain-language explanations, structured summaries, interactive quizzes, and mind maps — built from your own material, in Arabic and English. ارفع ملفاتك وافهم كل حاجة من مصدرك.";
 
 export const metadata: Metadata = {
   title,

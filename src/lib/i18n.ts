@@ -9,7 +9,7 @@ export function isLang(value: string | undefined | null): value is Lang {
 }
 
 export type FeatureId =
-  "tutor" | "summary" | "quiz" | "mindmap" | "visual" | "audio" | "path" | "analytics";
+  "tutor" | "summary" | "quiz" | "mindmap" | "rooms" | "audio" | "path" | "analytics";
 
 export type SubjectId = "math" | "physics" | "biology" | "chemistry" | "history" | "programming";
 
@@ -40,32 +40,28 @@ export interface HeroDict {
   trust: { ai: string; fast: string; personal: string };
 }
 
-export interface StatisticsDict {
+export interface ProofDict {
   eyebrow: string;
   title: string;
   description: string;
-  activeStudents: string;
-  materialsProcessed: string;
-  successRate: string;
-  fasterLearning: string;
+  items: { value: string; suffix?: string; label: string; note: string }[];
   trust: string[];
 }
 
-export interface TestimonialItem {
-  name: string;
-  role: string;
-  avatar: string;
-  quote: string;
+export interface UseCaseItem {
+  tag: string;
+  title: string;
+  scenario: string;
+  steps: string[];
   highlight: string;
 }
 
-export interface TestimonialsDict {
+export interface UseCasesDict {
   eyebrow: string;
   title: string;
   description: string;
-  ratingValue: string;
-  ratingNote: string;
-  items: TestimonialItem[];
+  items: UseCaseItem[];
+  note: string;
 }
 
 export interface ProductPreviewDict {
@@ -215,7 +211,7 @@ export interface FooterDict {
   productTitle: string;
   productLinks: { label: string; href: string }[];
   toolsTitle: string;
-  toolsLinks: string[];
+  toolsLinks: { label: string; href: string }[];
   companyTitle: string;
   companyLinks: { label: string; href: string }[];
   legalTitle: string;
@@ -234,8 +230,8 @@ export interface FooterDict {
 export interface Dictionary {
   nav: NavDict;
   hero: HeroDict;
-  statistics: StatisticsDict;
-  testimonials: TestimonialsDict;
+  proof: ProofDict;
+  useCases: UseCasesDict;
   productPreview: ProductPreviewDict;
   learning: LearningDict;
   how: HowDict;
@@ -262,89 +258,86 @@ export const dictionaries: Record<Lang, Dictionary> = {
       signIn: "تسجيل الدخول",
     },
     hero: {
-      badge: "مستقبل التعلّم أصبح أكثر ذكاءً",
+      badge: "من ملفاتك الدراسية... لأدوات فهم حقيقية",
       headlineTop: "مش مجرد مذاكرة...",
-      headlineMiddle: "افهم كل حاجة",
-      headlineAccent: "بطريقتك.",
+      headlineMiddle: "حوّل ملفك إلى شرح",
+      headlineAccent: "واختبار وخريطة.",
       description:
-        "ارفع كتبك وملفاتك الدراسية، ودع EduMind يحوّلها إلى شروحات ذكية وملخصات واختبارات وتجارب تعليمية تفاعلية تناسب طريقة تعلّمك.",
-      primaryCta: "ابدأ رحلتك",
-      secondaryCta: "اكتشف كيف يعمل",
+        "ارفع كتابك أو محاضرتك أو ملاحظاتك، وEduMind يبني منها شرحاً مبسّطاً وملخصاً منظماً واختباراً تفاعلياً وخريطة ذهنية — كلها من نفس المحتوى اللي بتراجعه.",
+      primaryCta: "ابدأ الآن",
+      secondaryCta: "جرّب المعاينة",
       formatsLabel: "بيشتغل مع ملفاتك",
-      formats: ["PDF", "Word", "Text"],
+      formats: ["PDF", "DOCX", "TXT"],
       previewLabel: "معاينة الواجهة",
       trust: {
-        ai: "مدعوم بالذكاء الاصطناعي",
-        fast: "تعلّم سريع",
-        personal: "مخصص لك",
+        ai: "مخرجات من محتواك",
+        fast: "بدون إعداد معقد",
+        personal: "عربي وإنجليزي",
       },
     },
-    statistics: {
-      eyebrow: "أرقام تتكلم",
-      title: "موثوق من الطلاب حول العالم",
-      description: "انضم لآلاف الطلاب الذين يتعلمون بذكاء مع EduMind",
-      activeStudents: "طالب نشط",
-      materialsProcessed: "مادة معالجة",
-      successRate: "معدل نجاح",
-      fasterLearning: "تعلّم أسرع",
-      trust: ["آمن بالتصميم", "الخصوصية أولاً", "مدعوم بالذكاء الاصطناعي", "متاح 24/7"],
-    },
-    testimonials: {
-      eyebrow: "آراء المتعلّمين",
-      title: "ماذا يقول متعلّمونا؟",
-      description: "انضم لآلاف الطلاب الذين غيّروا طريقة تعلّمهم مع EduMind",
-      ratingValue: "4.9/5",
-      ratingNote: "بناءً على أكثر من 10,000 تقييم من متعلّمين راضين",
+    proof: {
+      eyebrow: "باختصار",
+      title: "إيه اللي هتلاقيه جوه EduMind؟",
+      description: "أربع طرق للفهم، من مصدر واحد، بثلاث صيغ ملفات وبلغتين.",
       items: [
         {
-          name: "أحمد محمد",
-          role: "طالب طب",
-          avatar: "أم",
-          quote:
-            "غيّر EduMind طريقة مذاكرتي تماماً. المدرّس الذكي يشرح المفاهيم الطبية المعقدة ببساطة، والاختبارات تساعدني على تثبيت المعلومات أكثر من أي وقت مضى.",
-          highlight: "المفاهيم الطبية المعقدة",
+          value: "04",
+          label: "طرق للفهم",
+          note: "شرح · ملخص · اختبار · خريطة",
         },
         {
-          name: "سارة الراشد",
-          role: "طالبة هندسة",
-          avatar: "سر",
-          quote:
-            "الخرائط الذهنية مذهلة! أستطيع تصوّر الفصول كاملة وفهم الروابط بين الموضوعات. تحسّنت درجاتي بشكل ملحوظ منذ أن بدأت استخدام EduMind.",
-          highlight: "الخرائط الذهنية مذهلة",
+          value: "03",
+          label: "صيغ ملفات مدعومة",
+          note: "PDF · DOCX · TXT",
         },
         {
-          name: "عمر حسن",
-          role: "طالب ثانوية",
-          avatar: "عح",
-          quote:
-            "كنت أكره المذاكرة للامتحانات. الآن أرفع ملاحظاتي وأحصل على اختبارات وملخصات مخصصة. وكأن لديّ مدرّساً خاصاً متاحاً على مدار الساعة.",
-          highlight: "اختبارات وملخصات مخصصة",
+          value: "02",
+          label: "لغات للواجهة",
+          note: "عربي كامل · إنجليزي",
         },
         {
-          name: "ليلى أحمد",
-          role: "طالبة جامعية",
-          avatar: "لأ",
-          quote:
-            "الملخصات توفر عليّ ساعات من القراءة. أستطيع مراجعة كتب كاملة في دقائق والتركيز على الأهم. ضرورية لأي طالب جاد.",
-          highlight: "توفر عليّ ساعات من القراءة",
-        },
-        {
-          name: "كريم علي",
-          role: "طالب ماجستير إدارة أعمال",
-          avatar: "كع",
-          quote:
-            "كموظف مشغول، الوقت ثمين. يساعدني EduMind على التعلّم بكفاءة أثناء التنقل، والملخصات السريعة تغيّر قواعد اللعبة.",
-          highlight: "التعلّم بكفاءة",
-        },
-        {
-          name: "نور فتحي",
-          role: "طالبة علوم حاسب",
-          avatar: "نف",
-          quote:
-            "المدرّس الذكي يفهم المفاهيم التقنية بدقة. أستطيع السؤال عن البرمجة والخوارزميات والحصول على شروحات واضحة مع أمثلة برمجية.",
-          highlight: "شروحات واضحة",
+          value: "01",
+          label: "مصدر للمخرجات",
+          note: "ملفك هو المرجع",
         },
       ],
+      trust: ["بياناتك مرتبطة بحسابك", "واجهة عربية كاملة", "يعمل على الموبايل", "تحديث مستمر"],
+    },
+    useCases: {
+      eyebrow: "طرق الاستخدام",
+      title: "مش كل مذاكرة ليها نفس الشكل.",
+      description: "اختار السيناريو اللي يشبه يومك، وشوف EduMind بيختصر إيه.",
+      items: [
+        {
+          tag: "قبل الامتحان",
+          title: "فصل كامل في ليلة واحدة",
+          scenario: "محتاج تلمّ الفصل بسرعة، وتتأكد إنك فهمت أهم النقاط.",
+          steps: ["ارفع الفصل", "خد ملخص بالمصطلحات", "اختبر نفسك وارجع للناقص"],
+          highlight: "ملخص واختبار من نفس الفصل",
+        },
+        {
+          tag: "مسألة واقفة معاك",
+          title: "مش عايز الإجابة... عايز الخطوات",
+          scenario: "واقف عند خطوة في مسألة أو مفهوم مش داخل دماغك.",
+          steps: ["اسأل المدرّس الذكي", "اطلب مثال تاني", "جرّب سؤال مشابه"],
+          highlight: "شرح خطوة بخطوة من درسك",
+        },
+        {
+          tag: "مراجعة وأنت مشغول",
+          title: "اسمع درسك بدل ما تقراه",
+          scenario: "مش قادر تقعد تقرا، أو عندك طريق طويل كل يوم.",
+          steps: ["اختار الدرس", "شغّل النسخة الصوتية", "ارجع للخريطة الذهنية"],
+          highlight: "نسخة صوتية من محتواك",
+        },
+        {
+          tag: "مذاكرة جماعية",
+          title: "نفس الغرفة... مع أصحابك",
+          scenario: "المذاكرة الجماعية بتتحول لكلام كتير ووقت ضايع.",
+          steps: ["افتح غرفة دراسة", "شارك الرابط", "ذاكروا بالمؤقّت نفسه"],
+          highlight: "غرفة دراسة برابط واحد",
+        },
+      ],
+      note: "كل الأدوات دي موجودة في النسخة الحالية، ومكمّلة لبعضها.",
     },
     productPreview: {
       fileName: "Introduction to Biology.pdf",
@@ -539,10 +532,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
           tag: "ربط",
         },
         {
-          id: "visual",
-          title: "تعلّم بصري",
-          description: "رسوم وتوضيحات بصرية بتقرّب المفاهيم المعقدة وتخليها أوضح.",
-          tag: "بصري",
+          id: "rooms",
+          title: "غرف دراسة",
+          description:
+            "افتح غرفة لمادة معيّنة، شارك الرابط، وذاكروا مع بعض بمؤقّت واحد وتحديث مباشر للأعضاء.",
+          tag: "مع أصحابك",
         },
         {
           id: "audio",
@@ -691,6 +685,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
             "أيوه. الاختبارات بتتبني من محتوى الدرس اللي رفعته، وبتشمل إجابات وتفسيرات عشان تعرف سبب الإجابة وتراجع النقطة الصح.",
         },
         {
+          question: "إيه حكاية غرف الدراسة؟",
+          answer:
+            "تقدر تفتح غرفة دراسة لمادة معيّنة وتشارك رابطها مع أصحابك، فتدخلوا نفس الغرفة وتشوفوا نفس المؤقّت. الغرفة بتقفل تلقائياً بعد انتهاء الوقت، وصاحب الغرفة يقدر ينهيها في أي وقت.",
+        },
+        {
           question: "EduMind بيدعم العربية؟",
           answer:
             "أيوه. الواجهة والمحتوى بيشتغلوا بالعربي والإنجليزي، مع دعم كامل لاتجاه الكتابة من اليمين لليسار وخط عربي واضح للقراءة.",
@@ -701,15 +700,16 @@ export const dictionaries: Record<Lang, Dictionary> = {
             "إحنا بنتعامل مع المحتوى المرفوع على إنه بيانات خاصة بالحساب. تفاصيل التخزين والاستخدام هتتوضح بالكامل في سياسة الخصوصية قبل الإطلاق، ومش بنعرض محتواك بشكل عام.",
         },
       ],
-      moreLabel: "لسه عندك سؤال؟",
+      moreLabel: "جاهز تجرّب بنفسك؟",
     },
     final: {
       eyebrow: "جاهز تبدأ؟",
       englishHeadline: "Your Next Learning Experience Starts Here.",
-      title: "ابدأ تتعلّم بطريقة مختلفة.",
-      description: "حوّل محتواك الدراسي إلى تجربة تعليمية تناسبك.",
-      cta: "ابدأ رحلتك مع EduMind",
-      note: "ارفع أول ملف، وشوف الفرق.",
+      title: "ابدأ من الملف اللي عندك.",
+      description:
+        "ارفع أول ملف، واختار الطريقة اللي تفهم بيها: شرح، ملخص، اختبار، أو خريطة ذهنية.",
+      cta: "أنشئ حسابك وابدأ",
+      note: "من غير إعداد معقد — ملف واحد يكفي.",
     },
     footer: {
       description:
@@ -719,10 +719,17 @@ export const dictionaries: Record<Lang, Dictionary> = {
         { label: "المميزات", href: "#features" },
         { label: "كيف يعمل", href: "#how-it-works" },
         { label: "أدوات التعلّم", href: "#learning-preview" },
+        { label: "طرق الاستخدام", href: "#use-cases" },
         { label: "الأسئلة الشائعة", href: "#faq" },
       ],
       toolsTitle: "أدوات التعلّم",
-      toolsLinks: ["المدرّس الذكي", "الملخصات الذكية", "الاختبارات التفاعلية", "الخرائط الذهنية"],
+      toolsLinks: [
+        { label: "المدرّس الذكي", href: "#learning-preview" },
+        { label: "الملخصات الذكية", href: "#learning-preview" },
+        { label: "الاختبارات التفاعلية", href: "#learning-preview" },
+        { label: "الخرائط الذهنية", href: "#learning-preview" },
+        { label: "غرف الدراسة", href: "#features" },
+      ],
       companyTitle: "الشركة",
       companyLinks: [
         { label: "الرؤية", href: "#why-edumind" },
@@ -760,89 +767,96 @@ export const dictionaries: Record<Lang, Dictionary> = {
       signIn: "Sign in",
     },
     hero: {
-      badge: "The future of learning is smarter",
+      badge: "From your study files to real understanding",
       headlineTop: "Not just studying.",
-      headlineMiddle: "Understand everything,",
-      headlineAccent: "your way.",
+      headlineMiddle: "Turn your document into",
+      headlineAccent: "an explanation, a quiz, a map.",
       description:
-        "Upload your books and study materials, and let EduMind turn them into smart explanations, summaries, quizzes, and interactive learning experiences that fit how you learn.",
-      primaryCta: "Start your journey",
-      secondaryCta: "See how it works",
+        "Upload your textbook, lecture, or notes, and EduMind builds a plain-language explanation, a structured summary, an interactive quiz, and a mind map — all from the same material you are actually studying.",
+      primaryCta: "Get started",
+      secondaryCta: "Try the preview",
       formatsLabel: "Works with your files",
-      formats: ["PDF", "Word", "Text"],
+      formats: ["PDF", "DOCX", "TXT"],
       previewLabel: "Product preview",
       trust: {
-        ai: "AI-powered",
-        fast: "Learn faster",
-        personal: "Personalized for you",
+        ai: "Built from your material",
+        fast: "No setup required",
+        personal: "Arabic and English",
       },
     },
-    statistics: {
-      eyebrow: "By the numbers",
-      title: "Trusted by learners worldwide",
-      description: "Join thousands of students who learn smarter with EduMind",
-      activeStudents: "Active students",
-      materialsProcessed: "Materials processed",
-      successRate: "Success rate",
-      fasterLearning: "Faster learning",
-      trust: ["Secure by design", "Privacy first", "AI-powered", "Available 24/7"],
-    },
-    testimonials: {
-      eyebrow: "Testimonials",
-      title: "What our learners say",
-      description: "Join thousands of students who transformed how they learn with EduMind",
-      ratingValue: "4.9/5",
-      ratingNote: "Based on 10,000+ reviews from satisfied learners",
+    proof: {
+      eyebrow: "At a glance",
+      title: "What you actually get inside EduMind",
+      description:
+        "Four ways to understand one document, across three file formats and two languages.",
       items: [
         {
-          name: "Ahmed Mohamed",
-          role: "Medical student",
-          avatar: "AM",
-          quote:
-            "EduMind transformed how I study. The AI tutor explains complex medical concepts in simple terms, and the quizzes help me retain information better than ever before.",
-          highlight: "complex medical concepts",
+          value: "04",
+          label: "Ways to understand",
+          note: "Explanation · Summary · Quiz · Map",
         },
         {
-          name: "Sarah Al-Rashid",
-          role: "Engineering student",
-          avatar: "SR",
-          quote:
-            "The mind maps are incredible! I can visualize entire chapters and understand connections between topics. My grades have improved significantly since I started using EduMind.",
-          highlight: "mind maps are incredible",
+          value: "03",
+          label: "Supported file formats",
+          note: "PDF · DOCX · TXT",
         },
         {
-          name: "Omar Hassan",
-          role: "High school student",
-          avatar: "OH",
-          quote:
-            "I used to hate studying for exams. Now I upload my notes and get personalized quizzes and summaries. It's like having a private tutor available 24/7.",
-          highlight: "personalized quizzes",
+          value: "02",
+          label: "Interface languages",
+          note: "Full Arabic · English",
         },
         {
-          name: "Layla Ahmed",
-          role: "University student",
-          avatar: "LA",
-          quote:
-            "The summaries save me hours of reading. I can review entire textbooks in minutes and focus on what matters most. Absolutely essential for any serious student.",
-          highlight: "summaries save me hours",
-        },
-        {
-          name: "Karim Ali",
-          role: "MBA student",
-          avatar: "KA",
-          quote:
-            "As a working professional, time is precious. EduMind helps me learn efficiently during my commute. The audio features and quick summaries are game-changers.",
-          highlight: "learn efficiently",
-        },
-        {
-          name: "Nour Fathy",
-          role: "Computer science student",
-          avatar: "NF",
-          quote:
-            "The AI tutor understands technical concepts perfectly. I can ask questions about programming and algorithms, and get clear explanations with code examples.",
-          highlight: "clear explanations",
+          value: "01",
+          label: "Source for every output",
+          note: "Your document is the reference",
         },
       ],
+      trust: [
+        "Private to your account",
+        "Full Arabic interface",
+        "Works on mobile",
+        "Actively developed",
+      ],
+    },
+    useCases: {
+      eyebrow: "How people use it",
+      title: "Not every study session looks the same.",
+      description: "Pick the scenario that looks like your day, and see what EduMind shortens.",
+      items: [
+        {
+          tag: "Before an exam",
+          title: "A whole chapter, one night",
+          scenario: "You need to cover the chapter fast and make sure the key points landed.",
+          steps: [
+            "Upload the chapter",
+            "Read the summary and key terms",
+            "Quiz yourself, revisit gaps",
+          ],
+          highlight: "A summary and quiz from the same chapter",
+        },
+        {
+          tag: "Stuck on a problem",
+          title: "You want the steps, not just the answer",
+          scenario: "One step in a problem, or one concept, is not clicking.",
+          steps: ["Ask the AI tutor", "Request another example", "Try a similar question"],
+          highlight: "Step-by-step help from your lesson",
+        },
+        {
+          tag: "Review on the move",
+          title: "Listen to the lesson instead of reading it",
+          scenario: "You cannot sit and read, or you have a long commute.",
+          steps: ["Pick the lesson", "Play the audio version", "Go back to the mind map"],
+          highlight: "An audio version of your material",
+        },
+        {
+          tag: "Group study",
+          title: "The same room, with your friends",
+          scenario: "Group study turns into lost time and scattered notes.",
+          steps: ["Open a study room", "Share the link", "Study on the same timer"],
+          highlight: "A study room in one link",
+        },
+      ],
+      note: "Every tool listed here exists in the current version and connects to the others.",
     },
     productPreview: {
       fileName: "Introduction to Biology.pdf",
@@ -988,21 +1002,21 @@ export const dictionaries: Record<Lang, Dictionary> = {
         {
           number: "01",
           title: "Upload your materials",
-          english: "Upload your materials",
+          english: "Upload",
           description:
             "Choose a textbook, lecture, or your notes as a PDF, Word file, or text, and start with a single document.",
         },
         {
           number: "02",
           title: "AI understands your content",
-          english: "AI understands your content",
+          english: "Analyze",
           description:
             "EduMind analyzes the material, extracts the core concepts, and builds a clear structure for the lesson.",
         },
         {
           number: "03",
           title: "Learn your way",
-          english: "Learn your way",
+          english: "Learn",
           description:
             "Move between explanations, summaries, quizzes, and mind maps based on what you need right now.",
         },
@@ -1043,10 +1057,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
           tag: "Connections",
         },
         {
-          id: "visual",
-          title: "Visual learning",
-          description: "Diagrams and visual explanations that make complex ideas easier to grasp.",
-          tag: "Visual",
+          id: "rooms",
+          title: "Study rooms",
+          description:
+            "Open a room for a subject, share the link, and study together with one shared timer and live member updates.",
+          tag: "With friends",
         },
         {
           id: "audio",
@@ -1202,6 +1217,11 @@ export const dictionaries: Record<Lang, Dictionary> = {
             "Yes. Quizzes are generated from the lesson you uploaded and include answers and explanations so you can review why an answer is correct.",
         },
         {
+          question: "How do study rooms work?",
+          answer:
+            "You can open a study room for a subject and share its link with friends, so you join the same room and see the same timer. The room closes automatically when time is up, and the owner can end it at any point.",
+        },
+        {
           question: "Does EduMind support Arabic?",
           answer:
             "Yes. The interface and content work in both Arabic and English, with full right-to-left support and a reading-friendly Arabic typeface.",
@@ -1212,15 +1232,16 @@ export const dictionaries: Record<Lang, Dictionary> = {
             "Uploaded content is treated as private to your account. The full details of how files are stored and used will be documented in the privacy policy before launch, and your content is not published publicly.",
         },
       ],
-      moreLabel: "Still have a question?",
+      moreLabel: "Ready to try it yourself?",
     },
     final: {
       eyebrow: "Ready when you are",
       englishHeadline: "Your Next Learning Experience Starts Here.",
-      title: "Start learning a different way.",
-      description: "Turn your study material into a learning experience built around you.",
-      cta: "Start your journey with EduMind",
-      note: "Upload your first document and feel the difference.",
+      title: "Start with the file you already have.",
+      description:
+        "Upload your first document and pick how you want to understand it: explanation, summary, quiz, or mind map.",
+      cta: "Create your account",
+      note: "No complicated setup — one document is enough.",
     },
     footer: {
       description:
@@ -1230,10 +1251,17 @@ export const dictionaries: Record<Lang, Dictionary> = {
         { label: "Features", href: "#features" },
         { label: "How it works", href: "#how-it-works" },
         { label: "Learning tools", href: "#learning-preview" },
+        { label: "How people use it", href: "#use-cases" },
         { label: "FAQ", href: "#faq" },
       ],
       toolsTitle: "Learning tools",
-      toolsLinks: ["AI Tutor", "Smart summaries", "Interactive quizzes", "Mind maps"],
+      toolsLinks: [
+        { label: "AI Tutor", href: "#learning-preview" },
+        { label: "Smart summaries", href: "#learning-preview" },
+        { label: "Interactive quizzes", href: "#learning-preview" },
+        { label: "Mind maps", href: "#learning-preview" },
+        { label: "Study rooms", href: "#features" },
+      ],
       companyTitle: "Company",
       companyLinks: [
         { label: "Our approach", href: "#why-edumind" },

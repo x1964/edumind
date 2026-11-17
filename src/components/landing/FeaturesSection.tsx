@@ -5,7 +5,6 @@ import {
   ChartNoAxesColumn,
   Check,
   CircleCheck,
-  Eye,
   FileText,
   Headphones,
   ListChecks,
@@ -14,6 +13,7 @@ import {
   Network,
   Route,
   Sparkles,
+  Users,
 } from "lucide-react";
 import type { Dictionary, FeatureId } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ const icons: Record<FeatureId, typeof Sparkles> = {
   summary: ListChecks,
   quiz: CircleCheck,
   mindmap: Network,
-  visual: Eye,
+  rooms: Users,
   audio: Headphones,
   path: Route,
   analytics: ChartNoAxesColumn,
@@ -127,32 +127,55 @@ function MindMapVisual({ dict }: { dict: Dictionary }) {
   );
 }
 
-function VisualLearningMock({ dict }: { dict: Dictionary }) {
+function RoomsVisual() {
+  const reduceMotion = useReducedMotion();
+  const members = ["S", "M", "A"];
+
   return (
-    <div className="relative mt-4 h-[96px] overflow-hidden rounded-xl border border-hairline/80 bg-surface-deep p-2">
-      <svg viewBox="0 0 200 90" className="size-full" aria-hidden="true">
-        <defs>
-          <linearGradient id="visual-curve" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#059669" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#059669" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <line x1="16" y1="76" x2="188" y2="76" stroke="rgba(15,23,42,0.12)" />
-        <line x1="16" y1="10" x2="16" y2="76" stroke="rgba(15,23,42,0.12)" />
-        <path d="M16 70 Q 70 66 100 44 T 184 18 L184 76 L16 76 Z" fill="url(#visual-curve)" />
-        <path
-          d="M16 70 Q 70 66 100 44 T 184 18"
-          fill="none"
-          stroke="#059669"
-          strokeWidth="1.6"
-          strokeLinecap="round"
+    <div className="mt-4 rounded-xl border border-hairline/80 bg-surface-deep p-3">
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-ink-soft">
+          <motion.span
+            animate={reduceMotion ? undefined : { opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            className="size-1.5 rounded-full bg-rose-500"
+            aria-hidden="true"
+          />
+          LIVE
+        </span>
+        <span className="font-mono text-[12px] text-ink-muted">12:40</span>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <div className="flex items-center -space-x-1.5 rtl:space-x-reverse" aria-hidden="true">
+          {members.map((member, index) => (
+            <span
+              key={member}
+              className={cn(
+                "grid size-6 place-items-center rounded-full border-2 border-surface-deep text-[10px] font-semibold",
+                index === 0 ? "bg-brand text-primary-foreground" : "bg-brand/15 text-brand-ink"
+              )}
+            >
+              {member}
+            </span>
+          ))}
+          <span className="grid size-6 place-items-center rounded-full border-2 border-surface-deep bg-black/[0.06] font-mono text-[10px] text-ink-muted">
+            +2
+          </span>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full border border-brand/20 bg-brand/[0.06] px-2 py-1 text-[10.5px] font-medium text-brand-ink">
+          <Users className="size-2.5" aria-hidden="true" />5
+        </span>
+      </div>
+
+      <div className="mt-3 h-1 overflow-hidden rounded-full bg-black/[0.06]" aria-hidden="true">
+        <motion.span
+          className="block h-full rounded-full bg-brand/70"
+          initial={{ width: "38%" }}
+          animate={reduceMotion ? undefined : { width: ["38%", "52%", "44%"] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
-        <circle cx="100" cy="44" r="2.6" fill="#059669" />
-        <circle cx="100" cy="44" r="6" fill="none" stroke="#059669" strokeOpacity="0.28" />
-      </svg>
-      <span className="absolute bottom-2 start-3 font-mono text-[12px] text-ink-muted" dir="auto">
-        {dict.subjects.items[0].visualCaption}
-      </span>
+      </div>
     </div>
   );
 }
@@ -275,8 +298,8 @@ function FeatureVisual({ id, dict }: { id: FeatureId; dict: Dictionary }) {
       return <QuizVisual dict={dict} />;
     case "mindmap":
       return <MindMapVisual dict={dict} />;
-    case "visual":
-      return <VisualLearningMock dict={dict} />;
+    case "rooms":
+      return <RoomsVisual />;
     case "audio":
       return <AudioVisual dict={dict} />;
     case "path":
@@ -303,7 +326,9 @@ export function FeaturesSection({ dict }: { dict: Dictionary }) {
             />
           </Reveal>
           <Reveal delay={0.08} className="hidden items-center gap-2 lg:flex">
-            <span className="font-mono text-[12px] text-ink-muted">08</span>
+            <span className="font-mono text-[12px] text-ink-muted">
+              {String(features.items.length).padStart(2, "0")}
+            </span>
             <span className="h-px w-10 bg-hairline-strong" aria-hidden="true" />
             <span className="text-[12px] uppercase tracking-[0.18em] text-ink-muted">
               {features.eyebrow}

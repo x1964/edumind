@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "motion/react";
-import { Brain, BookOpen, FileText, Play, Sparkles, Zap } from "lucide-react";
+import { FileCheck2, FileText, Languages, Play, Sparkles, Zap } from "lucide-react";
 import { useRef } from "react";
 import type { Dictionary } from "@/lib/i18n";
 import { CtaLink } from "./CtaLink";
@@ -80,11 +80,11 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
               variants={item}
               className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:items-center"
             >
-              <CtaLink href="#start" size="lg" className="w-full sm:w-auto" withArrow>
+              <CtaLink href="/signup" size="lg" className="w-full sm:w-auto" withArrow>
                 {hero.primaryCta}
               </CtaLink>
               <CtaLink
-                href="#how-it-works"
+                href="#learning-preview"
                 variant="secondary"
                 size="lg"
                 className="w-full sm:w-auto"
@@ -122,9 +122,9 @@ export function HeroSection({ dict }: { dict: Dictionary }) {
               className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-hairline/60 pt-6"
             >
               {[
-                { icon: Brain, label: hero.trust.ai },
+                { icon: FileCheck2, label: hero.trust.ai },
                 { icon: Zap, label: hero.trust.fast },
-                { icon: BookOpen, label: hero.trust.personal },
+                { icon: Languages, label: hero.trust.personal },
               ].map((trust) => (
                 <div key={trust.label} className="flex items-center gap-2">
                   <trust.icon className="size-4 text-brand-ink/70" aria-hidden="true" />
